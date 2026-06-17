@@ -25,6 +25,9 @@ dist/
 npm-debug.log*
 pnpm-debug.log*
 
+# Local-only Claude notes (may reference private repos)
+CLAUDE.local.md
+
 # OS / editor
 .DS_Store
 .idea/
