@@ -1,0 +1,57 @@
+{
+  "name": "@lunaris/easypoints-hydrogen",
+  "version": "0.1.0",
+  "description": "Headless React building blocks and a server-side client to integrate the easyPoints loyalty program into Shopify Hydrogen storefronts.",
+  "license": "GPL-3.0-only",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    },
+    "./server": {
+      "types": "./dist/server.d.mts",
+      "import": "./dist/server.mjs"
+    },
+    "./types": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/types.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "check": "vp check",
+    "test": "vp test",
+    "prepublishOnly": "vp pack"
+  },
+  "devDependencies": {
+    "@shopify/hydrogen": "^2026.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router": "~7.16.0",
+    "typescript": "^6.0.0"
+  },
+  "peerDependencies": {
+    "@shopify/hydrogen": "^2026.0.0",
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0",
+    "react-router": "^7.12.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    }
+  }
+}
