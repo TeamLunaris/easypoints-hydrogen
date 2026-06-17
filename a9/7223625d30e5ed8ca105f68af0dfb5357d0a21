@@ -1,0 +1,28 @@
+.gitignore
+  s_c54a6c1fd93c2f::t_8274ec83112927 28-30
+CLAUDE.md
+  s_c54a6c1fd93c2f::t_e173eb86fd22ea 13
+  s_c54a6c1fd93c2f::t_c023823fa62574 1-5,7-12,14-38
+  s_c54a6c1fd93c2f::t_7de0c296b2382c 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "a97223625d30e5ed8ca105f68af0dfb5357d0a21",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_c54a6c1fd93c2f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "471be785-ec0b-41bc-99fa-efb903ed681a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
