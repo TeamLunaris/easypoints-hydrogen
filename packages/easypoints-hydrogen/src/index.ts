@@ -7,6 +7,5 @@
 // INVARIANT: this entry must never import from "./server" — keeps the API token and any
 // server-only code out of the browser bundle.
 
-export const VERSION = "0.1.0";
-
 export type * from "./types";
+export { keysToCamel } from "./shared/case";
