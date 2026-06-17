@@ -9,3 +9,12 @@
 
 export type * from "./types";
 export { keysToCamel } from "./shared/case";
+export {
+  findTierIndex,
+  getCurrentTier,
+  getMaintenanceTier,
+  getNextTier,
+  getProgressTier,
+  getTierRule,
+  sortTierRules,
+} from "./shared/tiers";
