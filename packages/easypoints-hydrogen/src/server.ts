@@ -9,11 +9,22 @@ if (typeof window !== "undefined") {
   );
 }
 
-// Placeholder factory — the real Bearer-token loyalty client, route handlers, and GraphQL
-// fragments are ported in the follow-up phase from solaris-cards-storefront
-// (app/lib/easy-points/loyalty.server.ts, api/client.ts, routes/, shopify-gql/).
-//
-// TODO(follow-up plan): implement createEasyPointsClient.
-export function createEasyPointsClient(): never {
-  throw new Error("not implemented");
-}
+// Loyalty client factory + its public types (D3).
+export { createEasyPointsClient } from "./server/loyalty";
+export type { Context, CreateEasyPointsClientParams, EasyPointsClient } from "./server/loyalty";
+
+// Customer loyalty query.
+export { queryCustomerLoyalty } from "./server/loyalty-customer";
+
+// Errors.
+export { ContextError, LoyaltyClientError } from "./server/errors";
+
+// GraphQL queries + fragments (merchants embed the fragments in their own codegen).
+export {
+  COLLECTION_LOYALTY_METAFIELD_FRAGMENT,
+  COLLECTIONS_LOYALTY_FRAGMENT,
+  CUSTOMER_LOYALTY_METAFIELD_FRAGMENT,
+  CUSTOMER_LOYALTY_QUERY,
+  PRODUCT_LOYALTY_QUERY,
+  SHOP_LOYALTY_QUERY,
+} from "./server/graphql";
