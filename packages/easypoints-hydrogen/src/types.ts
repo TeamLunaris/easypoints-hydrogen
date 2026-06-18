@@ -76,6 +76,9 @@ export interface ShopLoyaltyValue extends SnakeCasedKeys<PointRule> {
  * `easy_points_attributes` metafield.
  */
 export interface CustomerLoyaltyMetafield {
+  /**
+   * Session-authenticated Shopify customer GID (`gid://shopify/Customer/…`). */
+  customerId: string;
   /** Available points balance for the customer. */
   balance: number;
   /** Monetary value used as denominator for point conversion ratios. */

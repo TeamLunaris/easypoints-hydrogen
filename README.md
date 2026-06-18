@@ -15,10 +15,10 @@ It provides:
 
 ## Layout
 
-| Path | Description |
-| --- | --- |
-| `packages/easypoints-hydrogen` | The publishable library. |
-| `examples/storefront` | A minimal Hydrogen app that consumes the library for local development. |
+| Path                           | Description                                                             |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| `packages/easypoints-hydrogen` | The publishable library.                                                |
+| `examples/storefront`          | A minimal Hydrogen app that consumes the library for local development. |
 
 ## Toolchain
 

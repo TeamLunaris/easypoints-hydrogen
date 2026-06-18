@@ -16,6 +16,19 @@ export type { Context, CreateEasyPointsClientParams, EasyPointsClient } from "./
 // Customer loyalty query.
 export { queryCustomerLoyalty } from "./server/loyalty-customer";
 
+// Shop + product points math (D4).
+export { fetchShopLoyalty } from "./server/shop";
+export { productPoints } from "./server/product";
+
+// Cart points action dispatcher (D4). `CalculatePointsResponse` + the route-path const are
+// consumed type-only by the client hooks (D5).
+export {
+  ACTIONS,
+  CART_POINTS_ROUTE_PATH,
+  createCartPointsAction,
+} from "./server/routes/cartPoints";
+export type { CalculatePointsResponse } from "./server/routes/cartPoints";
+
 // Errors.
 export { ContextError, LoyaltyClientError } from "./server/errors";
 

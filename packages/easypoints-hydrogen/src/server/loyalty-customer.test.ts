@@ -81,6 +81,7 @@ describe("queryCustomerLoyalty", () => {
     const result = await queryCustomerLoyalty(loggedInWith({ value: METAFIELD_VALUE }));
 
     expect(result).toEqual({
+      customerId: "gid://shopify/Customer/1",
       balance: 100,
       currencyValue: 100,
       tierUid: "abc",

@@ -57,7 +57,11 @@ export async function queryCustomerLoyalty(
     const loyalty = data.customer.loyalty?.value;
     if (!loyalty) return null;
 
-    return keysToCamel(JSON.parse(loyalty)) as CustomerLoyaltyMetafield;
+    const metafield = keysToCamel(JSON.parse(loyalty)) as CustomerLoyaltyMetafield;
+
+    // Carry the session-authenticated customer GID through, so callers (e.g. redeemPoints) can
+    // authorize against it rather than trusting a client-supplied id.
+    return { ...metafield, customerId: data.customer.id };
   } catch (error) {
     console.error("Error fetching customer loyalty:", error);
     return null;

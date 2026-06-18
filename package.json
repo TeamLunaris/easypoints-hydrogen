@@ -3,10 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@11.7.0",
-  "engines": {
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "build": "vp run -r build",
     "dev": "vp run -r dev",
@@ -16,5 +12,9 @@
   "devDependencies": {
     "typescript": "^6.0.0",
     "vite-plus": "^0.1.24"
-  }
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@11.7.0"
 }

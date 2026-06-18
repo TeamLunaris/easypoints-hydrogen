@@ -43,6 +43,7 @@ const makeCustomer = (
 
   return {
     loyalty: {
+      customerId: "gid://shopify/Customer/1",
       balance: 1000,
       currencyValue: 100,
       tier: "Silver",
