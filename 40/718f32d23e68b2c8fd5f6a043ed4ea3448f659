@@ -1,0 +1,25 @@
+packages/easypoints-hydrogen/src/index.ts
+  s_6bc82bb796b31f::t_5995af4aaa3ab3 1,3-5,8-9,22-42
+packages/easypoints-hydrogen/src/client/components/TierProgress.tsx
+  s_6bc82bb796b31f::t_0234894aa25b07 1-38
+packages/easypoints-hydrogen/src/client/components/PointsRedemption.tsx
+  s_6bc82bb796b31f::t_28151d470c12fc 1-35
+packages/easypoints-hydrogen/src/client/components/ProductPoints.tsx
+  s_6bc82bb796b31f::t_4cb8b96dfe3d95 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "40718f32d23e68b2c8fd5f6a043ed4ea3448f659",
+  "prompts": {},
+  "sessions": {
+    "s_6bc82bb796b31f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "84ed6541-9cb1-4c40-a4a9-46b64037c62e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
