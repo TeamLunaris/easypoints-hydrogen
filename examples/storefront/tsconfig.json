@@ -1,7 +1,47 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "include": [
+    "env.d.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "app/**/*.d.ts",
+    "*.ts",
+    "*.tsx",
+    "*.d.ts",
+    ".graphqlrc.ts",
+    ".react-router/types/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "build", "packages/**/dist/**/*"],
   "compilerOptions": {
-    "noEmit": true
-  },
-  "include": ["src"]
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "module": "ES2022",
+    "target": "ES2022",
+    "strict": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    // Hydrogen resolves the codegen output (`storefrontapi.generated`,
+    // `customer-accountapi.generated`) as bare specifiers via baseUrl. baseUrl is deprecated in
+    // TS 6 but still required here, so silence the deprecation.
+    "ignoreDeprecations": "6.0",
+    "types": [
+      "@shopify/oxygen-workers-types",
+      "react-router",
+      "@shopify/hydrogen/react-router-types",
+      "vite/client"
+    ],
+    "paths": {
+      "~/*": ["app/*"]
+    },
+    "noEmit": true,
+    "rootDirs": [".", "./.react-router/types"],
+    "incremental": true,
+    "composite": false,
+    "verbatimModuleSyntax": true
+  }
 }
