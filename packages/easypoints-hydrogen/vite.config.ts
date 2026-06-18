@@ -12,12 +12,4 @@ export default defineConfig({
     sourcemap: true,
     minify: false,
   },
-  // Make `vp check` the single static-check command: type-aware lint + type checking
-  // (run via tsgolint / TypeScript-Go), on top of Oxlint + Oxfmt.
-  lint: {
-    options: {
-      typeAware: true,
-      typeCheck: true,
-    },
-  },
 });
