@@ -29,8 +29,9 @@ vite-plugin-dts, vitest, or any `@teamlunaris/*` shared config.
 ## Layout
 
 - `packages/easypoints-hydrogen` is the publishable lib.
-  Entries: `index.ts` (client, browser-safe), `server.ts` (holds token, server-only),
-  `types.ts`. INVARIANT: `index.ts` must never import from `./server`.
+  Entries: `index.ts` (isomorphic, browser-safe: types + `keysToCamel` + tier logic),
+  `client.ts` (React hooks + provider, browser-safe), `server.ts` (holds token, server-only),
+  `types.ts`. INVARIANT: neither `index.ts` nor `client.ts` may import from `./server`.
 - `examples/storefront` is a minimal Hydrogen consumer for local dev.
 
 ## Targets

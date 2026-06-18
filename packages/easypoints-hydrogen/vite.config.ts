@@ -6,7 +6,7 @@ import { defineConfig } from "vite-plus";
 // react-router, @shopify/hydrogen), so no manual `external` list is needed.
 export default defineConfig({
   pack: {
-    entry: ["src/index.ts", "src/server.ts", "src/types.ts"],
+    entry: ["src/index.ts", "src/client.ts", "src/server.ts", "src/types.ts"],
     format: ["esm"],
     dts: true,
     sourcemap: true,

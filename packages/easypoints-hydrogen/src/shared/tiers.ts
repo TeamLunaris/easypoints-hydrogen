@@ -1,11 +1,11 @@
 import type { LoyaltyCustomer, Tier, TierMaintenance, TierRule } from "../types";
 
-interface RawAmount {
+export interface RawAmount {
   currency: string;
   raw: number | null;
 }
 
-interface TierProgress {
+export interface TierProgress {
   requirement: RawAmount;
   spend: RawAmount;
 }
