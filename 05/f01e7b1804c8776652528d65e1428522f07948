@@ -1,0 +1,19 @@
+vite.config.ts
+  s_f1a0c4f744e608::t_cfa69679187ebf 10-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "05f01e7b1804c8776652528d65e1428522f07948",
+  "prompts": {},
+  "sessions": {
+    "s_f1a0c4f744e608": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4fa14302-0cdd-4c6d-9ce0-9b5636d76cfa",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
