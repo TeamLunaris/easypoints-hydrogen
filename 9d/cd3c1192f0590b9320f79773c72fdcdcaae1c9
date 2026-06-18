@@ -1,0 +1,76 @@
+packages/easypoints-hydrogen/src/server/product.test.ts
+  s_c06c8330078a74::t_8b189554353327 1-138
+packages/easypoints-hydrogen/src/shared/tiers.test.ts
+  s_452a03af78a2c9::t_bb5bb4702cbe4c 46
+README.md
+  s_c06c8330078a74::t_819b89ec7eec8e 18-21
+packages/easypoints-hydrogen/src/server/routes/cartPoints.ts
+  s_c06c8330078a74::t_2a158adc4674a9 1-130,134-143,152-209
+  s_452a03af78a2c9::t_a5d72ce2c9a316 131-133
+  s_fe9f1362e1f696::t_d0142c2ad98648 144-151
+packages/easypoints-hydrogen/src/server/loyalty-customer.test.ts
+  s_452a03af78a2c9::t_de08d86cf9eee7 84
+packages/easypoints-hydrogen/src/server.ts
+  s_c06c8330078a74::t_6546ab08153e8f 19-31
+packages/easypoints-hydrogen/src/server/product.ts
+  s_c06c8330078a74::t_804d7c1ab5b99f 1-145
+packages/easypoints-hydrogen/src/server/shop.ts
+  s_c06c8330078a74::t_7d8f46b2702bd8 1-57
+packages/easypoints-hydrogen/src/types.ts
+  s_452a03af78a2c9::t_bac9343d2b0104 79,81
+  h_8c8bb3a0db3180 80
+packages/easypoints-hydrogen/src/server/loyalty-customer.ts
+  s_452a03af78a2c9::t_fa4718eed8ba6e 60-64
+package.json
+  s_c06c8330078a74::t_819b89ec7eec8e 15-19
+packages/easypoints-hydrogen/src/server/routes/cartPoints.test.ts
+  s_6d9390c3d6bc38::t_85cc1e6102e5a7 9,122-124,142-145,217-220,224-227,231-234
+  s_6d9390c3d6bc38::t_9ef7d0d751c8a0 1-8,10-89,93-121,125-141,146-216,221-223,228-230,235-280,307-362
+  s_fe9f1362e1f696::t_90ee012fa829b4 281-306
+  s_6d9390c3d6bc38::t_d71aba1eee9f3b 90-92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "9dcd3c1192f0590b9320f79773c72fdcdcaae1c9",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_452a03af78a2c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f5512338-70ec-480d-a7d0-12f564588fcf",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_6d9390c3d6bc38": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "57ded102-b7ff-47f7-9d18-24ecd8e590f8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_c06c8330078a74": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a1b84f4-2e0d-4070-8694-1b9d8521a937",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_fe9f1362e1f696": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a1ff8d0-381b-4ed0-bc56-dbae04fb7af5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
