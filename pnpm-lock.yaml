@@ -44,6 +44,10 @@ importers:
         version: 6.0.3
 
   packages/easypoints-hydrogen:
+    dependencies:
+      valibot:
+        specifier: ^1.0.0
+        version: 1.4.1(typescript@6.0.3)
     devDependencies:
       '@shopify/hydrogen':
         specifier: ^2026.0.0

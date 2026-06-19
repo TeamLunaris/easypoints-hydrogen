@@ -3,6 +3,8 @@
 // Isomorphic and secret-free: domain types ported from solaris-cards-storefront
 // (app/lib/easy-points/types.d.ts, api/types.d.ts, types-utils.d.ts). No runtime code.
 
+import type { CustomerLoyaltyMetafield } from "./shared/loyalty-schema";
+
 // ---------------------------------------------------------------------------
 // Case-conversion utility types (from types-utils.d.ts)
 // ---------------------------------------------------------------------------
@@ -71,35 +73,16 @@ export interface ShopLoyaltyValue extends SnakeCasedKeys<PointRule> {
   point_rules: Record<string, SnakeCasedKeys<PointRule>>;
 }
 
-/**
- * Normalized (camelCase) customer-level loyalty attributes from the
- * `easy_points_attributes` metafield.
- */
-export interface CustomerLoyaltyMetafield {
-  /**
-   * Session-authenticated Shopify customer GID (`gid://shopify/Customer/…`). */
-  customerId: string;
-  /** Available points balance for the customer. */
-  balance: number;
-  /** Monetary value used as denominator for point conversion ratios. */
-  currencyValue: number;
-  /** Current tier identifier/name as provided by loyalty backend. */
-  tier: string;
-  /** UID of the current tier, used to match rule keys and tier arrays. */
-  tierUid: string;
-  /** Point value used as numerator for point conversion ratios. */
-  pointValue: number;
-  /** Tier expiration date (if any). */
-  expirationDate: string | null;
-  /** Human-readable tier label. */
-  tierName: string;
-  /** Default earn percentage for the current customer context. */
-  percentage: number;
-  /** Tier maintenance and advancement data used for progress calculations. */
-  tierMaintenanceData: CustomerTierMaintenance;
-  /** Whether tax is included in loyalty calculations. */
-  includeTax: boolean;
-}
+// The customer metafield + tier-maintenance type cluster is *inferred* from the Valibot schemas
+// in `./shared/loyalty-schema` so the runtime validation and these exported types stay in lockstep.
+// Re-exported here to keep `../types` the single public type surface for consumers.
+export type {
+  AmountCurrency,
+  CustomerLoyaltyMetafield,
+  CustomerTierMaintenance,
+  Tier,
+  TierMaintenance,
+} from "./shared/loyalty-schema";
 
 /**
  * Loyalty-bearing customer shape exposed to consumers. Replaces the storefront's
@@ -107,50 +90,6 @@ export interface CustomerLoyaltyMetafield {
  */
 export interface LoyaltyCustomer {
   loyalty: CustomerLoyaltyMetafield | null;
-}
-
-// ---------------------------------------------------------------------------
-// Tier maintenance / advancement
-// ---------------------------------------------------------------------------
-
-/**
- * Monetary values in both formatted and numeric forms.
- * `rawAmount` is used by tier progress calculations.
- */
-export interface AmountCurrency {
-  amount: string | null;
-  currency: string;
-  rawAmount: number | null;
-}
-
-/**
- * Tier entry used when evaluating advancement progression.
- */
-export interface Tier extends AmountCurrency {
-  uid: string;
-  name: string;
-  ratio?: number;
-  spentRequirement: AmountCurrency;
-}
-
-/**
- * Tier requirement payload used for maintenance/advancement checks.
- */
-export interface TierMaintenance extends AmountCurrency {
-  deadline: string | null;
-  spentRequirement: AmountCurrency;
-}
-
-/**
- * Group of maintenance and advancement data for the current customer.
- */
-export interface CustomerTierMaintenance {
-  maintenanceData: TierMaintenance;
-  advancementData: TierMaintenance & {
-    tierUid: string;
-    tierName: string | null;
-    tiers: Tier[];
-  };
 }
 
 // ---------------------------------------------------------------------------

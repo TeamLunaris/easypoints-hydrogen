@@ -11,6 +11,8 @@ client that integrates the easyPoints loyalty program into Shopify Hydrogen stor
 - Server client is a factory mounted as `context.loyalty`. Customer loyalty comes
   from Shopify metafields via GraphQL; REST handles coupons + points calc.
 - Components are HEADLESS/unstyled.
+- **Valibot** validates external JSON at the trust boundary AND is the source of truth
+  for its types.
 
 ## Toolchain: Vite+ (`vp`) only
 

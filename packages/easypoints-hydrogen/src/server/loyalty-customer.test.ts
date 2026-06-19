@@ -21,12 +21,36 @@ function makeContext(account: {
   } as unknown as Context;
 }
 
-/** A valid (snake_case) metafield value as the API returns it. */
+/** A complete (snake_case) metafield value as the API returns it. */
 const METAFIELD_VALUE = JSON.stringify({
   balance: 100,
   currency_value: 100,
+  tier: "Gold",
   tier_uid: "abc",
   point_value: 1,
+  expiration_date: null,
+  tier_name: "Gold",
+  percentage: 1,
+  include_tax: false,
+  tier_maintenance_data: {
+    maintenance_data: {
+      amount: "¥0",
+      currency: "JPY",
+      raw_amount: 0,
+      deadline: null,
+      spent_requirement: { amount: "¥0", currency: "JPY", raw_amount: 0 },
+    },
+    advancement_data: {
+      amount: "¥0",
+      currency: "JPY",
+      raw_amount: 0,
+      deadline: null,
+      spent_requirement: { amount: "¥0", currency: "JPY", raw_amount: 0 },
+      tier_uid: "abc",
+      tier_name: "Gold",
+      tiers: [],
+    },
+  },
 });
 
 const loggedInWith = (loyalty: { value: string | null } | null) =>
@@ -84,9 +108,47 @@ describe("queryCustomerLoyalty", () => {
       customerId: "gid://shopify/Customer/1",
       balance: 100,
       currencyValue: 100,
+      tier: "Gold",
       tierUid: "abc",
       pointValue: 1,
+      expirationDate: null,
+      tierName: "Gold",
+      percentage: 1,
+      includeTax: false,
+      tierMaintenanceData: {
+        maintenanceData: {
+          amount: "¥0",
+          currency: "JPY",
+          rawAmount: 0,
+          deadline: null,
+          spentRequirement: { amount: "¥0", currency: "JPY", rawAmount: 0 },
+        },
+        advancementData: {
+          amount: "¥0",
+          currency: "JPY",
+          rawAmount: 0,
+          deadline: null,
+          spentRequirement: { amount: "¥0", currency: "JPY", rawAmount: 0 },
+          tierUid: "abc",
+          tierName: "Gold",
+          tiers: [],
+        },
+      },
     });
+  });
+
+  test("returns null and logs when the metafield shape is incomplete", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    // Missing tier, tierMaintenanceData, etc. — the shape consumers like useTierProgress rely on.
+    const partial = JSON.stringify({
+      balance: 100,
+      currency_value: 100,
+      tier_uid: "abc",
+      point_value: 1,
+    });
+
+    expect(await queryCustomerLoyalty(loggedInWith({ value: partial }))).toBe(null);
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   test("returns null and logs when the query throws", async () => {
