@@ -215,9 +215,16 @@ export function createEasyPointsClient({
       }
 
       if (response.status >= 400 && response.status < 500) {
-        // `withCache.fetch` only parses the body on 2xx; on a 4xx it leaves the response body
-        // unconsumed and returns `data: null`. Parse it here so a real `ErrorResponse` surfaces.
         const errorBody = data ?? (await response.json().catch(() => null));
+
+        if (errorBody === null) {
+          return {
+            errors: [],
+            status: response.status,
+            title: response.statusText || "Request failed",
+          } satisfies ErrorResponse;
+        }
+
         return keysToCamel(errorBody) as ErrorResponse;
       }
 

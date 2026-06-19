@@ -137,9 +137,16 @@ export async function fetchProductLoyalty(
   let price: number | null = Number(product.selectedOrFirstAvailableVariant?.price.amount);
   price = !Number.isNaN(price) ? price : null;
 
-  const collections = product.collections.nodes
-    .filter((node) => node.bonusPoints !== null)
-    .map((node) => JSON.parse(node.bonusPoints!.value) as CollectionBonusPoints);
+  const collections: CollectionBonusPoints[] = product.collections.nodes.flatMap((node) => {
+    const { bonusPoints } = node;
+    if (!bonusPoints) return [];
+
+    try {
+      return [JSON.parse(bonusPoints.value)];
+    } catch {
+      return [];
+    }
+  });
 
   return { price, collections };
 }

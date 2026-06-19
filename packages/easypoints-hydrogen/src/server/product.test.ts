@@ -127,6 +127,24 @@ test("collection maxCollectionBonusRatio is folded into the rate", async () => {
   expect(result).toEqual({ totalPoints: 60, singlePoints: 60 });
 });
 
+test("a collection with an unparseable bonusPoints value is skipped, not fatal", async () => {
+  // The malformed collection must be dropped (its JSON.parse throws) while the valid one still
+  // counts -- otherwise the throw would bubble to productPoints' catch and yield null.
+  // 1% base + valid active bonus 0.05; rate = 0.06; 1000 * 0.06 = 60.
+  const loyalty = makeLoyalty({
+    priceAmount: "10.00",
+    shopLoyalty: shopValue(1),
+    collections: [
+      { id: "bad", bonusPoints: { value: "{not valid json" } },
+      bonusCollection("c1", 5, 100),
+    ],
+  });
+
+  const result = await productPoints(loyalty, args);
+
+  expect(result).toEqual({ totalPoints: 60, singlePoints: 60 });
+});
+
 test("quantity scales the total and floor is applied to the line, not the unit", async () => {
   // price 2.50 -> 250 cents; 1% -> raw 2.5 per unit. singlePoints = floor(2.5) = 2;
   // totalPoints = floor(2.5 * 3) = floor(7.5) = 7 (not 2 * 3 = 6).

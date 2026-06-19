@@ -63,6 +63,31 @@ test("4xx responses return a (camelCased) ErrorResponse rather than throwing", a
   expect(result).toEqual({ errors: ["bad_request"], status: 400, title: "Bad Request" });
 });
 
+test("4xx with an unparseable body synthesizes an ErrorResponse from the status line", async () => {
+  // Non-JSON 4xx body: `withCache.fetch` returns `data: null` and `response.json()` rejects,
+  // so `errorBody` is null and the client falls back to the status text.
+  globalThis.fetch = vi.fn(
+    async () => new Response("not json", { status: 404, statusText: "Not Found" }),
+  ) as typeof fetch;
+
+  const client = makeClient();
+  const result = await client.api.fetch("/whatever", { method: "GET" });
+
+  expect(result).toEqual({ errors: [], status: 404, title: "Not Found" });
+});
+
+test("4xx with an unparseable body and no status text falls back to a default title", async () => {
+  // Some runtimes give an empty `statusText`; the client should still produce a usable title.
+  globalThis.fetch = vi.fn(
+    async () => new Response("", { status: 400, statusText: "" }),
+  ) as typeof fetch;
+
+  const client = makeClient();
+  const result = await client.api.fetch("/whatever", { method: "GET" });
+
+  expect(result).toEqual({ errors: [], status: 400, title: "Request failed" });
+});
+
 test("5xx responses throw LoyaltyClientError", async () => {
   globalThis.fetch = vi.fn(async () =>
     jsonResponse({ errors: ["boom"] }, { status: 500, statusText: "Server Error" }),

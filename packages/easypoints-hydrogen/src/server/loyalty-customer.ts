@@ -1,9 +1,3 @@
-// Customer loyalty metafield query.
-//
-// Ported from solaris-cards-storefront (app/lib/easy-points/loyalty-customer.server.ts). Uses the
-// library's `keysToCamel` (shared/case) instead of `~/lib/utils`. Because the library has no
-// codegen for the query, the response shape is supplied explicitly via the `query` override type.
-
 import { keysToCamel } from "../shared/case";
 
 import { ContextError } from "./errors";
