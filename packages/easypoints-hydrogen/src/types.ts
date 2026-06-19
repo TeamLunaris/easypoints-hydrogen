@@ -3,7 +3,7 @@
 // Isomorphic and secret-free: domain types ported from solaris-cards-storefront
 // (app/lib/easy-points/types.d.ts, api/types.d.ts, types-utils.d.ts). No runtime code.
 
-import type { CustomerLoyaltyMetafield } from "./shared/loyalty-schema";
+import type { CustomerLoyaltyMetafield, ErrorResponse } from "./shared/loyalty-schema";
 
 // ---------------------------------------------------------------------------
 // Case-conversion utility types (from types-utils.d.ts)
@@ -63,23 +63,16 @@ export interface TierRule extends PointRule {
 // Shop- and customer-level loyalty attributes
 // ---------------------------------------------------------------------------
 
-/**
- * Raw (snake_case) shop-level loyalty attributes from the `easy_points_attributes` metafield.
- */
-export interface ShopLoyaltyValue extends SnakeCasedKeys<PointRule> {
-  /** Feature flag indicating whether the loyalty program is active. */
-  live: boolean;
-  /** Tier UID -> tier rule mapping, preserving API snake_case keys. */
-  point_rules: Record<string, SnakeCasedKeys<PointRule>>;
-}
-
-// The customer metafield + tier-maintenance type cluster is *inferred* from the Valibot schemas
-// in `./shared/loyalty-schema` so the runtime validation and these exported types stay in lockstep.
-// Re-exported here to keep `../types` the single public type surface for consumers.
+// The shop/customer metafield, tier-maintenance, and REST API response types are *inferred* from
+// the Valibot schemas in `./shared/loyalty-schema` so the runtime validation and these exported
+// types stay in lockstep. Re-exported here to keep `../types` the single public type surface.
 export type {
   AmountCurrency,
+  CreateCouponResponse,
   CustomerLoyaltyMetafield,
   CustomerTierMaintenance,
+  ErrorResponse,
+  ShopLoyaltyValue,
   Tier,
   TierMaintenance,
 } from "./shared/loyalty-schema";
@@ -96,14 +89,9 @@ export interface LoyaltyCustomer {
 // API responses (from api/types.d.ts)
 // ---------------------------------------------------------------------------
 
-/**
- * Error response shape from the easyPoints API.
- */
-export interface ErrorResponse {
-  errors: string[];
-  status: number;
-  title: string;
-}
+// `ErrorResponse` and `CreateCouponResponse` are inferred from Valibot schemas — see the re-export
+// above. NOTE: `CreateCouponResponse` is camelCase because `api.fetch` runs `keysToCamel` on the
+// body before it reaches a consumer (the API itself sends snake_case).
 
 /**
  * Response type from the easyPoints API.
@@ -120,21 +108,4 @@ export interface CreateCouponParams {
   pointValue: number;
   /** Unique Shopify product IDs eligible for coupon redemption. */
   productIds: string[];
-}
-
-/**
- * Response shape from the easyPoints coupon creation endpoint.
- * `data.code` is applied as a cart discount code after successful redemption.
- */
-export interface CreateCouponResponse {
-  data: {
-    code: string;
-    currency_value: number;
-    expires_at: string;
-    id: number;
-    point_value: number;
-    points_reimbursed: number;
-    pos_discount: boolean;
-    reimbursement_cascade: boolean;
-  };
 }

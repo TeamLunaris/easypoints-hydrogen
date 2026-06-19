@@ -4,8 +4,6 @@ import { afterEach, beforeEach, expect, test, vi } from "vite-plus/test";
 import { LoyaltyClientError } from "./errors";
 import { createEasyPointsClient } from "./loyalty";
 
-import type { CreateCouponResponse } from "../types";
-
 const jsonResponse = (
   body: unknown,
   init?: { status?: number; statusText?: string; headers?: Record<string, string> },
@@ -135,6 +133,7 @@ test("429 stops retrying after the max attempts and returns the ErrorResponse", 
 });
 
 test("createCoupon serializes its payload to snake_case", async () => {
+  // The API replies in snake_case; `api.fetch` camelCases it before schema validation.
   const fetchMock = vi.fn(async () =>
     jsonResponse(
       {
@@ -148,14 +147,14 @@ test("createCoupon serializes its payload to snake_case", async () => {
           pos_discount: false,
           reimbursement_cascade: false,
         },
-      } satisfies CreateCouponResponse,
+      },
       { status: 200 },
     ),
   );
   globalThis.fetch = fetchMock as unknown as typeof fetch;
 
   const client = makeClient();
-  await client.api.createCoupon({
+  const result = await client.api.createCoupon({
     customerId: "gid://shopify/Customer/1",
     pointValue: 500,
     productIds: ["gid://shopify/Product/1", "gid://shopify/Product/2"],
@@ -169,4 +168,36 @@ test("createCoupon serializes its payload to snake_case", async () => {
     point_value: 500,
     product_ids: ["gid://shopify/Product/1", "gid://shopify/Product/2"],
   });
+
+  // The response is schema-validated and surfaced camelCase.
+  expect(result).toEqual({
+    data: {
+      code: "ABC123",
+      currencyValue: 100,
+      expiresAt: "2026-12-31",
+      id: 1,
+      pointValue: 500,
+      pointsReimbursed: 0,
+      posDiscount: false,
+      reimbursementCascade: false,
+    },
+  });
+});
+
+test("createCoupon returns an ErrorResponse when the 2xx body fails schema validation", async () => {
+  const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  // 200 OK, but the coupon payload is malformed (missing every `data` field).
+  globalThis.fetch = vi.fn(async () =>
+    jsonResponse({ data: { code: "ABC123" } }, { status: 200 }),
+  ) as typeof fetch;
+
+  const client = makeClient();
+  const result = await client.api.createCoupon({
+    customerId: "gid://shopify/Customer/1",
+    pointValue: 500,
+    productIds: ["gid://shopify/Product/1"],
+  });
+
+  expect(result).toEqual({ errors: [], status: 200, title: "Invalid response from loyalty API" });
+  expect(errorSpy).toHaveBeenCalled();
 });

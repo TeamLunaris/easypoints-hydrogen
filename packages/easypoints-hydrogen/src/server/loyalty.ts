@@ -8,8 +8,10 @@
 // throw `LoyaltyClientError` on 5xx.
 
 import { CacheNone, createWithCache } from "@shopify/hydrogen";
+import * as v from "valibot";
 
 import { keysToCamel } from "../shared/case";
+import { CreateCouponResponseSchema, ErrorResponseSchema } from "../shared/loyalty-schema";
 
 import { getHeaders, getUrl } from "./client";
 import { ContextError, LoyaltyClientError } from "./errors";
@@ -180,7 +182,13 @@ export function createEasyPointsClient({
    * @returns The camelCased success body, or an {@link ErrorResponse} for 4xx.
    * @throws {LoyaltyClientError} On 5xx responses.
    */
-  async function fetch<T = unknown>(endpoint_: string, options: RequestInit): ApiResponse<T> {
+  async function fetch<T = unknown>(
+    endpoint_: string,
+    options: RequestInit,
+    // When provided, the camelCased 2xx body is validated against this schema rather than blindly
+    // cast to `T`; a mismatch resolves to an `ErrorResponse` instead of leaking a malformed object.
+    schema?: v.GenericSchema<unknown, T>,
+  ): ApiResponse<T> {
     const url = getUrl({ endpoint }, endpoint_);
 
     for (let attempt = 0; ; attempt++) {
@@ -206,7 +214,18 @@ export function createEasyPointsClient({
       const { data, response } = result;
 
       if (response.ok) {
-        return keysToCamel(data) as T;
+        const body = keysToCamel(data);
+        if (!schema) return body as T;
+
+        const validated = v.safeParse(schema, body);
+        if (validated.success) return validated.output;
+
+        console.error(`Invalid response body from ${endpoint_}:`, v.flatten(validated.issues));
+        return {
+          errors: [],
+          status: response.status,
+          title: "Invalid response from loyalty API",
+        } satisfies ErrorResponse;
       }
 
       if (response.status === 429 && attempt < MAX_RETRY_ATTEMPTS) {
@@ -217,15 +236,16 @@ export function createEasyPointsClient({
       if (response.status >= 400 && response.status < 500) {
         const errorBody = data ?? (await response.json().catch(() => null));
 
-        if (errorBody === null) {
-          return {
-            errors: [],
-            status: response.status,
-            title: response.statusText || "Request failed",
-          } satisfies ErrorResponse;
-        }
+        const fallback: ErrorResponse = {
+          errors: [],
+          status: response.status,
+          title: response.statusText || "Request failed",
+        };
+        if (errorBody === null) return fallback;
 
-        return keysToCamel(errorBody) as ErrorResponse;
+        // Validate the error envelope too; fall back to the status-derived error if it doesn't match.
+        const validated = v.safeParse(ErrorResponseSchema, keysToCamel(errorBody));
+        return validated.success ? validated.output : fallback;
       }
 
       throw new LoyaltyClientError({ endpoint: endpoint_, response });
@@ -249,7 +269,7 @@ export function createEasyPointsClient({
       product_ids: params.productIds,
     });
 
-    return fetch("/shopify/coupons", { method: "POST", body });
+    return fetch("/shopify/coupons", { method: "POST", body }, CreateCouponResponseSchema);
   }
 
   /**

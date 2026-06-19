@@ -76,3 +76,57 @@ export type CustomerLoyaltyMetafield = v.InferOutput<typeof CustomerLoyaltyMetaf
   /** Session-authenticated Shopify customer GID (`gid://shopify/Customer/…`). */
   customerId: string;
 };
+
+// ---------------------------------------------------------------------------
+// Shop-level loyalty metafield (snake_case — this metafield is NOT camelCased)
+// ---------------------------------------------------------------------------
+
+/** Snake-cased base point-conversion rule, exactly as the shop metafield stores it. */
+const SnakePointRuleSchema = v.object({
+  currency_value: v.number(),
+  percentage: v.number(),
+  point_value: v.number(),
+});
+
+/**
+ * Raw (snake_case) shop-level loyalty attributes from the `easy_points_attributes` metafield.
+ * Unlike the customer metafield, this value is consumed as-is (no `keysToCamel`), so its keys stay
+ * snake_case.
+ */
+export const ShopLoyaltyValueSchema = v.object({
+  ...SnakePointRuleSchema.entries,
+  live: v.boolean(),
+  point_rules: v.record(v.string(), SnakePointRuleSchema),
+});
+export type ShopLoyaltyValue = v.InferOutput<typeof ShopLoyaltyValueSchema>;
+
+// ---------------------------------------------------------------------------
+// REST API responses (validated AFTER keysToCamel — keys are camelCase)
+// ---------------------------------------------------------------------------
+
+/** Error response shape from the easyPoints API. */
+export const ErrorResponseSchema = v.object({
+  errors: v.array(v.string()),
+  status: v.number(),
+  title: v.string(),
+});
+export type ErrorResponse = v.InferOutput<typeof ErrorResponseSchema>;
+
+/**
+ * Response from the coupon-creation endpoint, as it looks AFTER `api.fetch` camelCases the body
+ * (the API sends snake_case; `keysToCamel` runs before validation). `data.code` is applied as the
+ * cart discount code on a successful redemption.
+ */
+export const CreateCouponResponseSchema = v.object({
+  data: v.object({
+    code: v.string(),
+    currencyValue: v.number(),
+    expiresAt: v.string(),
+    id: v.number(),
+    pointValue: v.number(),
+    pointsReimbursed: v.number(),
+    posDiscount: v.boolean(),
+    reimbursementCascade: v.boolean(),
+  }),
+});
+export type CreateCouponResponse = v.InferOutput<typeof CreateCouponResponseSchema>;

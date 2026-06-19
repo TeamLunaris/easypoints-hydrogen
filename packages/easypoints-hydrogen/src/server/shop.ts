@@ -1,3 +1,7 @@
+import * as v from "valibot";
+
+import { ShopLoyaltyValueSchema } from "../shared/loyalty-schema";
+
 import { SHOP_LOYALTY_QUERY } from "./graphql";
 
 import type { ShopLoyaltyValue } from "../types";
@@ -26,8 +30,8 @@ export function queryLoyaltyAttributes(storefront: Storefront) {
  * Parses the shop loyalty metafield. The metafield value is always a string from GraphQL.
  *
  * @param response - The {@link queryLoyaltyAttributes} result.
- * @returns The parsed {@link ShopLoyaltyValue}, or `null` when the metafield is absent, empty, or
- *   not valid JSON.
+ * @returns The parsed {@link ShopLoyaltyValue}, or `null` when the metafield is absent, empty, not
+ *   valid JSON, or fails schema validation.
  */
 export function parseLoyaltyAttributes({
   shop,
@@ -37,11 +41,22 @@ export function parseLoyaltyAttributes({
     return null;
   }
 
+  let parsed: unknown;
   try {
-    return JSON.parse(raw) as ShopLoyaltyValue;
+    parsed = JSON.parse(raw);
   } catch {
     return null;
   }
+
+  // Validate the shape rather than trusting it: a malformed metafield (e.g. missing `point_rules`)
+  // would otherwise throw downstream in `productPoints` on `shopLoyalty.point_rules[tierUid]`.
+  const result = v.safeParse(ShopLoyaltyValueSchema, parsed);
+  if (!result.success) {
+    console.error("Invalid shop loyalty metafield:", v.flatten(result.issues));
+    return null;
+  }
+
+  return result.output;
 }
 
 /**
