@@ -1,0 +1,25 @@
+packages/easypoints-hydrogen/src/server/product.ts
+  s_56bea2927502b1::t_dd0be25e37d072 1-4,9
+  s_56bea2927502b1::t_3393285d095763 149-150,152
+  s_56bea2927502b1::t_05fa3356269ec9 142,144,148,151
+packages/easypoints-hydrogen/src/server/product.test.ts
+  s_56bea2927502b1::t_1ee44bf44fafea 148-165
+packages/easypoints-hydrogen/src/shared/loyalty-schema.ts
+  s_56bea2927502b1::t_ab2bcca548639a 103-113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "c83c3047b42b123ce726bb0be6ce44928c122a3d",
+  "prompts": {},
+  "sessions": {
+    "s_56bea2927502b1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "131c7f55-5b15-415f-b1cc-3934c0257ae1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
