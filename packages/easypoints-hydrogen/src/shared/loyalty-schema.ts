@@ -100,6 +100,17 @@ export const ShopLoyaltyValueSchema = v.object({
 });
 export type ShopLoyaltyValue = v.InferOutput<typeof ShopLoyaltyValueSchema>;
 
+/**
+ * Parsed `loyalty/bonus_points` metafield for a collection (snake_case, consumed as-is). Drives the
+ * `point_value / currency_value` bonus ratio in `productPoints`.
+ */
+export const CollectionBonusPointsSchema = v.object({
+  active: v.boolean(),
+  point_value: v.number(),
+  currency_value: v.number(),
+});
+export type CollectionBonusPoints = v.InferOutput<typeof CollectionBonusPointsSchema>;
+
 // ---------------------------------------------------------------------------
 // REST API responses (validated AFTER keysToCamel — keys are camelCase)
 // ---------------------------------------------------------------------------

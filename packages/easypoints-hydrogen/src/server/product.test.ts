@@ -145,6 +145,24 @@ test("a collection with an unparseable bonusPoints value is skipped, not fatal",
   expect(result).toEqual({ totalPoints: 60, singlePoints: 60 });
 });
 
+test("a collection with a valid-JSON but wrong-shape bonusPoints value is skipped", async () => {
+  // Valid JSON, wrong shape (no point_value/currency_value): if trusted it would compute a NaN
+  // ratio that the `>=` comparison swallows. It must be dropped, leaving only the valid bonus.
+  // 1% base + valid active bonus 0.05; rate = 0.06; 1000 * 0.06 = 60.
+  const loyalty = makeLoyalty({
+    priceAmount: "10.00",
+    shopLoyalty: shopValue(1),
+    collections: [
+      { id: "bad", bonusPoints: { value: JSON.stringify({ active: true, foo: "bar" }) } },
+      bonusCollection("c1", 5, 100),
+    ],
+  });
+
+  const result = await productPoints(loyalty, args);
+
+  expect(result).toEqual({ totalPoints: 60, singlePoints: 60 });
+});
+
 test("quantity scales the total and floor is applied to the line, not the unit", async () => {
   // price 2.50 -> 250 cents; 1% -> raw 2.5 per unit. singlePoints = floor(2.5) = 2;
   // totalPoints = floor(2.5 * 3) = floor(7.5) = 7 (not 2 * 3 = 6).

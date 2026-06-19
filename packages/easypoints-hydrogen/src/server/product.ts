@@ -1,7 +1,12 @@
+import * as v from "valibot";
+
+import { CollectionBonusPointsSchema } from "../shared/loyalty-schema";
+
 import { PRODUCT_LOYALTY_QUERY } from "./graphql";
 import { fetchShopLoyalty } from "./shop";
 
 import type { EasyPointsClient } from "./loyalty";
+import type { CollectionBonusPoints } from "../shared/loyalty-schema";
 import type { Storefront } from "@shopify/hydrogen";
 import type { CountryCode, SelectedOptionInput } from "@shopify/hydrogen/storefront-api-types";
 
@@ -85,13 +90,6 @@ interface CollectionNode {
   bonusPoints: { value: string } | null;
 }
 
-/** Parsed `loyalty/bonus_points` metafield for a collection. */
-interface CollectionBonusPoints {
-  active: boolean;
-  point_value: number;
-  currency_value: number;
-}
-
 /** Shape of the `ProductLoyalty` query result (no codegen, so typed explicitly). */
 interface ProductLoyaltyQueryData {
   product: {
@@ -141,11 +139,17 @@ export async function fetchProductLoyalty(
     const { bonusPoints } = node;
     if (!bonusPoints) return [];
 
+    let parsed: unknown;
     try {
-      return [JSON.parse(bonusPoints.value)];
+      parsed = JSON.parse(bonusPoints.value);
     } catch {
       return [];
     }
+
+    // Drop a malformed bonus metafield (same as unparseable JSON above): an invalid shape would
+    // otherwise yield NaN ratios that the `>=` comparison silently swallows, skewing the points math.
+    const result = v.safeParse(CollectionBonusPointsSchema, parsed);
+    return result.success ? [result.output] : [];
   });
 
   return { price, collections };
