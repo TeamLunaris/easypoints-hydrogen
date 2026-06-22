@@ -1,0 +1,39 @@
+packages/easypoints-hydrogen/src/client/components/TierProgress.tsx
+  s_35c799a1d639d2::t_fab6444f3271e7 11
+  s_35c799a1d639d2::t_3c2b37fc5b31d6 20,23
+  s_35c799a1d639d2::t_719ea85e2995af 36-37
+packages/easypoints-hydrogen/src/client/useTierProgress.test.tsx
+  s_35c799a1d639d2::t_6c27aa57a007c0 100
+  s_35c799a1d639d2::t_7941b96de9e746 9
+  s_35c799a1d639d2::t_33269273e20e7a 81
+  s_35c799a1d639d2::t_890d3fdaaa2a49 107
+  s_35c799a1d639d2::t_ad5fa94889489e 93
+  s_35c799a1d639d2::t_fd97830e6956b2 114
+  s_35c799a1d639d2::t_80af4d26a2247a 120
+  s_35c799a1d639d2::t_5266c2734fd0fb 126
+  s_35c799a1d639d2::t_9838f47f0353cb 28,30,33-55,58,63,69
+packages/easypoints-hydrogen/src/client/hooks/usePointsRedemption.ts
+  s_35c799a1d639d2::t_5a3eeca64915b1 73-74
+  s_35c799a1d639d2::t_35a51ddf19ef11 15
+packages/easypoints-hydrogen/src/client/hooks/useTierProgress.ts
+  s_35c799a1d639d2::t_8fe7b7cd8db678 10
+  s_35c799a1d639d2::t_095a97b5883cc8 12
+  s_35c799a1d639d2::t_e194a3404e5604 31-32,34,43-46
+  s_35c799a1d639d2::t_480b0ac0b3f2e0 20-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "2fb8708b45bd41d3880eff9b841640b6d49b2c65",
+  "prompts": {},
+  "sessions": {
+    "s_35c799a1d639d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a3af4a8-f415-4a45-a70f-0aaa56d64180",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
