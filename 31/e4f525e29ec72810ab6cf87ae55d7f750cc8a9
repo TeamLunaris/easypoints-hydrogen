@@ -1,0 +1,14 @@
+packages/easypoints-hydrogen/src/shared/tiers.ts
+  h_8c8bb3a0db3180 78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "31e4f525e29ec72810ab6cf87ae55d7f750cc8a9",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
