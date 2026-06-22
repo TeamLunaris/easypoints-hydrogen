@@ -10,20 +10,19 @@ export default function AccountLoyalty() {
 
   return (
     <div className="account-loyalty">
-      <CustomerLoyalty loyalty={loyalty}>
-        {({balance, tier, show}) =>
-          show ? (
-            <p>
-              <strong>{balance?.toLocaleString()}</strong> points
-              {tier ? ` · ${tier.name}` : null}
-            </p>
-          ) : (
-            <p>No loyalty data available for this customer.</p>
-          )
-        }
+      <CustomerLoyalty
+        loyalty={loyalty}
+        fallback={<p>No loyalty data available for this customer.</p>}
+      >
+        {({balance, tier}) => (
+          <p>
+            <strong>{balance.toLocaleString()}</strong> points
+            {tier ? ` · ${tier.name}` : null}
+          </p>
+        )}
       </CustomerLoyalty>
 
-      <TierProgress customer={loyalty ? {loyalty} : null}>
+      <TierProgress loyalty={loyalty}>
         {({currentTier, progress, percentage}) =>
           currentTier ? (
             <div>

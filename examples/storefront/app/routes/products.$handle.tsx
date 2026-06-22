@@ -122,9 +122,9 @@ export default function Product() {
           compareAtPrice={selectedVariant?.compareAtPrice}
         />
         <ProductPoints points={points}>
-          {({formattedPoints, show}) =>
-            show ? <p className="product-points">Earn {formattedPoints} points</p> : null
-          }
+          {({formattedPoints}) => (
+            <p className="product-points">Earn {formattedPoints} points</p>
+          )}
         </ProductPoints>
         <br />
         <ProductForm

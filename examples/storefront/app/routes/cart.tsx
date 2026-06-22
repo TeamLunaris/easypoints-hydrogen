@@ -151,43 +151,33 @@ function CartPoints({
         cartTotalQuantity={optimisticCart?.totalQuantity}
         isOptimistic={optimisticCart?.isOptimistic}
       >
-        {({
-          pointsToRedeem,
-          setPointsToRedeem,
-          canRedeem,
-          step,
-          redeem,
-          undo,
-          redeemedPoints,
-          error,
-          isSubmitting,
-        }) =>
-          redeemedPoints ? (
+        {({input, form, result}) =>
+          result.redeemedPoints ? (
             <div>
-              <p>Redeemed {redeemedPoints.toLocaleString()} points.</p>
-              <button type="button" onClick={undo} disabled={isSubmitting}>
+              <p>Redeemed {result.redeemedPoints.toLocaleString()} points.</p>
+              <button type="button" onClick={form.undo} disabled={form.isSubmitting}>
                 Undo
               </button>
             </div>
           ) : (
             <div>
-              <label htmlFor="points-to-redeem">Redeem points (step {step})</label>
+              <label htmlFor="points-to-redeem">Redeem points (step {input.step})</label>
               <input
                 id="points-to-redeem"
                 type="number"
                 inputMode="numeric"
-                step={step}
-                value={pointsToRedeem}
-                onChange={(event) => setPointsToRedeem(event.target.value)}
+                step={input.step}
+                value={input.value}
+                onChange={(event) => input.setValue(event.target.value)}
               />
               <button
                 type="button"
-                onClick={redeem}
-                disabled={!canRedeem || isSubmitting}
+                onClick={form.submit}
+                disabled={!form.isValid || form.isSubmitting}
               >
                 Redeem
               </button>
-              {error ? <p role="alert">{error.message}</p> : null}
+              {result.error ? <p role="alert">{result.error.message}</p> : null}
             </div>
           )
         }
