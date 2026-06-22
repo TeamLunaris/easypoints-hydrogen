@@ -59,14 +59,15 @@ const getStepValue = (balance: number) => {
  * Drives the points-redemption flow: input + validation + adaptive stepper + REDEEM/UNDO submit.
  *
  * @param params - See {@link UsePointsRedemptionParams}.
- * @returns
- * - `pointsToRedeem` / `setPointsToRedeem` — the raw input string.
- * - `canRedeem` — whether the current input is a positive integer within balance.
- * - `step` — the adaptive increment (1 / 10 / 100 / 500) for the current balance.
- * - `redeem` / `undo` — submit the REDEEM / UNDO actions.
- * - `redeemedPoints` — points locked in after a successful redeem, else `null`.
- * - `error` — the structured `{ code?, message }` from a failed redeem, else `null`.
- * - `isSubmitting` — whether a submit is in flight.
+ * @returns Three groups:
+ * - `input` — the numeric field. `value` is the current string; `setValue(raw)` parses and clamps
+ *   it to `[0, balance]` (empty stays empty); `increment` / `decrement` step by `step` (the adaptive
+ *   1 / 10 / 100 / 500 increment for the balance), also clamped; `setMax` fills the full balance.
+ * - `form` — the action surface: `submit` / `undo` fire the REDEEM / UNDO actions, `isValid`
+ *   gates submit (a positive amount, and not mid-optimistic-update), `isSubmitting` is true while a
+ *   submit is in flight.
+ * - `result` — the outcome: `redeemedPoints` (points locked in after a successful redeem, else
+ *   `null`) and `error` (the structured `{ code?, message }` from a failed redeem, else `null`).
  */
 export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   const config = useEasyPointsConfig();
@@ -85,18 +86,50 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   const safeRedeemablePoints = pointsBalance ?? 0;
   const parsed = Number.parseInt(pointsToRedeem, 10);
   const normalizedPointsToRedeem = Number.isNaN(parsed) ? 0 : parsed;
-  const isIntegerInput = /^\d+$/.test(pointsToRedeem.trim());
-
-  const canRedeem =
-    !isOptimistic &&
-    isIntegerInput &&
-    normalizedPointsToRedeem > 0 &&
-    normalizedPointsToRedeem <= safeRedeemablePoints;
 
   const step = getStepValue(safeRedeemablePoints);
   const isSubmitting = fetcher.state === "submitting";
 
-  const redeem = useCallback(() => {
+  // Clamp a numeric value to [0, balance] and store it as the input string (empty when <= 0) —
+  // the source's `updatePointsValue`, the single point where the field is normalized.
+  const setClamped = useCallback(
+    (next: number) => {
+      const clamped = Math.min(Math.max(next, 0), safeRedeemablePoints);
+      setPointsToRedeem(clamped > 0 ? `${clamped}` : "");
+    },
+    [safeRedeemablePoints],
+  );
+
+  // Field setter for the input's onChange: empty stays empty, otherwise parse + clamp.
+  const setValue = useCallback(
+    (raw: string) => {
+      if (!raw) {
+        setPointsToRedeem("");
+        return;
+      }
+      setClamped(Number.parseInt(raw, 10));
+    },
+    [setClamped],
+  );
+
+  const increment = useCallback(
+    () => setClamped(normalizedPointsToRedeem + step),
+    [setClamped, normalizedPointsToRedeem, step],
+  );
+  const decrement = useCallback(
+    () => setClamped(normalizedPointsToRedeem - step),
+    [setClamped, normalizedPointsToRedeem, step],
+  );
+  const setMax = useCallback(
+    () => setClamped(safeRedeemablePoints),
+    [setClamped, safeRedeemablePoints],
+  );
+
+  // `setValue` clamps every write, so the field is always an integer within balance; the gate
+  // only has to reject the empty/zero input and the optimistic window.
+  const isValid = !isOptimistic && normalizedPointsToRedeem > 0;
+
+  const submit = useCallback(() => {
     if (isOptimistic) return;
 
     void fetcher.submit(
@@ -144,14 +177,8 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   }, [cartTotalQuantity]);
 
   return {
-    pointsToRedeem,
-    setPointsToRedeem,
-    canRedeem,
-    step,
-    redeem,
-    undo,
-    redeemedPoints,
-    error,
-    isSubmitting,
+    input: { value: pointsToRedeem, setValue, increment, decrement, setMax, step },
+    form: { submit, undo, isValid, isSubmitting },
+    result: { redeemedPoints, error },
   };
 }

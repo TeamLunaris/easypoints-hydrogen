@@ -44,36 +44,49 @@ const wrapper =
   );
 
 describe("usePointsRedemption", () => {
-  describe("input validation", () => {
+  describe("input validation + clamping", () => {
     test("accepts a positive integer within balance", () => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
 
-      act(() => result.current.setPointsToRedeem("500"));
-      expect(result.current.canRedeem).toBe(true);
+      act(() => result.current.input.setValue("500"));
+      expect(result.current.input.value).toBe("500");
+      expect(result.current.form.isValid).toBe(true);
     });
 
-    test("rejects values above the balance", () => {
+    test("clamps values above the balance down to the balance", () => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
 
-      act(() => result.current.setPointsToRedeem("1001"));
-      expect(result.current.canRedeem).toBe(false);
+      act(() => result.current.input.setValue("1001"));
+      expect(result.current.input.value).toBe("1000");
+      expect(result.current.form.isValid).toBe(true);
     });
 
-    test("rejects non-positive values", () => {
+    test("clamps non-positive values to empty (not submittable)", () => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
 
-      act(() => result.current.setPointsToRedeem("0"));
-      expect(result.current.canRedeem).toBe(false);
+      act(() => result.current.input.setValue("0"));
+      expect(result.current.input.value).toBe("");
+      expect(result.current.form.isValid).toBe(false);
 
-      act(() => result.current.setPointsToRedeem("-5"));
-      expect(result.current.canRedeem).toBe(false);
+      act(() => result.current.input.setValue("-5"));
+      expect(result.current.input.value).toBe("");
+      expect(result.current.form.isValid).toBe(false);
     });
 
-    test("rejects non-integer values", () => {
+    test("truncates non-integer input to an integer", () => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
 
-      act(() => result.current.setPointsToRedeem("3.5"));
-      expect(result.current.canRedeem).toBe(false);
+      act(() => result.current.input.setValue("3.5"));
+      expect(result.current.input.value).toBe("3");
+      expect(result.current.form.isValid).toBe(true);
+    });
+
+    test("clears non-numeric input to empty", () => {
+      const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
+
+      act(() => result.current.input.setValue("abc"));
+      expect(result.current.input.value).toBe("");
+      expect(result.current.form.isValid).toBe(false);
     });
 
     test("rejects everything while the cart is optimistic", () => {
@@ -81,8 +94,33 @@ describe("usePointsRedemption", () => {
         usePointsRedemption({ pointsBalance: 1000, isOptimistic: true }),
       );
 
-      act(() => result.current.setPointsToRedeem("500"));
-      expect(result.current.canRedeem).toBe(false);
+      act(() => result.current.input.setValue("500"));
+      expect(result.current.form.isValid).toBe(false);
+    });
+  });
+
+  describe("stepper helpers", () => {
+    test("increment / decrement move by the adaptive step, clamped to [0, balance]", () => {
+      const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
+      // balance 1000 -> step 100.
+
+      act(() => result.current.input.increment());
+      expect(result.current.input.value).toBe("100");
+
+      act(() => result.current.input.decrement());
+      expect(result.current.input.value).toBe(""); // 100 - 100 -> 0 -> empty
+
+      act(() => result.current.input.setValue("950"));
+      act(() => result.current.input.increment());
+      expect(result.current.input.value).toBe("1000"); // 950 + 100 clamps to balance
+    });
+
+    test("setMax fills the full balance", () => {
+      const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 750 }));
+
+      act(() => result.current.input.setMax());
+      expect(result.current.input.value).toBe("750");
+      expect(result.current.form.isValid).toBe(true);
     });
   });
 
@@ -94,7 +132,7 @@ describe("usePointsRedemption", () => {
       [5000, 500],
     ])("balance %i -> step %i", (balance, expectedStep) => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: balance }));
-      expect(result.current.step).toBe(expectedStep);
+      expect(result.current.input.step).toBe(expectedStep);
     });
   });
 
@@ -104,8 +142,8 @@ describe("usePointsRedemption", () => {
         usePointsRedemption({ pointsBalance: 1000, customerId: "gid://shopify/Customer/1" }),
       );
 
-      act(() => result.current.setPointsToRedeem("300"));
-      act(() => result.current.redeem());
+      act(() => result.current.input.setValue("300"));
+      act(() => result.current.form.submit());
 
       expect(mock.submit).toHaveBeenCalledWith(
         { action: "RedeemPoints", points: 300, customerId: "gid://shopify/Customer/1" },
@@ -115,16 +153,16 @@ describe("usePointsRedemption", () => {
       mock.fetcher.data = { success: true, points: 300 };
       act(() => rerender());
 
-      expect(result.current.redeemedPoints).toBe(300);
-      expect(result.current.error).toBe(null);
+      expect(result.current.result.redeemedPoints).toBe(300);
+      expect(result.current.result.error).toBe(null);
     });
 
-    test("does not submit when the input is invalid", () => {
+    test("is not submittable with empty input", () => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 100 }));
 
-      // redeem() guards only on isOptimistic, but callers gate on canRedeem; assert the value.
-      act(() => result.current.setPointsToRedeem("500"));
-      expect(result.current.canRedeem).toBe(false);
+      // submit() guards only on isOptimistic, but callers gate on isValid; assert the value.
+      expect(result.current.input.value).toBe("");
+      expect(result.current.form.isValid).toBe(false);
     });
   });
 
@@ -134,12 +172,12 @@ describe("usePointsRedemption", () => {
 
       mock.fetcher.data = { success: true, points: 200 };
       act(() => rerender());
-      expect(result.current.redeemedPoints).toBe(200);
+      expect(result.current.result.redeemedPoints).toBe(200);
 
-      act(() => result.current.undo());
+      act(() => result.current.form.undo());
 
       expect(mock.submit).toHaveBeenCalledWith({ action: "UndoRedeem" }, ROUTE);
-      expect(result.current.redeemedPoints).toBe(null);
+      expect(result.current.result.redeemedPoints).toBe(null);
     });
   });
 
@@ -154,11 +192,11 @@ describe("usePointsRedemption", () => {
       };
       act(() => rerender());
 
-      expect(result.current.error).toEqual({
+      expect(result.current.result.error).toEqual({
         code: "redemption_failed",
         message: "Coupon could not be created",
       });
-      expect(result.current.redeemedPoints).toBe(null);
+      expect(result.current.result.redeemedPoints).toBe(null);
     });
 
     test("clears a previous error when a new submit starts", () => {
@@ -166,11 +204,11 @@ describe("usePointsRedemption", () => {
 
       mock.fetcher.data = { success: false, points: 0, error: { message: "nope" } };
       act(() => rerender());
-      expect(result.current.error).not.toBe(null);
+      expect(result.current.result.error).not.toBe(null);
 
       mock.fetcher.state = "submitting";
       act(() => rerender());
-      expect(result.current.error).toBe(null);
+      expect(result.current.result.error).toBe(null);
     });
   });
 
@@ -178,7 +216,7 @@ describe("usePointsRedemption", () => {
     test("reflects the fetcher submitting state", () => {
       mock.fetcher.state = "submitting";
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
-      expect(result.current.isSubmitting).toBe(true);
+      expect(result.current.form.isSubmitting).toBe(true);
     });
   });
 
@@ -188,8 +226,8 @@ describe("usePointsRedemption", () => {
         usePointsRedemption({ pointsBalance: 1000, isOptimistic: true }),
       );
 
-      act(() => result.current.setPointsToRedeem("100"));
-      act(() => result.current.redeem());
+      act(() => result.current.input.setValue("100"));
+      act(() => result.current.form.submit());
 
       expect(mock.submit).not.toHaveBeenCalled();
     });
@@ -226,10 +264,10 @@ describe("usePointsRedemption", () => {
         }),
       });
 
-      act(() => result.current.setPointsToRedeem("800"));
-      expect(result.current.canRedeem).toBe(true);
+      act(() => result.current.input.setValue("800"));
+      expect(result.current.form.isValid).toBe(true);
 
-      act(() => result.current.redeem());
+      act(() => result.current.form.submit());
       expect(mock.submit).toHaveBeenCalledWith(
         { action: "RedeemPoints", points: 800, customerId: "gid://shopify/Customer/42" },
         { method: "POST", action: "/custom/cart/points" },
@@ -241,9 +279,9 @@ describe("usePointsRedemption", () => {
         wrapper: wrapper({ customerLoyalty: account(800) }),
       });
 
-      act(() => result.current.setPointsToRedeem("800"));
-      // 800 exceeds the explicit balance of 50, so the provider's 800 is not used.
-      expect(result.current.canRedeem).toBe(false);
+      act(() => result.current.input.setValue("800"));
+      // Clamped to the explicit balance of 50, not the provider's 800.
+      expect(result.current.input.value).toBe("50");
     });
   });
 });

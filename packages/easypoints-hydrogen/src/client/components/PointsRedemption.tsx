@@ -17,8 +17,9 @@ export type PointsRedemptionRenderProps = ReturnType<typeof usePointsRedemption>
 /** Props for {@link PointsRedemption}: the hook params plus the render prop. */
 export interface PointsRedemptionProps extends UsePointsRedemptionParams {
   /**
-   * Render prop receiving the full redemption api: `{ pointsToRedeem, setPointsToRedeem, canRedeem,
-   * step, redeem, undo, redeemedPoints, error, isSubmitting }`.
+   * Render prop receiving the full redemption api, grouped as `{ input: { value, setValue,
+   * increment, decrement, setMax, step }, form: { submit, undo, isValid, isSubmitting },
+   * result: { redeemedPoints, error } }`.
    */
   children: (props: PointsRedemptionRenderProps) => ReactNode;
 }
