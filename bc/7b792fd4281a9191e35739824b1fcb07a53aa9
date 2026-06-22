@@ -1,0 +1,53 @@
+packages/easypoints-hydrogen/src/client/usePointsRedemption.test.tsx
+  s_f471dd263a21d3::t_8c18e97a2f0afd 8
+  s_f471dd263a21d3::t_931137a61a5d01 41
+  s_f471dd263a21d3::t_4cf5bad3cf3543 43
+packages/easypoints-hydrogen/src/client/useTierProgress.test.tsx
+  s_f471dd263a21d3::t_f8ff7ba82b01c8 75
+  s_f471dd263a21d3::t_27536188409baa 77
+  s_f471dd263a21d3::t_925901c6f7dcd3 8
+packages/easypoints-hydrogen/src/client/context.tsx
+  s_f471dd263a21d3::t_5a198ce6c43eb8 8-14,31,41,46,48
+  s_f471dd263a21d3::t_abd1b3b5aa53fa 29,32,37,42,50-51
+  s_f471dd263a21d3::t_166cdef95f0acc 15
+packages/easypoints-hydrogen/src/client/useCartPoints.test.tsx
+  s_f471dd263a21d3::t_d4278a178ceec6 8
+  s_f471dd263a21d3::t_96c3bb1e401339 49
+  s_f471dd263a21d3::t_c330308453c78d 47
+packages/easypoints-hydrogen/src/client/hooks/useCustomerLoyalty.ts
+  s_f471dd263a21d3::t_e8172c3c111d4d 9
+  s_f471dd263a21d3::t_4f16ad636d8d8a 27
+  s_f471dd263a21d3::t_35947112deeb0f 25
+packages/easypoints-hydrogen/src/client/hooks/usePointsRedemption.ts
+  s_f471dd263a21d3::t_8b46358cd8dd3d 6
+  s_f471dd263a21d3::t_385b81291575f5 115
+  s_f471dd263a21d3::t_eff9e966ce4037 118-119
+packages/easypoints-hydrogen/src/client/useCustomerLoyalty.test.tsx
+  s_f471dd263a21d3::t_7cb9855dd7e8b5 46
+  s_f471dd263a21d3::t_23afd3883ad308 48
+  s_f471dd263a21d3::t_ceafb99d6ab767 8
+packages/easypoints-hydrogen/src/client/hooks/useCartPoints.ts
+  s_f471dd263a21d3::t_f03cf305938da1 62
+  s_f471dd263a21d3::t_98c5792f16828c 6
+  s_f471dd263a21d3::t_4a1e3714910931 61
+packages/easypoints-hydrogen/src/client.ts
+  s_f471dd263a21d3::t_411e6973cf60a4 3
+  s_f471dd263a21d3::t_651bbc699c13ef 10
+  s_f471dd263a21d3::t_81af74021ecc59 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "bc7b792fd4281a9191e35739824b1fcb07a53aa9",
+  "prompts": {},
+  "sessions": {
+    "s_f471dd263a21d3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c012514d-eef4-4fc1-958d-c0cea3cd9012",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
