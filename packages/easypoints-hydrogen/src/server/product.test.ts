@@ -15,6 +15,8 @@ interface CollectionFixture {
 interface Fixtures {
   /** Variant price as the GraphQL string amount (e.g. `"10.00"`). */
   priceAmount: string;
+  /** ISO currency of the variant price (default `"USD"`); drives minor-unit decimal count. */
+  currencyCode?: string;
   shopLoyalty: ShopLoyaltyValue | null;
   collections?: CollectionFixture[];
   customerLoyalty?: CustomerLoyaltyMetafield | null;
@@ -26,6 +28,7 @@ interface Fixtures {
  */
 function makeLoyalty({
   priceAmount,
+  currencyCode = "USD",
   shopLoyalty,
   collections = [],
   customerLoyalty = null,
@@ -43,7 +46,7 @@ function makeLoyalty({
           product: {
             id: "gid://shopify/Product/1",
             selectedOrFirstAvailableVariant: {
-              price: { amount: priceAmount, currencyCode: "USD" },
+              price: { amount: priceAmount, currencyCode },
             },
             collections: { nodes: collections },
           },
@@ -171,4 +174,44 @@ test("quantity scales the total and floor is applied to the line, not the unit",
   const result = await productPoints(loyalty, { ...args, quantity: 3 });
 
   expect(result).toEqual({ totalPoints: 7, singlePoints: 2 });
+});
+
+// Minor-unit conversion derives the decimal count from the MoneyV2 currencyCode instead of
+// hardcoding `price * 100`, so points are correct for non-2-decimal currencies and free of the
+// float drift that `amount * 100` would otherwise leak into `Math.floor`.
+test("zero-decimal currency (JPY) is not multiplied by 100", async () => {
+  // JPY has 0 minor-unit decimals: "1000" already IS the minor amount. 5% -> floor(1000 * 0.05)
+  // = 50. (Hardcoding * 100 would give 1000 * 100 = 100000 -> floor(5000) = 5000, 100x too high.)
+  const loyalty = makeLoyalty({
+    priceAmount: "1000",
+    currencyCode: "JPY",
+    shopLoyalty: shopValue(5),
+  });
+
+  const result = await productPoints(loyalty, args);
+
+  expect(result).toEqual({ totalPoints: 50, singlePoints: 50 });
+});
+
+test("three-decimal currency (BHD) uses 1000 minor units", async () => {
+  // BHD has 3 minor-unit decimals: 1.500 BHD -> 1500 fils. 10% -> floor(1500 * 0.10) = 150.
+  const loyalty = makeLoyalty({
+    priceAmount: "1.500",
+    currencyCode: "BHD",
+    shopLoyalty: shopValue(10),
+  });
+
+  const result = await productPoints(loyalty, args);
+
+  expect(result).toEqual({ totalPoints: 150, singlePoints: 150 });
+});
+
+test("2-decimal amount converts to minor units without float drift", async () => {
+  // 19.99 USD -> 1999 cents. At 100% the points equal the minor amount: floor(1999 * 1.0) = 1999.
+  // (A naive 19.99 * 100 = 1998.9999999999998 -> floor = 1998 would be off by one.)
+  const loyalty = makeLoyalty({ priceAmount: "19.99", shopLoyalty: shopValue(100) });
+
+  const result = await productPoints(loyalty, args);
+
+  expect(result).toEqual({ totalPoints: 1999, singlePoints: 1999 });
 });

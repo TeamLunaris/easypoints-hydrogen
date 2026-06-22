@@ -30,7 +30,8 @@ export interface ProductPoints {
  * Rate = `percentage / 100 + maxCollectionBonusRatio`, where `percentage` is the shop's default
  * earn rate unless the customer's tier has an override in `shopLoyalty.point_rules[tierUid]`, and
  * `maxCollectionBonusRatio` is the largest `point_value / currency_value` across the product's
- * active collections. Points are `floor(priceCents * rate)` per unit, scaled by quantity.
+ * active collections. Points are `floor(price * rate)` per unit, scaled by quantity, where `price`
+ * is in the currency's smallest unit (see {@link toMinorUnits}).
  *
  * Resolves to `null` (rather than throwing) on every "no data" path — missing product, missing
  * price, missing shop loyalty — and logs unexpected errors to `console.error`.
@@ -57,7 +58,7 @@ export async function productPoints(
     if (!shopLoyalty) return null;
 
     let { percentage } = shopLoyalty;
-    const price = product.price * 100;
+    const { price } = product;
     if (customerLoyalty && shopLoyalty.point_rules[customerLoyalty.tierUid]) {
       percentage = shopLoyalty.point_rules[customerLoyalty.tierUid].percentage;
     }
@@ -82,6 +83,34 @@ export async function productPoints(
     console.error(error);
     return null;
   }
+}
+
+/**
+ * Converts a `MoneyV2` amount string into an integer count of the currency's smallest unit,
+ * using `currencyCode` to determine the number of fraction digits (e.g. JPY → 0, USD → 2,
+ * BHD → 3). Rounding to an integer here avoids the float drift of `amount * 100`
+ * (e.g. `19.99 * 100 === 1998.9999999999998`) leaking into the downstream `Math.floor`.
+ */
+function toMinorUnits({ amount, currencyCode }: { amount: string; currencyCode: string }): number {
+  const value = Number(amount);
+  if (Number.isNaN(value)) {
+    throw new Error(
+      `Invalid amount "${amount}" with currency code "${currencyCode}" in toMinorUnits`,
+    );
+  }
+
+  let fractionDigits = 2;
+  try {
+    fractionDigits =
+      new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currencyCode,
+      }).resolvedOptions().maximumFractionDigits ?? 2;
+  } catch {
+    console.warn(`Unknown currency code "${currencyCode}" in toMinorUnits; using 2 decimals.`);
+  }
+
+  return Math.round(value * 10 ** fractionDigits);
 }
 
 /** Collection node as returned by the {@link PRODUCT_LOYALTY_QUERY}. */
@@ -115,8 +144,8 @@ interface FetchProductLoyaltyOptions {
  * @param storefront - The Hydrogen storefront client.
  * @param options - The product handle, selected options, and optional `country` (default `US`) /
  *   `firstCollections` (default `10`).
- * @returns `{ price, collections }` (price may be `null` when the variant has no parseable amount),
- *   or `null` when the product is not found.
+ * @returns `{ price, collections }` (`price` is in the currency's smallest unit and may be `null`
+ *   when the variant has no parseable amount), or `null` when the product is not found.
  */
 export async function fetchProductLoyalty(
   storefront: Storefront,
@@ -132,8 +161,8 @@ export async function fetchProductLoyalty(
 
   if (!product) return null;
 
-  let price: number | null = Number(product.selectedOrFirstAvailableVariant?.price.amount);
-  price = !Number.isNaN(price) ? price : null;
+  const variantPrice = product.selectedOrFirstAvailableVariant?.price;
+  const price = variantPrice ? toMinorUnits(variantPrice) : null;
 
   const collections: CollectionBonusPoints[] = product.collections.nodes.flatMap((node) => {
     const { bonusPoints } = node;
