@@ -1,14 +1,5 @@
 "use client";
 
-// Optional configuration provider for the easyPoints client hooks.
-//
-// Every hook accepts explicit arguments first and falls back to whatever this provider supplies,
-// so the provider is purely a convenience for threading shared config (the cart-points route path,
-// display currency, and — when the storefront already loaded it — the current customer's loyalty
-// metafield + GID) down to deeply nested headless components.
-//
-// Browser-safe: holds no token and imports no server code.
-
 import { createContext, useContext } from "react";
 
 import type { CustomerLoyaltyMetafield } from "../types";
