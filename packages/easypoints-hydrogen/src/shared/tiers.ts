@@ -75,7 +75,7 @@ const transformTierData = (tier: Tier | TierMaintenance, subtotal = 0): TierProg
     },
     spend: {
       currency: tier.currency,
-      raw: tier.rawAmount !== null ? tier.rawAmount - subtotal : subtotal,
+      raw: tier.rawAmount !== null ? tier.rawAmount - subtotal : null,
     },
   };
 };
