@@ -1,0 +1,12 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "4e8eba3f8663cc7e7ed028407db402be23fb6d33",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
