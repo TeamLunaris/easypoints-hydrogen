@@ -1,12 +1,3 @@
-// The easyPoints loyalty client factory (the hub).
-//
-// Ported from solaris-cards-storefront (app/lib/easy-points/loyalty.server.ts). Decoupled from the
-// storefront's global `Env`: the factory takes an explicit `{ token, endpoint? }` config instead.
-// Value-add over the source: `api.fetch` now retries on 429 honoring the `Retry-After` header.
-//
-// Response handling (unchanged): `keysToCamel(data)` on 2xx, return `ErrorResponse` on 4xx,
-// throw `LoyaltyClientError` on 5xx.
-
 import { CacheNone, createWithCache } from "@shopify/hydrogen";
 import * as v from "valibot";
 

@@ -1,11 +1,5 @@
 "use client";
 
-// Tier-progress hook (extracted from the CustomerLoyaltySection progress calc).
-//
-// Wraps `getCurrentTier` / `getProgressTier` and computes the progress-bar percentage with the
-// same `BASE_TIER_PROGRESS_PERCENTAGE` (2%) floor and 100% cap the source used. Pure derivation —
-// no markup, no animation timer (the component owns presentation).
-
 import { getCurrentTier, getProgressTier } from "../../shared/tiers";
 import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
