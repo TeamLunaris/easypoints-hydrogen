@@ -1,0 +1,37 @@
+packages/easypoints-hydrogen/src/server/product.test.ts
+  s_5028767cdf0f4d::t_1da4efc2ace7b7 178,183,190-195,210,212-217
+  s_5028767cdf0f4d::t_3661c0db612850 179-182,184,196-197,203-209,211
+  s_5028767cdf0f4d::t_ae146f100892a8 49
+  s_5028767cdf0f4d::t_5e2da206d92590 185-189,198-202
+  s_5028767cdf0f4d::t_5382c169de251e 18-19
+  s_5028767cdf0f4d::t_8eabf1ced0c8e1 31
+packages/easypoints-hydrogen/src/server/product.ts
+  s_5028767cdf0f4d::t_6d58bd7835d1e3 33-34
+  s_5028767cdf0f4d::t_2505e77da349ef 147-148
+  s_5028767cdf0f4d::t_7181313d274740 61
+  h_8c8bb3a0db3180 96,100,110,164-165
+  s_5028767cdf0f4d::t_f6d4886915dcfe 88-93,95,101-103,109,111-115
+  s_5028767cdf0f4d::t_3f3e7fde1e99b3 104-108
+  s_5028767cdf0f4d::t_6ca344570a3a66 94,97-99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "3bbdad14b8c0c6c52366aec2c5fd630d52a49cc4",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_5028767cdf0f4d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f1651344-5c1f-412f-ae4a-d6f3b3161006",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
