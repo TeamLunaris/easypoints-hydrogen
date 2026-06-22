@@ -1,0 +1,34 @@
+packages/easypoints-hydrogen/src/client/components/ProductPoints.tsx
+  s_21c2ac8655e779::t_642c2414b5dacb 5,7,15-20,27-28,30-35,37
+packages/easypoints-hydrogen/src/client/components/TierProgress.tsx
+  s_21c2ac8655e779::t_495d15eb210111 3,21-29,36-38,40-53
+packages/easypoints-hydrogen/src/client/components/PointsRedemption.tsx
+  s_21c2ac8655e779::t_09036491b1a3ef 14-18,22,30-32,34-40,42-43
+  s_21c2ac8655e779::t_9dc19bd67d31b8 41
+packages/easypoints-hydrogen/src/client/components/CustomerLoyalty.tsx
+  s_21c2ac8655e779::t_77fb2da27990c8 9,11-15,26-31,38-40,42-46,48-49,53-54
+packages/easypoints-hydrogen/src/client/hooks/usePointsRedemption.ts
+  s_21c2ac8655e779::t_2689f1dfd070d8 179
+  s_21c2ac8655e779::t_17e03a75bc80b7 103-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "37611d088b0874202e34d9d4cadd91e7dc6a41f9",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_21c2ac8655e779": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9addbf97-8ba9-4c99-84aa-9bbd255fba4f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
