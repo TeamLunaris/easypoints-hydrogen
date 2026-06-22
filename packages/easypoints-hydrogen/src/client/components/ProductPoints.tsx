@@ -1,38 +1,38 @@
 "use client";
 
-// Headless product-points component (ported from app/components/points/ProductPoints.tsx).
-//
-// Strips the `@lingui` / Lucide / Tailwind / Skeleton presentation the source carried and exposes
-// the two values it derived as a render prop: the locale-formatted point count and a `show` flag
-// (the source returned `null` for missing points). The consumer renders and styles everything.
-
 import type { ReactNode } from "react";
 
-/** Values handed to {@link ProductPoints}'s render prop. */
+/** Values handed to {@link ProductPoints}'s render prop. Points are guaranteed present here. */
 export interface ProductPointsRenderProps {
-  /** `points` rendered with `toLocaleString()`; empty string when there are no points. */
+  /** `points` rendered with `toLocaleString()`. */
   formattedPoints: string;
-  /** Whether points are available to show (`false` for `null` / `undefined`, mirroring the source). */
-  show: boolean;
 }
 
 /** Props for {@link ProductPoints}. */
 export interface ProductPointsProps {
   /** Points earned for the product, or `null` / `undefined` when not yet known. */
   points?: number | null;
-  /** Render prop receiving {@link ProductPointsRenderProps}. */
+  /**
+   * Rendered when there are no points (`null` / `undefined`). Defaults to `null` (render nothing).
+   * Receiving the empty case here is what lets `children` assume points are present.
+   */
+  fallback?: ReactNode;
+  /** Render prop receiving {@link ProductPointsRenderProps}, only invoked when points are present. */
   children: (props: ProductPointsRenderProps) => ReactNode;
 }
 
 /**
  * Headless wrapper exposing a product's earnable points.
  *
- * Renders no markup of its own — it derives `{ formattedPoints, show }` and hands them to
- * `children`. When `points` is `null`/`undefined`, `show` is `false` (the source rendered nothing).
+ * Renders no markup of its own — when `points` is present it derives `{ formattedPoints }` and hands
+ * it to `children`; when `points` is `null` / `undefined` it renders `fallback` (or nothing).
  */
-export function ProductPoints({ points, children }: ProductPointsProps): ReactNode {
-  const show = points !== null && points !== undefined;
-  const formattedPoints = show ? points.toLocaleString() : "";
+export function ProductPoints({
+  points,
+  fallback = null,
+  children,
+}: ProductPointsProps): ReactNode {
+  if (points === null || points === undefined) return fallback;
 
-  return children({ formattedPoints, show });
+  return children({ formattedPoints: points.toLocaleString() });
 }

@@ -100,7 +100,8 @@ function useRedeemInput(balance: number) {
  * Drives the points-redemption flow: input + validation + adaptive stepper + REDEEM/UNDO submit.
  *
  * @param params - See {@link UsePointsRedemptionParams}.
- * @returns Three groups:
+ * @returns The resolved `pointsBalance` (explicit param, else provider loyalty, else `null` when no
+ * redemption context exists) plus three groups:
  * - `input` — the numeric field. `value` is the current string; `setValue(raw)` parses and clamps
  *   it to `[0, balance]` (empty stays empty); `increment` / `decrement` step by `step` (the adaptive
  *   1 / 10 / 100 / 500 increment for the balance), also clamped; `setMax` fills the full balance.
@@ -175,6 +176,7 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   }, [cartTotalQuantity]);
 
   return {
+    pointsBalance,
     input: field,
     form: { submit, undo, isValid, isSubmitting },
     result: { redeemedPoints, error },

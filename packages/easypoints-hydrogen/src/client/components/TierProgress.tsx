@@ -1,11 +1,6 @@
 "use client";
 
-// Headless tier-progress component (the progress half of CustomerLoyaltySection).
-//
-// All markup (progress bar, `Money`, i18n tier messages, the 500ms animation timer) is stripped —
-// the calc now lives in `useTierProgress`. This component just runs the hook and hands its
-// result to the consumer's render prop.
-
+import { useCustomerLoyalty } from "../hooks/useCustomerLoyalty";
 import { useTierProgress } from "../hooks/useTierProgress";
 
 import type { CustomerLoyaltyMetafield } from "../../types";
@@ -23,16 +18,37 @@ export interface TierProgressProps {
   loyalty?: CustomerLoyaltyMetafield | null;
   /** Pending spend (e.g. a cart subtotal) applied before evaluating progress. Defaults to `0`. */
   subtotal?: number;
-  /** Render prop receiving `{ currentTier, progress, percentage, dataType }`. */
+  /**
+   * Rendered when no loyalty is available. Defaults to `null` (render nothing). Receiving the empty
+   * case here is what lets `children` assume loyalty was present.
+   */
+  fallback?: ReactNode;
+  /**
+   * Render prop receiving `{ currentTier, progress, percentage, dataType }`, only invoked when
+   * loyalty is available.
+   */
   children: (props: TierProgressRenderProps) => ReactNode;
 }
 
 /**
  * Headless wrapper over {@link useTierProgress}.
  *
- * Renders no markup — it computes `{ currentTier, progress, percentage, dataType }` and hands them
- * to `children` to render and format (progress bar, tier names, "spend X more" message, …).
+ * Renders no markup. When loyalty is available it computes `{ currentTier, progress, percentage,
+ * dataType }` and hands them to `children` to render and format (progress bar, tier names, "spend X
+ * more" message, …); otherwise it renders `fallback`.
  */
-export function TierProgress({ loyalty, subtotal, children }: TierProgressProps): ReactNode {
-  return children(useTierProgress(loyalty, subtotal));
+export function TierProgress({
+  loyalty,
+  subtotal,
+  fallback = null,
+  children,
+}: TierProgressProps): ReactNode {
+  // Resolve loyalty up front for the presence gate; `useTierProgress` re-resolves internally (cheap
+  // and idempotent) and must be called unconditionally to respect the rules of hooks.
+  const resolved = useCustomerLoyalty(loyalty);
+  const progress = useTierProgress(loyalty, subtotal);
+
+  if (resolved === null) return fallback;
+
+  return children(progress);
 }
