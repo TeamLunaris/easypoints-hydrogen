@@ -3,7 +3,7 @@
 // Headless points-redemption component (ported from app/components/points/RedemptionForm.tsx).
 //
 // The dialog, inputs, `fetcher.Form`, `Money`, i18n and Tailwind are all stripped — the state
-// machine now lives in D5's `usePointsRedemption`. This component runs the hook and hands its full
+// machine now lives in `usePointsRedemption`. This component runs the hook and hands its full
 // api to the consumer's render prop, which owns the form markup and submit wiring.
 
 import { usePointsRedemption } from "../hooks/usePointsRedemption";

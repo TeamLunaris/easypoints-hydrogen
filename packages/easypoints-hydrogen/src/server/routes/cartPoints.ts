@@ -5,7 +5,7 @@ import { productPoints } from "../product";
 import type { EasyPointsClient } from "../loyalty";
 import type { SelectedOptionInput } from "@shopify/hydrogen/storefront-api-types";
 
-/** Default path the merchant should mount the resource route at. Consumed type-side by D5. */
+/** Default path the merchant should mount the resource route at. Consumed type-side by the client hooks. */
 export const CART_POINTS_ROUTE_PATH = "/api/cart/points";
 
 /** The `action` form-field values the dispatcher switches on. */

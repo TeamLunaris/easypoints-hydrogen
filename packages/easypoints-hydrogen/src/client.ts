@@ -4,14 +4,14 @@
 // these in browser/SSR React code; the isomorphic helpers (types, `keysToCamel`, tier logic) live
 // on the root entry, and server-only code lives on `./server`.
 //
-// Browser-safe: route/action constants + response types are coupled to the server route (D4) by
+// Browser-safe: route/action constants + response types are coupled to the server route by
 // type only, so no server code reaches this bundle. This entry must never import from "./server".
 
-// Optional config provider (D5). The four client hooks read explicit args first and fall back to it.
+// Optional config provider. The four client hooks read explicit args first and fall back to it.
 export { EasyPointsProvider } from "./client/context";
 export type { EasyPointsConfig, EasyPointsProviderProps } from "./client/context";
 
-// Client hooks (D5).
+// Client hooks.
 export { useCustomerLoyalty } from "./client/hooks/useCustomerLoyalty";
 export { useCartPoints } from "./client/hooks/useCartPoints";
 export type {

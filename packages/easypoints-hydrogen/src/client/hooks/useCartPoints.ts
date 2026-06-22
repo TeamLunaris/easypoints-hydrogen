@@ -8,13 +8,13 @@ import { useEasyPointsConfig } from "../context";
 import type { CustomerLoyaltyMetafield } from "../../types";
 import type { CalculatePointsResponse } from "../../server/routes/cartPoints";
 
-/** Type handle to D4's cart-points route module — used only in type position (erased at build). */
+/** Type handle to the cart-points route module — used only in type position (erased at build). */
 type CartPointsModule = typeof import("../../server/routes/cartPoints");
 
-/** Default route path, pinned to D4's `CART_POINTS_ROUTE_PATH` const type. */
+/** Default route path, pinned to the route's `CART_POINTS_ROUTE_PATH` const type. */
 const CART_POINTS_ROUTE_PATH: CartPointsModule["CART_POINTS_ROUTE_PATH"] = "/api/cart/points";
 
-/** `CALCULATE_POINTS` action value, pinned to D4's `ACTIONS` const type. */
+/** `CALCULATE_POINTS` action value, pinned to the route's `ACTIONS` const type. */
 const CALCULATE_POINTS: CartPointsModule["ACTIONS"]["CALCULATE_POINTS"] = "CalculatePoints";
 
 /** A cart line, narrowed to the fields this hook reads. Compatible with Hydrogen cart lines. */
@@ -32,7 +32,7 @@ export interface PointsCart {
 
 /** Options for {@link useCartPoints}. */
 export interface UseCartPointsOptions {
-  /** Override the cart-points route path (else provider, else D4 default). */
+  /** Override the cart-points route path (else provider, else the route default). */
   route?: string;
   /**
    * Predicate selecting which cart lines participate. Defaults to including every line. Mirror the

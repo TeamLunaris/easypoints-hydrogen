@@ -8,16 +8,16 @@ import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
 import type { PointsActionError, RedeemPointsResponse } from "../../server/routes/cartPoints";
 
-/** Type handle to D4's cart-points route module — used only in type position (erased at build). */
+/** Type handle to the cart-points route module — used only in type position (erased at build). */
 type CartPointsModule = typeof import("../../server/routes/cartPoints");
 
-/** Default route path, pinned to D4's `CART_POINTS_ROUTE_PATH` const type. */
+/** Default route path, pinned to the route's `CART_POINTS_ROUTE_PATH` const type. */
 const CART_POINTS_ROUTE_PATH: CartPointsModule["CART_POINTS_ROUTE_PATH"] = "/api/cart/points";
 
-/** `REDEEM_POINTS` action value, pinned to D4's `ACTIONS` const type. */
+/** `REDEEM_POINTS` action value, pinned to the route's `ACTIONS` const type. */
 const REDEEM_POINTS: CartPointsModule["ACTIONS"]["REDEEM_POINTS"] = "RedeemPoints";
 
-/** `UNDO_REDEEM` action value, pinned to D4's `ACTIONS` const type. */
+/** `UNDO_REDEEM` action value, pinned to the route's `ACTIONS` const type. */
 const UNDO_REDEEM: CartPointsModule["ACTIONS"]["UNDO_REDEEM"] = "UndoRedeem";
 
 /** Shared fetcher key, so the redemption fetcher can be observed across components. */
@@ -29,7 +29,7 @@ export interface UsePointsRedemptionParams {
   pointsBalance?: number | null;
   /** Customer GID submitted with the redeem action. Falls back to the provider's `customerId`. */
   customerId?: string | null;
-  /** Override the cart-points route path (else provider, else D4 default). */
+  /** Override the cart-points route path (else provider, else the route default). */
   route?: string;
   /**
    * Cart line-item quantity. When provided, a change auto-undoes any active redemption — matching

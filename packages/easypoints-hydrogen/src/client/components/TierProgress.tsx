@@ -3,7 +3,7 @@
 // Headless tier-progress component (the progress half of CustomerLoyaltySection).
 //
 // All markup (progress bar, `Money`, i18n tier messages, the 500ms animation timer) is stripped —
-// the calc now lives in D5's `useTierProgress`. This component just runs the hook and hands its
+// the calc now lives in `useTierProgress`. This component just runs the hook and hands its
 // result to the consumer's render prop.
 
 import { useTierProgress } from "../hooks/useTierProgress";

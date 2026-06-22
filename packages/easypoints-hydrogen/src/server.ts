@@ -9,19 +9,19 @@ if (typeof window !== "undefined") {
   );
 }
 
-// Loyalty client factory + its public types (D3).
+// Loyalty client factory + its public types.
 export { createEasyPointsClient } from "./server/loyalty";
 export type { Context, CreateEasyPointsClientParams, EasyPointsClient } from "./server/loyalty";
 
 // Customer loyalty query.
 export { queryCustomerLoyalty } from "./server/loyalty-customer";
 
-// Shop + product points math (D4).
+// Shop + product points math.
 export { fetchShopLoyalty } from "./server/shop";
 export { productPoints } from "./server/product";
 
-// Cart points action dispatcher (D4). `CalculatePointsResponse` + the route-path const are
-// consumed type-only by the client hooks (D5).
+// Cart points action dispatcher. `CalculatePointsResponse` + the route-path const are
+// consumed type-only by the client hooks.
 export {
   ACTIONS,
   CART_POINTS_ROUTE_PATH,

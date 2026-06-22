@@ -4,7 +4,7 @@
 //
 // Resolves the explicit argument first, falling back to whatever an {@link EasyPointsProvider}
 // supplies. Trivial today, but centralizing the arg-vs-provider resolution keeps the other hooks
-// and the render-prop components (D6) consistent.
+// and the render-prop components consistent.
 
 import { useEasyPointsConfig } from "../context";
 

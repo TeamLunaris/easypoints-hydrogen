@@ -3,7 +3,7 @@
 // Headless customer-loyalty component (the header half of CustomerLoyaltySection).
 //
 // The balance markup, divider and `Suspense`/`Await` wiring are stripped — this resolves the
-// customer's loyalty metafield (via D5's `useCustomerLoyalty`), derives the current tier (via D2's
+// customer's loyalty metafield (via `useCustomerLoyalty`), derives the current tier (via
 // `getCurrentTier`), and hands the raw values to the consumer's render prop to format.
 
 import { getCurrentTier } from "../../shared/tiers";

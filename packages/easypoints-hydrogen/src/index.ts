@@ -1,11 +1,11 @@
 // Root (browser-safe) entry for `@lunaris/easypoints-hydrogen`.
 //
 // Re-exports the secret-free isomorphic surface — domain types, the `keysToCamel` case utility, and
-// the tier logic shared by client and server — plus the headless render-prop components (D6). The
+// the tier logic shared by client and server — plus the headless render-prop components. The
 // granular hooks + provider live on `./client`; server-only code lives on `./server`.
 //
 // INVARIANT: this entry must never import from "./server" — keeps the API token and any
-// server-only code out of the browser bundle. (The components' D4 route coupling is type-only, and
+// server-only code out of the browser bundle. (The components' cart-points route coupling is type-only, and
 // React is an external peer, so neither server code nor React is bundled here.)
 
 export type * from "./types";
@@ -20,7 +20,7 @@ export {
   sortTierRules,
 } from "./shared/tiers";
 
-// Headless render-prop components (D6). Thin children-as-function wrappers over the D5 hooks: they
+// Headless render-prop components. Thin children-as-function wrappers over the client hooks: they
 // render no markup, apply no styling, and (apart from `ProductPoints`'s locale-formatted count) do
 // no formatting — they hand raw values to the consumer to render.
 export { ProductPoints } from "./client/components/ProductPoints";
