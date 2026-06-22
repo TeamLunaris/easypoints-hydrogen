@@ -49,7 +49,7 @@ export const COLLECTION_LOYALTY_METAFIELD_FRAGMENT = `#graphql
 ` as const;
 
 /**
- * Fragment for the loyalty metafield on a list of collections sorted by updated at.
+ * Fragment for the loyalty metafield on a list of collections.
  * @param firstCollections - The number of collections to return
  */
 export const COLLECTIONS_LOYALTY_FRAGMENT = `#graphql

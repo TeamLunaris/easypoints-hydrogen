@@ -70,8 +70,8 @@ export const getTierRule = (tierRules: Record<string, TierRule>, { uid }: { uid:
 const transformTierData = (tier: Tier | TierMaintenance, subtotal = 0): TierProgress => {
   return {
     requirement: {
-      currency: tier.spentRequirement?.currency,
-      raw: tier.spentRequirement?.rawAmount,
+      currency: tier.spentRequirement.currency,
+      raw: tier.spentRequirement.rawAmount,
     },
     spend: {
       currency: tier.currency,
@@ -101,7 +101,7 @@ export const getNextTier = (customer: LoyaltyCustomer, subtotal = 0) => {
   }
 
   const nextTier = advancement.tiers.find(
-    (tier) => tier.rawAmount && tier.rawAmount - subtotal > 0,
+    (tier) => tier.rawAmount !== null && tier.rawAmount - subtotal > 0,
   );
 
   if (!nextTier) {
@@ -110,7 +110,7 @@ export const getNextTier = (customer: LoyaltyCustomer, subtotal = 0) => {
 
   // calculate the total of tiers we've skipped
   const skippedAmount: number = advancement.tiers.reduce((acc: number, t: Tier): number => {
-    if (t.rawAmount && t.rawAmount - subtotal < 0) {
+    if (t.rawAmount !== null && t.rawAmount - subtotal < 0) {
       return acc + t.rawAmount;
     }
 

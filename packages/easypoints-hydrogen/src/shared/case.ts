@@ -23,6 +23,11 @@ export function keysToCamel<T = unknown>(value: unknown): T {
   }
 
   if (typeof value === "object" && value !== null) {
+    // Only transform plain objects; leave things like Date, URL, Map, etc. untouched.
+    if (Object.prototype.toString.call(value) !== "[object Object]") {
+      return value as T;
+    }
+
     return Object.entries(value as Record<string, unknown>).reduce<Record<string, unknown>>(
       (acc, [key, val]) => {
         acc[camelCase(key)] = keysToCamel(val);
