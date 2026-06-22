@@ -1,14 +1,5 @@
 "use client";
 
-// Cart-points hook (ported from app/hooks/useCartPoints.ts).
-//
-// Maintains a line-id → points map for the current cart and refetches it from the cart-points
-// resource route whenever the cart settles (leaves its optimistic state) or the balance changes.
-//
-// Browser-safe: the response type and route/action constants are coupled to D4 by *type only* —
-// the `typeof import(...)` queries below are erased by the bundler, so no server code reaches the
-// browser bundle.
-
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
@@ -77,6 +68,9 @@ export function useCartPoints(
   const isOptimistic = cart?.isOptimistic ?? false;
   const balance = accountPoints?.balance ?? 0;
 
+  const eligibleLines = (cart?.lines?.nodes ?? []).filter(lineFilter);
+  const linesSignature = eligibleLines.map((l) => `${l.id}:${l.quantity ?? 1}`).join(",");
+
   useEffect(() => {
     if (!cart || isOptimistic) return;
 
@@ -84,19 +78,18 @@ export function useCartPoints(
       { action: CALCULATE_POINTS, pointsBalance: balance },
       { method: "post", action: route },
     );
-    // `fetcher` is intentionally excluded — including it can loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOptimistic, balance, route]);
+  }, [isOptimistic, balance, route, linesSignature]);
 
   useEffect(() => {
     setPointsMap(fetcher.data?.pointsMap ?? {});
   }, [fetcher.data]);
 
-  const eligibleCount = (cart?.lines?.nodes ?? []).filter(lineFilter).length;
-
   useEffect(() => {
-    if (eligibleCount === 0) setPointsMap({});
-  }, [eligibleCount]);
+    if (eligibleLines.length === 0) {
+      setPointsMap({});
+    }
+  }, [eligibleLines.length]);
 
   const totalPoints = Object.values(pointsMap).reduce(
     (sum: number, val) => (typeof val === "number" ? sum + val : sum),
