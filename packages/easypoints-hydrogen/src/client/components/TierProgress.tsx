@@ -8,7 +8,7 @@
 
 import { useTierProgress } from "../hooks/useTierProgress";
 
-import type { LoyaltyCustomer } from "../../types";
+import type { CustomerLoyaltyMetafield } from "../../types";
 import type { ReactNode } from "react";
 
 /** Values handed to {@link TierProgress}'s render prop — the {@link useTierProgress} result. */
@@ -17,10 +17,10 @@ export type TierProgressRenderProps = ReturnType<typeof useTierProgress>;
 /** Props for {@link TierProgress}. */
 export interface TierProgressProps {
   /**
-   * The loyalty-bearing customer. Falls back to the provider's `customerLoyalty`; pass `null` to
+   * The customer's loyalty metafield, or `undefined` to read from the provider; pass `null` to
    * force an empty result. See {@link useTierProgress}.
    */
-  customer?: LoyaltyCustomer | null;
+  loyalty?: CustomerLoyaltyMetafield | null;
   /** Pending spend (e.g. a cart subtotal) applied before evaluating progress. Defaults to `0`. */
   subtotal?: number;
   /** Render prop receiving `{ currentTier, progress, percentage, dataType }`. */
@@ -33,6 +33,6 @@ export interface TierProgressProps {
  * Renders no markup — it computes `{ currentTier, progress, percentage, dataType }` and hands them
  * to `children` to render and format (progress bar, tier names, "spend X more" message, …).
  */
-export function TierProgress({ customer, subtotal, children }: TierProgressProps): ReactNode {
-  return children(useTierProgress(customer, subtotal));
+export function TierProgress({ loyalty, subtotal, children }: TierProgressProps): ReactNode {
+  return children(useTierProgress(loyalty, subtotal));
 }

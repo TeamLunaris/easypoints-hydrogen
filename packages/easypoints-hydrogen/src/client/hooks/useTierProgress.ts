@@ -7,9 +7,9 @@
 // no markup, no animation timer (the component owns presentation).
 
 import { getCurrentTier, getProgressTier } from "../../shared/tiers";
-import { useEasyPointsConfig } from "../context";
+import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
-import type { LoyaltyCustomer } from "../../types";
+import type { CustomerLoyaltyMetafield, LoyaltyCustomer } from "../../types";
 
 /** Minimum progress shown even at zero spend (matches the source's 2% floor). */
 export const BASE_TIER_PROGRESS_PERCENTAGE = 2;
@@ -17,8 +17,8 @@ export const BASE_TIER_PROGRESS_PERCENTAGE = 2;
 /**
  * Computes the customer's current tier and progress toward the next one.
  *
- * @param customer - The loyalty-bearing customer (`{ loyalty }`). Falls back to the provider's
- *   `customerLoyalty`. Pass `null` to force an empty result.
+ * @param loyalty - The customer's loyalty metafield, or `undefined` to read from the provider.
+ *   Pass `null` to force an empty result. See {@link useCustomerLoyalty}.
  * @param subtotal - Pending spend (e.g. a cart subtotal) in the same minor-unit (raw) amount the
  *   tier data uses, applied before evaluation. Defaults to `0`.
  * @returns
@@ -28,17 +28,10 @@ export const BASE_TIER_PROGRESS_PERCENTAGE = 2;
  * - `dataType` — which progression state applies (`MAINTENANCE_TIER` / `NEXT_TIER` /
  *   `HIGHEST_TIER_NEXT_CYCLE`), or `null`.
  */
-export function useTierProgress(customer?: LoyaltyCustomer | null, subtotal = 0) {
-  const config = useEasyPointsConfig();
+export function useTierProgress(loyalty?: CustomerLoyaltyMetafield | null, subtotal = 0) {
+  const resolved = useCustomerLoyalty(loyalty);
 
-  const resolved: LoyaltyCustomer | null =
-    customer !== undefined
-      ? customer
-      : config.customerLoyalty !== undefined
-        ? { loyalty: config.customerLoyalty }
-        : null;
-
-  if (!resolved || resolved.loyalty === null) {
+  if (resolved === null) {
     return {
       currentTier: null,
       progress: null,
@@ -47,8 +40,10 @@ export function useTierProgress(customer?: LoyaltyCustomer | null, subtotal = 0)
     };
   }
 
-  const currentTier = getCurrentTier(resolved);
-  const progress = getProgressTier(resolved, subtotal);
+  // The tier functions key off the `{ loyalty }` wrapper; build it once here.
+  const customer: LoyaltyCustomer = { loyalty: resolved };
+  const currentTier = getCurrentTier(customer);
+  const progress = getProgressTier(customer, subtotal);
 
   let percentage = BASE_TIER_PROGRESS_PERCENTAGE;
   const requirement = progress?.requirement.raw ?? null;

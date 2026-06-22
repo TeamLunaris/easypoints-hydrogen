@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { useEasyPointsConfig } from "../context";
+import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
 import type { PointsActionError, RedeemPointsResponse } from "../../server/routes/cartPoints";
 
@@ -69,7 +70,8 @@ const getStepValue = (balance: number) => {
  */
 export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   const config = useEasyPointsConfig();
-  const pointsBalance = params.pointsBalance ?? config.customerLoyalty?.balance ?? null;
+  const loyalty = useCustomerLoyalty();
+  const pointsBalance = params.pointsBalance ?? loyalty?.balance ?? null;
   const customerId = params.customerId ?? config.customerId ?? null;
   const route = params.route ?? config.route ?? CART_POINTS_ROUTE_PATH;
   const { cartTotalQuantity, isOptimistic = false } = params;
