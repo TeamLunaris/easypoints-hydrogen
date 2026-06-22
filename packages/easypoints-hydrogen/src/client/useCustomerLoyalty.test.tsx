@@ -5,7 +5,7 @@ import { describe, expect, test } from "vite-plus/test";
 import { EasyPointsProvider } from "./context";
 import { useCustomerLoyalty } from "./hooks/useCustomerLoyalty";
 
-import type { EasyPointsConfig } from "./context";
+import type { EasyPointsContext } from "./context";
 import type { CustomerLoyaltyMetafield } from "../types";
 import type { ReactNode } from "react";
 
@@ -43,9 +43,9 @@ const loyalty = (overrides: Partial<CustomerLoyaltyMetafield> = {}): CustomerLoy
 });
 
 const wrapper =
-  (config: EasyPointsConfig) =>
+  (value: EasyPointsContext) =>
   ({ children }: { children: ReactNode }) => (
-    <EasyPointsProvider {...config}>{children}</EasyPointsProvider>
+    <EasyPointsProvider {...value}>{children}</EasyPointsProvider>
   );
 
 describe("useCustomerLoyalty", () => {

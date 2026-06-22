@@ -5,7 +5,7 @@ import { describe, expect, test } from "vite-plus/test";
 import { EasyPointsProvider } from "./context";
 import { BASE_TIER_PROGRESS_PERCENTAGE, useTierProgress } from "./hooks/useTierProgress";
 
-import type { EasyPointsConfig } from "./context";
+import type { EasyPointsContext } from "./context";
 import type { AmountCurrency, CustomerLoyaltyMetafield, Tier } from "../types";
 import type { ReactNode } from "react";
 
@@ -72,9 +72,9 @@ const nextTierLoyalty = makeLoyalty({
 });
 
 const wrapper =
-  (config: EasyPointsConfig) =>
+  (value: EasyPointsContext) =>
   ({ children }: { children: ReactNode }) => (
-    <EasyPointsProvider {...config}>{children}</EasyPointsProvider>
+    <EasyPointsProvider {...value}>{children}</EasyPointsProvider>
   );
 
 describe("useTierProgress", () => {

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
-import { useEasyPointsConfig } from "../context";
+import { useEasyPoints } from "../context";
 import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
 import type { PointsActionError, RedeemPointsResponse } from "../../server/routes/cartPoints";
@@ -112,11 +112,11 @@ function useRedeemInput(balance: number) {
  *   `null`) and `error` (the structured `{ code?, message }` from a failed redeem, else `null`).
  */
 export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
-  const config = useEasyPointsConfig();
+  const context = useEasyPoints();
   const loyalty = useCustomerLoyalty();
   const pointsBalance = params.pointsBalance ?? loyalty?.balance ?? null;
-  const customerId = params.customerId ?? config.customerId ?? null;
-  const route = params.route ?? config.route ?? CART_POINTS_ROUTE_PATH;
+  const customerId = params.customerId ?? context.customerId ?? null;
+  const route = params.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
   const { cartTotalQuantity, isOptimistic = false } = params;
 
   const fetcher = useFetcher<RedeemPointsResponse | null>({ key: FETCHER_REDEMPTION_KEY });

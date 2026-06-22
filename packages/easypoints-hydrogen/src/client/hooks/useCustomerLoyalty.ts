@@ -6,7 +6,7 @@
 // supplies. Trivial today, but centralizing the arg-vs-provider resolution keeps the other hooks
 // and the render-prop components consistent.
 
-import { useEasyPointsConfig } from "../context";
+import { useEasyPoints } from "../context";
 
 import type { CustomerLoyaltyMetafield } from "../../types";
 
@@ -22,7 +22,7 @@ import type { CustomerLoyaltyMetafield } from "../../types";
 export function useCustomerLoyalty(
   loyalty?: CustomerLoyaltyMetafield | null,
 ): CustomerLoyaltyMetafield | null {
-  const config = useEasyPointsConfig();
+  const context = useEasyPoints();
 
-  return loyalty !== undefined ? loyalty : (config.customerLoyalty ?? null);
+  return loyalty !== undefined ? loyalty : (context.customerLoyalty ?? null);
 }

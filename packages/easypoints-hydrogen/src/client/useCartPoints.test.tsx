@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, test, vi } from "vite-plus/test";
 import { EasyPointsProvider } from "./context";
 import { useCartPoints } from "./hooks/useCartPoints";
 
-import type { EasyPointsConfig } from "./context";
+import type { EasyPointsContext } from "./context";
 import type { PointsCart } from "./hooks/useCartPoints";
 import type { CalculatePointsResponse } from "../server/routes/cartPoints";
 import type { CustomerLoyaltyMetafield } from "../types";
@@ -44,9 +44,9 @@ const settledCart = (...ids: string[]): PointsCart => ({
 const account = (balance: number) => ({ balance }) as CustomerLoyaltyMetafield;
 
 const wrapper =
-  (config: EasyPointsConfig) =>
+  (value: EasyPointsContext) =>
   ({ children }: { children: ReactNode }) => (
-    <EasyPointsProvider {...config}>{children}</EasyPointsProvider>
+    <EasyPointsProvider {...value}>{children}</EasyPointsProvider>
   );
 
 describe("useCartPoints", () => {

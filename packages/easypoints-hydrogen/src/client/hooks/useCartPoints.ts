@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 
-import { useEasyPointsConfig } from "../context";
+import { useEasyPoints } from "../context";
 
 import type { CustomerLoyaltyMetafield } from "../../types";
 import type { CalculatePointsResponse } from "../../server/routes/cartPoints";
@@ -58,8 +58,8 @@ export function useCartPoints(
   accountPoints: CustomerLoyaltyMetafield | null,
   options: UseCartPointsOptions = {},
 ) {
-  const config = useEasyPointsConfig();
-  const route = options.route ?? config.route ?? CART_POINTS_ROUTE_PATH;
+  const context = useEasyPoints();
+  const route = options.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
   const lineFilter = options.lineFilter ?? (() => true);
 
   const [pointsMap, setPointsMap] = useState<Record<string, number | null>>({});
