@@ -1,8 +1,3 @@
-// Isomorphic, secret-free case conversion. Browser-safe; zero runtime deps.
-//
-// Replaces the storefront's `keysToCamel` (backed by lodash-es `camelCase`) with an
-// internal minimal `camelCase` that handles snake_case and kebab-case input.
-
 /**
  * Convert a single snake_case / kebab-case / space-separated string to camelCase.
  * Already-camelCase strings (no separators) pass through unchanged.

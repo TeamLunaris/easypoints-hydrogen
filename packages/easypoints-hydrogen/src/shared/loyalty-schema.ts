@@ -1,14 +1,3 @@
-// Isomorphic, secret-free Valibot schemas for the customer `easy_points_attributes` metafield.
-//
-// These schemas are the single source of truth for the metafield/tier-maintenance type cluster:
-// the public types in `../types` are *inferred* from them (`v.InferOutput`), so the runtime
-// validation and the exported types can never drift. Browser-safe — Valibot is isomorphic — but
-// the schema *values* are only imported at runtime by `server/loyalty-customer.ts`, so they
-// tree-shake out of the browser (`index`/`client`) bundles, which import the types only.
-//
-// Keys are validated AFTER `keysToCamel`, so every field here is camelCase even though the API
-// returns snake_case.
-
 import * as v from "valibot";
 
 /** Monetary value in both formatted and numeric (`rawAmount`) forms. */
