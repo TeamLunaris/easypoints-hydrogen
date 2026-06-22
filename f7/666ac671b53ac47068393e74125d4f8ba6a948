@@ -1,0 +1,41 @@
+packages/easypoints-hydrogen/src/client/hooks/usePointsRedemption.ts
+  s_69606978cdb8b7::t_1b6d079f5e8c0c 62,69-70
+  s_69606978cdb8b7::t_01a108c5beac8d 123-126
+  s_69606978cdb8b7::t_ea2b886399fa86 63-65,67-68
+  s_69606978cdb8b7::t_5fb3802a86e8b6 182
+  s_69606978cdb8b7::t_3f025468e2182d 180
+  s_69606978cdb8b7::t_a60cdf998dcdc1 66
+  h_8c8bb3a0db3180 130,132,181
+  s_69606978cdb8b7::t_f745e186dd6fbb 93-122,127-129
+packages/easypoints-hydrogen/src/client/usePointsRedemption.test.tsx
+  s_69606978cdb8b7::t_67954445e7cb39 47,52,56,60,64,68,72,76,80,82-88,99-122
+  s_69606978cdb8b7::t_7d5f7532541fb0 51,59,67,71,79,97,135,145-146,156-157,175,177,180,195,199,207,211,219,229-230,267,270,282
+  s_69606978cdb8b7::t_198779de4993f7 53,61,69,73,81,89,98,123,165,268
+  s_69606978cdb8b7::t_ad09034d1b5719 160,164
+  s_69606978cdb8b7::t_5b8551e339ef14 163
+  s_69606978cdb8b7::t_6aeb11b3292a35 283-284
+packages/easypoints-hydrogen/src/client/components/PointsRedemption.tsx
+  s_69606978cdb8b7::t_9df5a762c32229 21
+  s_69606978cdb8b7::t_51b13e06e7e2d4 20,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "f7666ac671b53ac47068393e74125d4f8ba6a948",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_69606978cdb8b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4df20f95-fd09-40af-8b46-6b4e22f6fb5b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
