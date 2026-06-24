@@ -7,7 +7,8 @@ import { SHOP_VALUE } from "../test-support/fixtures/shop";
 /** Wraps a metafield value in the `ShopLoyalty` query response shape. */
 const response = (value: string | null | undefined) => ({
   shop: {
-    loyalty: value === undefined ? undefined : value === null ? null : { value } },
+    loyalty: value === undefined ? undefined : value === null ? null : { value },
+  },
 });
 
 afterEach(() => {
@@ -48,12 +49,14 @@ describe("parseLoyaltyAttributes", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     // Valid JSON, wrong shape: `point_rules` missing — would throw in productPoints if trusted.
-    const resp = response(JSON.stringify({
-      live: true,
-      currency_value: 100,
-      percentage: 1,
-      point_value: 1,
-    }));
+    const resp = response(
+      JSON.stringify({
+        live: true,
+        currency_value: 100,
+        percentage: 1,
+        point_value: 1,
+      }),
+    );
 
     expect(parseLoyaltyAttributes(resp)).toBe(null);
     expect(errorSpy).toHaveBeenCalled();
