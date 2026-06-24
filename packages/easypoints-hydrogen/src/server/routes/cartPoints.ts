@@ -132,12 +132,14 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
   ): Promise<RedeemPointsResponse> {
     const loyalty = await context.loyalty.getCustomerLoyalty();
     if (!loyalty) throw new CustomerNotAuthenticatedError();
-    const customerId = loyalty.customerId;
 
     const points = Number(formData.get("points"));
-
     if (!Number.isInteger(points) || points <= 0) {
-      return { success: false, points };
+      return {
+        success: false,
+        error: { code: "invalid_points", message: "Points must be a positive integer" },
+        points,
+      };
     }
 
     const cart = await context.cart.get();
@@ -146,14 +148,14 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
     if (productIds.length === 0) {
       return {
         success: false,
-        points,
         error: { code: "empty_cart", message: "Cart has no eligible lines to redeem against" },
+        points,
       };
     }
 
     const resp = await context.loyalty.api.createCoupon({
       productIds: Array.from(new Set(productIds)),
-      customerId,
+      customerId: loyalty.customerId,
       pointValue: points,
     });
 
@@ -162,8 +164,8 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
 
       return {
         success: false,
-        points,
         error: { code: "redemption_failed", message },
+        points,
       };
     }
 
@@ -178,8 +180,8 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
 
     return {
       success: false,
-      points,
       error: { code: "coupon_creation_failed", message: "Coupon could not be created" },
+      points,
     };
   }
 
