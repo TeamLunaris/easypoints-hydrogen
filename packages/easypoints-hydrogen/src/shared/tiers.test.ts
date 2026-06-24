@@ -1,17 +1,10 @@
 import { describe, expect, test } from "vite-plus/test";
 
-import {
-  getCurrentTier,
-  getMaintenanceTier,
-  getNextTier,
-  getProgressTier,
-  getTierRule,
-  sortTierRules,
-} from "./tiers";
+import { getCurrentTier, getMaintenanceTier, getNextTier, getProgressTier } from "./tiers";
 
 import { loyaltyCustomer, tier } from "../test-support/fixtures/loyalty";
 
-import type { LoyaltyCustomer, TierRule } from "../types";
+import type { LoyaltyCustomer } from "../types";
 
 // --- tier scenarios ---------------------------------------------------------
 
@@ -35,6 +28,12 @@ describe("getCurrentTier", () => {
   test("resolves the customer's current tier object", () => {
     expect(getCurrentTier(maintenanceCustomer)?.uid).toBe("tier-current");
     expect(getCurrentTier(maintenanceCustomer)?.name).toBe("Silver");
+  });
+
+  test("matches even when the active uid is reformatted in state", () => {
+    // tierUid can come back dash-stripped / recased; both sides are normalized before matching.
+    const customer = loyaltyCustomer({ tierUid: "TierCurrent", tiers: standardTiers });
+    expect(getCurrentTier(customer)?.uid).toBe("tier-current");
   });
 
   test("returns null without loyalty", () => {
@@ -91,46 +90,5 @@ describe("getMaintenanceTier", () => {
 
   test("returns null without loyalty", () => {
     expect(getMaintenanceTier(noLoyaltyCustomer)).toBe(null);
-  });
-});
-
-// --- sortTierRules / getTierRule --------------------------------------------
-
-const tierRules: Record<string, TierRule> = {
-  "tier-gold": {
-    currencyValue: 100,
-    percentage: 2,
-    pointValue: 1,
-    currencySpentRequirement: 8000,
-    freeShipping: true,
-    name: "Gold",
-  },
-  "tier-silver": {
-    currencyValue: 100,
-    percentage: 1,
-    pointValue: 1,
-    currencySpentRequirement: 1000,
-    freeShipping: false,
-    name: "Silver",
-  },
-};
-
-describe("sortTierRules", () => {
-  test("orders rules by spend requirement ascending", () => {
-    expect(sortTierRules(tierRules).map(([key]) => key)).toEqual(["tier-silver", "tier-gold"]);
-  });
-});
-
-describe("getTierRule", () => {
-  test("resolves level and rule by uid (uid normalization)", () => {
-    // uid keys are matched after stripping dashes / lowercasing.
-    const result = getTierRule(tierRules, { uid: "TIER-GOLD" });
-    expect(result.level).toBe(2);
-    expect(result.tierRule?.name).toBe("Gold");
-  });
-
-  test("returns level 0 for an unknown uid", () => {
-    const result = getTierRule(tierRules, { uid: "missing" });
-    expect(result).toEqual({ level: 0, tierRule: null });
   });
 });

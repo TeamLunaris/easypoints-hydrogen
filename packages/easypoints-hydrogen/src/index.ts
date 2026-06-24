@@ -10,15 +10,7 @@
 
 export type * from "./types";
 export { keysToCamel } from "./shared/case";
-export {
-  findTierIndex,
-  getCurrentTier,
-  getMaintenanceTier,
-  getNextTier,
-  getProgressTier,
-  getTierRule,
-  sortTierRules,
-} from "./shared/tiers";
+export { getCurrentTier, getMaintenanceTier, getNextTier, getProgressTier } from "./shared/tiers";
 
 // Headless render-prop components. Thin children-as-function wrappers over the client hooks: they
 // render no markup, apply no styling, and (apart from `ProductPoints`'s locale-formatted count) do

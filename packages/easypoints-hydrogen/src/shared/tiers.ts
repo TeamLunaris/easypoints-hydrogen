@@ -1,4 +1,4 @@
-import type { LoyaltyCustomer, Tier, TierMaintenance, TierRule } from "../types";
+import type { LoyaltyCustomer, Tier, TierMaintenance } from "../types";
 
 export interface RawAmount {
   currency: string;
@@ -16,49 +16,6 @@ export interface TierProgress {
  * comparison must be normalized before matching.
  */
 const transformUid = (v: string) => v.replaceAll("-", "").toLowerCase();
-
-/**
- * Sorts a map of tier rules into ascending order by spend requirement.
- *
- * @returns The tier rules as `[uid, rule]` entries, lowest requirement first.
- */
-export const sortTierRules = (tierRules: Record<string, TierRule>) =>
-  Object.entries(tierRules).sort(
-    ([, a], [, b]) => a.currencySpentRequirement - b.currencySpentRequirement,
-  );
-
-/**
- * Finds the position of a tier within a sorted list of tier rules.
- *
- * @returns The index of the matching tier, or -1 if no tier matches `uid`.
- */
-export const findTierIndex = (sortedTierRules: [string, TierRule][], uid: string) =>
-  sortedTierRules.findIndex(
-    ([key, _tierRule]) =>
-      // somehow the uid tier keys get transformed within the state...
-      transformUid(key) === transformUid(uid),
-  );
-
-/**
- * Resolves a tier's 1-based level and rule from a map of tier rules.
- *
- * @returns `{ level, tierRule }` where `level` is the 1-based rank of the tier
- *   (lowest requirement is 1), or `{ level: 0, tierRule: null }` when `uid` is
- *   not found.
- */
-export const getTierRule = (tierRules: Record<string, TierRule>, { uid }: { uid: string }) => {
-  const sortedTierRules = sortTierRules(tierRules);
-
-  const idx = findTierIndex(sortedTierRules, uid);
-
-  if (idx !== -1) {
-    const [, tierRule] = sortedTierRules[idx];
-
-    return { level: idx + 1, tierRule };
-  }
-
-  return { level: 0, tierRule: null };
-};
 
 /**
  * Reshapes a tier into a progress view of requirement vs. accumulated spend.
@@ -218,6 +175,7 @@ export function getCurrentTier(customer: LoyaltyCustomer) {
   if (loyalty === null) return null;
 
   const tiers = loyalty.tierMaintenanceData.advancementData.tiers;
+  const tierUid = transformUid(loyalty.tierUid);
 
-  return tiers.find((tier) => tier.uid === customer.loyalty?.tierUid) || null;
+  return tiers.find((tier) => transformUid(tier.uid) === tierUid) || null;
 }
