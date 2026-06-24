@@ -1,0 +1,64 @@
+packages/easypoints-hydrogen/src/client/usePointsRedemption.test.tsx
+  s_5ede4ee0adad57::t_da6161e7d930c8 91,262
+  s_5ede4ee0adad57::t_51c4a3e210ae21 36-38,46-48,56-58,70-72,80-82,101-103,118-120,135-137,164-166,176-178,201-203,220-222,235-237,252-254
+  s_5ede4ee0adad57::t_e2c955bb98c7bf 293-298
+  s_5ede4ee0adad57::t_a1fba4578076dc 31
+packages/easypoints-hydrogen/src/server/routes/cartPoints.ts
+  h_8c8bb3a0db3180 55,57,117
+  s_5ede4ee0adad57::t_e0d949d7f45331 196
+  s_5ede4ee0adad57::t_cad92d2adca607 100
+packages/easypoints-hydrogen/src/client/hooks/useCartPoints.ts
+  s_eef98ae0665eb6::t_91256c63f9e8fa 53-57,59-60
+  s_dd20b03a74a4c2::t_97d9d97b0e183c 87
+  s_8336f46c19d621::t_7f527688115ba5 82
+  h_8c8bb3a0db3180 67-68,83-85
+  s_8336f46c19d621::t_6f5d95318ad336 13-15
+  s_5ede4ee0adad57::t_51c4a3e210ae21 79
+packages/easypoints-hydrogen/src/client/useCartPoints.test.tsx
+  s_5ede4ee0adad57::t_593df825fc6418 38-40,44,49,54,66,82,91,105,118,120,126,130
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "3d8498ee6d46d0fa517c0e8627a3a0a1eb95b93f",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_5ede4ee0adad57": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e6240cc0-384c-435c-b1b5-ae7d779ab42c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_8336f46c19d621": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4f069a59-83ed-48c1-9d8d-373b7d3869b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_dd20b03a74a4c2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dc39edd0-8119-4958-b9e5-32905e61634b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_eef98ae0665eb6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "78bf190f-a110-4fc9-b967-6c450cded895",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
