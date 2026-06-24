@@ -30,7 +30,7 @@ export {
 export type { CalculatePointsResponse } from "./server/routes/cartPoints";
 
 // Errors.
-export { ContextError, LoyaltyClientError } from "./server/errors";
+export { ContextError, CustomerNotAuthenticatedError, LoyaltyClientError } from "./server/errors";
 
 // GraphQL queries + fragments (merchants embed the fragments in their own codegen).
 export {

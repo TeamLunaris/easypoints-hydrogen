@@ -37,3 +37,16 @@ export class ContextError extends Error {
     return "Context is not initialized";
   }
 }
+
+/**
+ * Thrown when a points action requires an authenticated customer but none is available.
+ */
+export class CustomerNotAuthenticatedError extends Error {
+  constructor(message?: string | null) {
+    super(`[easyPoints] ${message ?? CustomerNotAuthenticatedError.getDefaultErrorMessage()}`);
+  }
+
+  private static getDefaultErrorMessage() {
+    return "Customer is not authenticated";
+  }
+}

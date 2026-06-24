@@ -1,5 +1,6 @@
 import { parseGid } from "@shopify/hydrogen";
 
+import { CustomerNotAuthenticatedError } from "../errors";
 import { productPoints } from "../product";
 
 import type { EasyPointsClient } from "../loyalty";
@@ -130,7 +131,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
     formData: FormData,
   ): Promise<RedeemPointsResponse> {
     const loyalty = await context.loyalty.getCustomerLoyalty();
-    if (!loyalty) throw new Error("Customer is not authenticated");
+    if (!loyalty) throw new CustomerNotAuthenticatedError();
     const customerId = loyalty.customerId;
 
     const points = Number(formData.get("points"));
@@ -158,12 +159,21 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
 
     if ("errors" in resp) {
       const message = resp.errors?.length ? resp.errors.join(", ") : resp.title;
-      return { success: false, points, error: { code: "redemption_failed", message } };
+
+      return {
+        success: false,
+        points,
+        error: { code: "redemption_failed", message },
+      };
     }
 
     if ("data" in resp && resp.data?.code) {
       await context.cart.updateDiscountCodes([resp.data.code]);
-      return { success: true, points };
+
+      return {
+        success: true,
+        points,
+      };
     }
 
     return {
