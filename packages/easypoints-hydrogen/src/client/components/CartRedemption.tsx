@@ -1,15 +1,15 @@
 "use client";
 
-import { usePointsRedemption } from "../hooks/usePointsRedemption";
+import { useCartRedemption } from "../hooks/useCartRedemption";
 
-import type { UsePointsRedemptionParams } from "../hooks/usePointsRedemption";
+import type { UseCartRedemptionParams } from "../hooks/useCartRedemption";
 import type { ReactNode } from "react";
 
-/** Values handed to {@link PointsRedemption}'s render prop — the full {@link usePointsRedemption} api. */
-export type PointsRedemptionRenderProps = ReturnType<typeof usePointsRedemption>;
+/** Values handed to {@link CartRedemption}'s render prop — the full {@link useCartRedemption} api. */
+export type CartRedemptionRenderProps = ReturnType<typeof useCartRedemption>;
 
-/** Props for {@link PointsRedemption}: the hook params plus the render prop. */
-export interface PointsRedemptionProps extends UsePointsRedemptionParams {
+/** Props for {@link CartRedemption}: the hook params plus the render prop. */
+export interface CartRedemptionProps extends UseCartRedemptionParams {
   /**
    * Rendered when there is no redeemable balance (no explicit `pointsBalance` and no provider
    * loyalty). Defaults to `null` (render nothing). Receiving the empty case here is what lets
@@ -21,22 +21,22 @@ export interface PointsRedemptionProps extends UsePointsRedemptionParams {
    * increment, decrement, setMax, step }, form: { submit, undo, isValid, isSubmitting },
    * result: { redeemedPoints, error } }`. Only invoked when there is a redeemable balance.
    */
-  children: (props: PointsRedemptionRenderProps) => ReactNode;
+  children: (props: CartRedemptionRenderProps) => ReactNode;
 }
 
 /**
- * Headless wrapper over {@link usePointsRedemption}.
+ * Headless wrapper over {@link useCartRedemption}.
  *
  * Renders no markup — when there is a redeemable balance it drives the redeem input + validation +
  * adaptive stepper + REDEEM/UNDO submit and hands the whole api to `children` (input, +/- buttons,
  * redeem/undo button, error, …); otherwise it renders `fallback`.
  */
-export function PointsRedemption({
+export function CartRedemption({
   fallback = null,
   children,
   ...params
-}: PointsRedemptionProps): ReactNode {
-  const redemption = usePointsRedemption(params);
+}: CartRedemptionProps): ReactNode {
+  const redemption = useCartRedemption(params);
 
   if (redemption.pointsBalance === null) return fallback;
 

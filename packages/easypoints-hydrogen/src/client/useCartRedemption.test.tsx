@@ -2,7 +2,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, test, vi } from "vite-plus/test";
 
-import { usePointsRedemption } from "./hooks/usePointsRedemption";
+import { useCartRedemption } from "./hooks/useCartRedemption";
 
 import { account } from "../test-support/fixtures/loyalty";
 import { createWrapper, setupFetcherMock } from "../test-support/react";
@@ -30,11 +30,11 @@ setupFetcherMock(mock);
 const ROUTE = { method: "POST", action: "/api/cart/points" };
 const CUSTOMER_ID = "gid://shopify/Customer/1";
 
-describe("usePointsRedemption", () => {
+describe("useCartRedemption", () => {
   describe("input validation + clamping", () => {
     test("accepts a positive integer within balance", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       act(() => result.current.input.setValue("500"));
@@ -44,7 +44,7 @@ describe("usePointsRedemption", () => {
 
     test("clamps values above the balance down to the balance", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       act(() => result.current.input.setValue("1001"));
@@ -54,7 +54,7 @@ describe("usePointsRedemption", () => {
 
     test("clamps non-positive values to empty (not submittable)", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       act(() => result.current.input.setValue("0"));
@@ -68,7 +68,7 @@ describe("usePointsRedemption", () => {
 
     test("truncates non-integer input to an integer", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       act(() => result.current.input.setValue("3.5"));
@@ -78,7 +78,7 @@ describe("usePointsRedemption", () => {
 
     test("clears non-numeric input to empty", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       act(() => result.current.input.setValue("abc"));
@@ -88,7 +88,7 @@ describe("usePointsRedemption", () => {
 
     test("rejects everything while the cart is optimistic", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID, isOptimistic: true }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID, isOptimistic: true }),
       );
 
       act(() => result.current.input.setValue("500"));
@@ -99,7 +99,7 @@ describe("usePointsRedemption", () => {
   describe("stepper helpers", () => {
     test("increment / decrement move by the adaptive step, clamped to [0, balance]", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
       // balance 1000 -> step 100.
 
@@ -116,7 +116,7 @@ describe("usePointsRedemption", () => {
 
     test("setMax fills the full balance", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 750, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 750, customerId: CUSTOMER_ID }),
       );
 
       act(() => result.current.input.setMax());
@@ -133,7 +133,7 @@ describe("usePointsRedemption", () => {
       [5000, 500],
     ])("balance %i -> step %i", (balance, expectedStep) => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: balance, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: balance, customerId: CUSTOMER_ID }),
       );
       expect(result.current.input.step).toBe(expectedStep);
     });
@@ -142,7 +142,7 @@ describe("usePointsRedemption", () => {
   describe("redeem", () => {
     test("submits the REDEEM action and surfaces redeemedPoints on success", () => {
       const { result, rerender } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: "gid://shopify/Customer/1" }),
+        useCartRedemption({ pointsBalance: 1000, customerId: "gid://shopify/Customer/1" }),
       );
 
       act(() => result.current.input.setValue("300"));
@@ -162,7 +162,7 @@ describe("usePointsRedemption", () => {
 
     test("is not submittable with empty input", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 100, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 100, customerId: CUSTOMER_ID }),
       );
 
       // submit() guards only on isOptimistic, but callers gate on isValid; assert the value.
@@ -174,7 +174,7 @@ describe("usePointsRedemption", () => {
   describe("undo", () => {
     test("submits the UNDO action and clears redeemed state", () => {
       const { result, rerender } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       mock.fetcher.data = { success: true, points: 200 };
@@ -199,7 +199,7 @@ describe("usePointsRedemption", () => {
   describe("error", () => {
     test("populates from a structured error response", () => {
       const { result, rerender } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       mock.fetcher.data = {
@@ -218,7 +218,7 @@ describe("usePointsRedemption", () => {
 
     test("clears a prior error once a redeem succeeds", () => {
       const { result, rerender } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       mock.fetcher.data = { success: false, points: 0, error: { message: "nope" } };
@@ -233,7 +233,7 @@ describe("usePointsRedemption", () => {
 
     test("clears a previous error when a new submit starts", () => {
       const { result, rerender } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
 
       mock.fetcher.data = { success: false, points: 0, error: { message: "nope" } };
@@ -250,7 +250,7 @@ describe("usePointsRedemption", () => {
     test("reflects the fetcher submitting state", () => {
       mock.fetcher.state = "submitting";
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID }),
       );
       expect(result.current.form.isSubmitting).toBe(true);
     });
@@ -259,7 +259,7 @@ describe("usePointsRedemption", () => {
   describe("optimistic guard", () => {
     test("redeem() is a no-op while the cart is optimistic", () => {
       const { result } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID, isOptimistic: true }),
+        useCartRedemption({ pointsBalance: 1000, customerId: CUSTOMER_ID, isOptimistic: true }),
       );
 
       act(() => result.current.input.setValue("100"));
@@ -271,7 +271,7 @@ describe("usePointsRedemption", () => {
 
   describe("provider fallback", () => {
     test("reads balance, customerId, and route from the provider", () => {
-      const { result } = renderHook(() => usePointsRedemption(), {
+      const { result } = renderHook(() => useCartRedemption(), {
         wrapper: createWrapper({
           route: "/custom/cart/points",
           customerId: "gid://shopify/Customer/42",
@@ -291,7 +291,7 @@ describe("usePointsRedemption", () => {
 
     test("explicit params win over the provider", () => {
       const { result } = renderHook(
-        () => usePointsRedemption({ pointsBalance: 50, customerId: CUSTOMER_ID }),
+        () => useCartRedemption({ pointsBalance: 50, customerId: CUSTOMER_ID }),
         {
           wrapper: createWrapper({ customerLoyalty: account(800) }),
         },

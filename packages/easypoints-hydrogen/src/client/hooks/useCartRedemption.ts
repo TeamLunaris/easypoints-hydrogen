@@ -24,8 +24,8 @@ const UNDO_REDEEM: CartPointsModule["ACTIONS"]["UNDO_REDEEM"] = "UndoRedeem";
 /** Shared fetcher key, so the redemption fetcher can be observed across components. */
 export const FETCHER_REDEMPTION_KEY = "redemption";
 
-/** Params for {@link usePointsRedemption}. All fall back to the provider when omitted. */
-export interface UsePointsRedemptionParams {
+/** Params for {@link useCartRedemption}. All fall back to the provider when omitted. */
+export interface UseCartRedemptionParams {
   /** Redeemable balance. Falls back to the provider's `customerLoyalty.balance`. */
   pointsBalance?: number | null;
   /** Customer GID submitted with the redeem action. Falls back to the provider's `customerId`. */
@@ -93,9 +93,11 @@ function useRedeemInput(balance: number) {
 }
 
 /**
- * Drives the points-redemption flow: input + validation + adaptive stepper + REDEEM/UNDO submit.
+ * Drives the active cart's points-redemption flow: input + validation + adaptive stepper +
+ * REDEEM/UNDO submit. Bound to the current cart (submits to the cart-points route, gated on the
+ * optimistic cart) — not a general-purpose coupon creator.
  *
- * @param params - See {@link UsePointsRedemptionParams}.
+ * @param params - See {@link UseCartRedemptionParams}.
  * @returns The resolved `pointsBalance` (explicit param, else provider loyalty, else `null` when no
  * redemption context exists) plus three groups:
  * - `input` — the numeric field. `value` is the current string; `setValue(raw)` parses and clamps
@@ -107,7 +109,7 @@ function useRedeemInput(balance: number) {
  * - `result` — the outcome: `redeemedPoints` (points locked in after a successful redeem, else
  *   `null`) and `error` (the structured `{ code?, message }` from a failed redeem, else `null`).
  */
-export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
+export function useCartRedemption(params: UseCartRedemptionParams = {}) {
   const context = useEasyPoints();
   const loyalty = useCustomerLoyalty();
 

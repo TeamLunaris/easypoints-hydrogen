@@ -22,6 +22,6 @@ export type {
   PointsCartLine,
   UseCartPointsOptions,
 } from "./client/hooks/useCartPoints";
-export { FETCHER_REDEMPTION_KEY, usePointsRedemption } from "./client/hooks/usePointsRedemption";
-export type { UsePointsRedemptionParams } from "./client/hooks/usePointsRedemption";
+export { FETCHER_REDEMPTION_KEY, useCartRedemption } from "./client/hooks/useCartRedemption";
+export type { UseCartRedemptionParams } from "./client/hooks/useCartRedemption";
 export { BASE_TIER_PROGRESS_PERCENTAGE, useTierProgress } from "./client/hooks/useTierProgress";

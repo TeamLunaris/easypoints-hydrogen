@@ -22,11 +22,11 @@ export type {
 } from "./client/components/ProductPoints";
 export { TierProgress } from "./client/components/TierProgress";
 export type { TierProgressProps, TierProgressRenderProps } from "./client/components/TierProgress";
-export { PointsRedemption } from "./client/components/PointsRedemption";
+export { CartRedemption } from "./client/components/CartRedemption";
 export type {
-  PointsRedemptionProps,
-  PointsRedemptionRenderProps,
-} from "./client/components/PointsRedemption";
+  CartRedemptionProps,
+  CartRedemptionRenderProps,
+} from "./client/components/CartRedemption";
 export { CustomerLoyalty } from "./client/components/CustomerLoyalty";
 export type {
   CustomerLoyaltyProps,
