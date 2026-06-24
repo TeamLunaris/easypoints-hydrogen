@@ -1,0 +1,25 @@
+packages/easypoints-hydrogen/src/shared/tiers.ts
+  s_75d4a2af27b1f2::t_f5ff1cce1f1d21 1
+  s_75d4a2af27b1f2::t_859b81f8171a68 178,180
+packages/easypoints-hydrogen/src/shared/tiers.test.ts
+  s_75d4a2af27b1f2::t_0ccf9615d326e8 3,7
+  s_75d4a2af27b1f2::t_0c96dd095781fa 33-38
+packages/easypoints-hydrogen/src/index.ts
+  s_75d4a2af27b1f2::t_464f581cf39a87 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "cbf6354d493bb61b8f151179da33e3a9100b2a75",
+  "prompts": {},
+  "sessions": {
+    "s_75d4a2af27b1f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f57e7035-773c-4b58-880e-935d1d9e0002",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
