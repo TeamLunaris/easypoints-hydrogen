@@ -1,0 +1,133 @@
+packages/easypoints-hydrogen/src/test-support/fixtures/shop.ts
+  s_5479f997f4a43f::t_f0d441c9c14362 1-29,36-42
+  s_5479f997f4a43f::t_672f85a909e577 30-35
+packages/easypoints-hydrogen/src/test-support/index.ts
+  s_5479f997f4a43f::t_0fdd5e2d7e45b3 13
+  s_5479f997f4a43f::t_21b59c7ab1082a 1-12,14-15
+packages/easypoints-hydrogen/src/test-support/http.ts
+  h_8c8bb3a0db3180 5-6,18,48,54
+  s_5479f997f4a43f::t_53c3fb0cbda70c 1-4,7-17,19-42,44-47,49,52-53,55-58
+  s_6c70982f6297df::t_d7463dedceb6e3 43,50-51
+packages/easypoints-hydrogen/src/server/routes/cartPoints.test.ts
+  s_5479f997f4a43f::t_ed0e1a50ddc6ff 1,5-7,30,34-40
+packages/easypoints-hydrogen/src/client/useCustomerLoyalty.test.tsx
+  s_5479f997f4a43f::t_210113151c095c 17,23,31-32,40
+  s_5479f997f4a43f::t_5ed22aa05b8bb9 7-8
+  s_5479f997f4a43f::t_0faa6407beecef 25,34,42
+packages/easypoints-hydrogen/src/server/shop.test.ts
+  s_5479f997f4a43f::t_d643b4885d9f34 5
+  s_aa774bf89924f3::t_4fc4aa896dbc2b 1,17-18,22-30,32,35,37,40,42,47-48,52-55,57,59-60
+  h_8c8bb3a0db3180 19,21,33-34,38-39,43-44,49-51,56,58
+packages/easypoints-hydrogen/src/test-support/fixtures/loyalty.ts
+  s_5479f997f4a43f::t_d61c5955906113 1-38,45-83
+  s_5479f997f4a43f::t_672f85a909e577 39-44
+packages/easypoints-hydrogen/src/shared/case.test.ts
+  s_5479f997f4a43f::t_0fa7a8679c6735 1,5-21,24-31
+packages/easypoints-hydrogen/src/test-support/react.tsx
+  s_4fce1510fe0cd3::t_c996110eaf1798 38
+  s_0a9542d4f02604::t_643b9d751ab519 20
+  s_5479f997f4a43f::t_29b0cf7d8ee4c7 1,3,5-18,32,36-37,39-42
+  s_4fce1510fe0cd3::t_e5a04543d44335 4
+  s_5479f997f4a43f::t_9cf2e0557b45bf 2,19,33-35
+packages/easypoints-hydrogen/src/test-support/context.ts
+  s_d42a11368a1d00::t_cc6da077fae3bb 38-40,43,52-59
+  s_5479f997f4a43f::t_672f85a909e577 115-117
+  s_5479f997f4a43f::t_909c5b8230a194 1-37,41,44-50,60-85,87-92,94-112,114,118-119,121-122,124-134,136-141
+  h_8c8bb3a0db3180 42,51,86,93,113,120,123,135
+packages/easypoints-hydrogen/src/test-support/fixtures/coupon.ts
+  s_5479f997f4a43f::t_4050ad29e8fd38 1-37
+packages/easypoints-hydrogen/src/server/loyalty.test.ts
+  s_5479f997f4a43f::t_87eb66b5dbb3eb 2,7-10,21-23,25-28,30-31,33-35,37,39-40,42-45,47,49-50,52-54,56,58-59,61-64,66-69,71-75,77-79,81-83,85,91-100,103-107,118-119,121-137,140-146,148-149,151-154
+  s_5479f997f4a43f::t_666b22c3df601e 86-90
+packages/easypoints-hydrogen/src/server/loyalty-customer.test.ts
+  s_5479f997f4a43f::t_c0ff104ecfa7c3 6,8
+  s_5479f997f4a43f::t_150dde2a5ea1de 61,67,78,143
+  h_8c8bb3a0db3180 42-43,47
+packages/easypoints-hydrogen/src/client/usePointsRedemption.test.tsx
+  s_5479f997f4a43f::t_738707b6290858 267,286
+  s_4fce1510fe0cd3::t_1307dbf26b1018 28
+  s_5479f997f4a43f::t_7477cc17e857c2 7,9,11,14-15,18-19,21
+  s_4fce1510fe0cd3::t_deac76849dc1c8 3
+  s_4fce1510fe0cd3::t_84f9d81605d32b 8
+  h_8c8bb3a0db3180 17,20
+packages/easypoints-hydrogen/src/client/useCartPoints.test.tsx
+  s_5479f997f4a43f::t_70fe19b5e4eedd 7,9,15
+  s_5479f997f4a43f::t_c9d7f9ed1a2dc0 157
+  s_5479f997f4a43f::t_89fd8084c71bdc 12,16,19-20,22
+  h_8c8bb3a0db3180 18,21
+  s_4fce1510fe0cd3::t_b4e389b47b6308 3
+  s_4fce1510fe0cd3::t_bdac9bdfe64fc4 29
+  s_4fce1510fe0cd3::t_68da5e420dbe07 8
+packages/easypoints-hydrogen/src/server/product.test.ts
+  s_aa774bf89924f3::t_0575969874e3c0 1,19-22,24,26,29-37,39,41,44-59,62-78,80-96,98-101,103,105-106,108-122,125-131,133,135,138-141,143,145-146
+  s_5479f997f4a43f::t_b02c962269dc3b 5-6,8,11,13
+  s_5479f997f4a43f::t_444878d56899de 9
+  s_5479f997f4a43f::t_666b22c3df601e 14-15
+packages/easypoints-hydrogen/src/shared/tiers.test.ts
+  s_5479f997f4a43f::t_6b89cd3b31b97c 12,14,16,18,20-21,23-24,26-27
+packages/easypoints-hydrogen/src/client/useTierProgress.test.tsx
+  s_5479f997f4a43f::t_4d8b480ce555ed 31,45
+  s_5479f997f4a43f::t_5a24ab262591fa 7,10,13,16
+  s_5479f997f4a43f::t_437b3fafa5342f 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "8a73b60a8bb0445b3a36da9b0fe9b62f33af49e8",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_0a9542d4f02604": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b50d5bea-f3ae-4718-bc8d-21fbaebe2670",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_4fce1510fe0cd3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "860dfcce-e122-48eb-9976-de4033252e6b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_5479f997f4a43f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de7b289e-7c49-45dc-83e4-d788c0d0ab09",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_6c70982f6297df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3dc008f8-f014-440b-a8dc-e53d9eae2e3c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_aa774bf89924f3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "be9f8baf-cb9e-4a51-8dac-e6f4a315820b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    },
+    "s_d42a11368a1d00": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "348e1f05-41a8-4fb1-9016-251c246b43b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
