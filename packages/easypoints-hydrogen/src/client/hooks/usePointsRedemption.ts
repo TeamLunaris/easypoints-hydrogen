@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
+import { MissingContextError } from "../errors";
 import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
 import type { RedeemPointsResponse } from "../../server/routes/cartPoints";
@@ -109,14 +110,22 @@ function useRedeemInput(balance: number) {
 export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   const context = useEasyPoints();
   const loyalty = useCustomerLoyalty();
+
+  const { isOptimistic = false } = params;
   const pointsBalance = params.pointsBalance ?? loyalty?.balance ?? null;
   const customerId = params.customerId ?? context.customerId ?? null;
   const route = params.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
-  const { isOptimistic = false } = params;
 
   const fetcher = useFetcher<RedeemPointsResponse | null>({ key: FETCHER_REDEMPTION_KEY });
-
   const { field, amount, reset } = useRedeemInput(pointsBalance ?? 0);
+
+  if (pointsBalance === null) {
+    throw new MissingContextError("pointsBalance", "a customer loyalty metafield");
+  }
+
+  if (customerId === null) {
+    throw new MissingContextError("customerId", "a customer ID");
+  }
 
   const isSubmitting = fetcher.state === "submitting";
   const isValid = !isOptimistic && amount > 0;
@@ -132,7 +141,7 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
     if (isOptimistic) return;
 
     void fetcher.submit(
-      { action: REDEEM_POINTS, points: amount, customerId: customerId ?? "" },
+      { action: REDEEM_POINTS, customerId, points: amount },
       { method: "POST", action: route },
     );
     // `fetcher` is intentionally excluded — including it can loop.
