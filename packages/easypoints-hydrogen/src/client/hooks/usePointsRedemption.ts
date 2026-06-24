@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
@@ -31,11 +31,6 @@ export interface UsePointsRedemptionParams {
   customerId?: string | null;
   /** Override the cart-points route path (else provider, else the route default). */
   route?: string;
-  /**
-   * Cart line-item quantity. When provided, a change auto-undoes any active redemption — matching
-   * the source's "undo on page refresh / cart change" behavior. Omit to disable.
-   */
-  cartTotalQuantity?: number;
   /** Disable submitting while the optimistic cart settles. */
   isOptimistic?: boolean;
 }
@@ -117,7 +112,7 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   const pointsBalance = params.pointsBalance ?? loyalty?.balance ?? null;
   const customerId = params.customerId ?? context.customerId ?? null;
   const route = params.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
-  const { cartTotalQuantity, isOptimistic = false } = params;
+  const { isOptimistic = false } = params;
 
   const fetcher = useFetcher<RedeemPointsResponse | null>({ key: FETCHER_REDEMPTION_KEY });
 
@@ -151,14 +146,6 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
     // `fetcher` is intentionally excluded — including it can loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route, reset]);
-
-  // Undo any active redemption when the cart changes (and on mount), mirroring the source.
-  useEffect(() => {
-    if (cartTotalQuantity === undefined) return;
-    undo();
-    // `undo` is stable per `route`; depending on `cartTotalQuantity` is the intended trigger.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartTotalQuantity]);
 
   return {
     pointsBalance,

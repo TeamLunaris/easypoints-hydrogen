@@ -240,27 +240,6 @@ describe("usePointsRedemption", () => {
     });
   });
 
-  describe("cart-change auto-undo", () => {
-    test("submits UNDO on mount and again when the cart quantity changes", () => {
-      let qty = 2;
-      const { rerender } = renderHook(() =>
-        usePointsRedemption({ pointsBalance: 1000, cartTotalQuantity: qty }),
-      );
-
-      expect(mock.submit).toHaveBeenCalledWith({ action: "UndoRedeem" }, ROUTE);
-      expect(mock.submit).toHaveBeenCalledTimes(1);
-
-      qty = 3;
-      act(() => rerender());
-      expect(mock.submit).toHaveBeenCalledTimes(2);
-    });
-
-    test("does not auto-undo when cartTotalQuantity is omitted", () => {
-      renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
-      expect(mock.submit).not.toHaveBeenCalled();
-    });
-  });
-
   describe("provider fallback", () => {
     test("reads balance, customerId, and route from the provider", () => {
       const { result } = renderHook(() => usePointsRedemption(), {
