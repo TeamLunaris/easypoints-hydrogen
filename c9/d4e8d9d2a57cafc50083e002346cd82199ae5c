@@ -1,0 +1,19 @@
+packages/easypoints-hydrogen/src/server/shop.test.ts
+  s_75d4a2af27b1f2::t_5a82d7dda84b35 10-11,52-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "c9d4e8d9d2a57cafc50083e002346cd82199ae5c",
+  "prompts": {},
+  "sessions": {
+    "s_75d4a2af27b1f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f57e7035-773c-4b58-880e-935d1d9e0002",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
