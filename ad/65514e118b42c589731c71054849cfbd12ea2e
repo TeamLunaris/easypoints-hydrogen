@@ -1,0 +1,25 @@
+packages/easypoints-hydrogen/src/client/hooks/useCartRedemption.ts
+  s_608aa440aef004::t_b58a3866e1beb6 139,144
+packages/easypoints-hydrogen/src/client/useCartRedemption.test.tsx
+  s_608aa440aef004::t_429880ae54e3ed 35,43,51,63,71,90,105,120,127,132,142,152,175,192,205,220,258-260
+  s_608aa440aef004::t_cebdbeb868b953 80,228,252
+  s_608aa440aef004::t_c9ef21b21245f0 239
+packages/easypoints-hydrogen/src/client/context.tsx
+  s_608aa440aef004::t_bf450fb7422419 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "ad65514e118b42c589731c71054849cfbd12ea2e",
+  "prompts": {},
+  "sessions": {
+    "s_608aa440aef004": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ae49c28b-03c1-4adf-8a27-655f240f701e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
