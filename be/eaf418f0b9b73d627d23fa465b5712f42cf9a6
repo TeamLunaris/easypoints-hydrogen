@@ -1,0 +1,25 @@
+packages/easypoints-hydrogen/src/client/hooks/usePointsRedemption.ts
+  s_3832062e4373a8::t_8b3c5ffca41130 115
+  s_3832062e4373a8::t_70f2a7dbbd1583 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "beeaf418f0b9b73d627d23fa465b5712f42cf9a6",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_3832062e4373a8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "96384081-3f63-423a-9544-49a165fe3c23",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
