@@ -47,8 +47,8 @@ export interface UseCartPointsOptions {
  * Tracks loyalty points for the items in a cart.
  *
  * Maintains a `pointsMap` keyed by cart-line id and refetches it from the cart-points route
- * whenever the cart leaves its optimistic state or the balance changes. Clears the map when the
- * cart has no eligible lines.
+ * whenever the cart leaves its optimistic state or the eligible line ids/quantities change.
+ * Clears the map when the cart has no eligible lines.
  *
  * Accepts a nullable cart so it can be wired directly to Hydrogen's loader cart or
  * `useOptimisticCart` output. When `cart` is `null`/`undefined` (not yet loaded) or has no

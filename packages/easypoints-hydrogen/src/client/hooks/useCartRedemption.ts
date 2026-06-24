@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
-import { MissingContextError } from "../errors";
 import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
 import type { RedeemPointsResponse } from "../../server/routes/cartPoints";
@@ -118,12 +117,11 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
   const fetcher = useFetcher<RedeemPointsResponse | null>({ key: FETCHER_REDEMPTION_KEY });
   const { field, amount, reset } = useRedeemInput(pointsBalance ?? 0);
 
-  if (pointsBalance === null) {
-    throw new MissingContextError("pointsBalance", "a customer loyalty metafield");
-  }
-
   const isSubmitting = fetcher.state === "submitting";
-  const isValid = !isOptimistic && amount > 0;
+  // A null balance means there's nothing to redeem (guest / un-enrolled customer). The hook stays
+  // render-safe and returns `pointsBalance: null`; the form is simply never submittable — `amount`
+  // is clamped to a 0 balance, so this also covers it, but gating explicitly keeps the intent clear.
+  const isValid = pointsBalance !== null && !isOptimistic && amount > 0;
 
   // `redeemedPoints` / `error` reflect the settled (not in-flight) fetcher result. A new submit
   // (isSubmitting) clears both until it resolves; UNDO resolves to a null body, which also clears
@@ -133,7 +131,7 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
   const error = settled && !settled.success ? (settled.error ?? null) : null;
 
   const submit = useCallback(() => {
-    if (isOptimistic) return;
+    if (!isValid) return;
 
     void fetcher.submit(
       { action: REDEEM_POINTS, points: amount },
@@ -141,7 +139,7 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
     );
     // `fetcher` is intentionally excluded — including it can loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount, route, isOptimistic]);
+  }, [amount, route, isValid]);
 
   const undo = useCallback(() => {
     reset();

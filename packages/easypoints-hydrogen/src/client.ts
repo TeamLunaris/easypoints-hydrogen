@@ -7,9 +7,6 @@
 // Browser-safe: route/action constants + response types are coupled to the server route by
 // type only, so no server code reaches this bundle. This entry must never import from "./server".
 
-// Shared client error types.
-export { MissingContextError } from "./client/errors";
-
 // Optional context provider. The four client hooks read explicit args first and fall back to it.
 export { EasyPointsProvider } from "./client/context";
 export type { EasyPointsContext, EasyPointsProviderProps } from "./client/context";

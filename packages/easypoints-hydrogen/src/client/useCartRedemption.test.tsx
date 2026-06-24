@@ -264,4 +264,19 @@ describe("useCartRedemption", () => {
       expect(result.current.input.value).toBe("50");
     });
   });
+
+  describe("no redeemable balance", () => {
+    test("stays render-safe and never submittable when there is no balance", () => {
+      // No explicit param and no provider loyalty -> null balance (guest / un-enrolled customer).
+      const { result } = renderHook(() => useCartRedemption());
+
+      expect(result.current.pointsBalance).toBe(null);
+      expect(result.current.form.isValid).toBe(false);
+
+      // The input clamps to a 0 balance, so the form can't be coaxed into a submittable state.
+      act(() => result.current.input.setValue("500"));
+      expect(result.current.input.value).toBe("");
+      expect(result.current.form.isValid).toBe(false);
+    });
+  });
 });

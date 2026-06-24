@@ -138,7 +138,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
       return {
         success: false,
         error: { code: "invalid_points", message: "Points must be a positive integer" },
-        points,
+        points: 0,
       };
     }
 
