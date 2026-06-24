@@ -1,18 +1,13 @@
 import { InMemoryCache } from "@shopify/hydrogen";
-import { afterEach, beforeEach, expect, test, vi } from "vite-plus/test";
+import { describe, expect, test, vi } from "vite-plus/test";
 
 import { LoyaltyClientError } from "./errors";
 import { createEasyPointsClient } from "./loyalty";
 
-const jsonResponse = (
-  body: unknown,
-  init?: { status?: number; statusText?: string; headers?: Record<string, string> },
-) =>
-  new Response(JSON.stringify(body), {
-    status: init?.status,
-    statusText: init?.statusText,
-    headers: { "content-type": "application/json", ...init?.headers },
-  });
+import { couponResponse, errorResponse } from "../test-support/fixtures/coupon";
+import { jsonResponse, setupFetchMock } from "../test-support/http";
+
+const fetchMock = setupFetchMock();
 
 function makeClient() {
   return createEasyPointsClient({
@@ -23,120 +18,93 @@ function makeClient() {
   });
 }
 
-const originalFetch = globalThis.fetch;
+describe("api.fetch", () => {
+  test("2xx responses are camelCased", async () => {
+    fetchMock.mock(async () => jsonResponse({ point_value: 5, currency_value: 100 }));
 
-beforeEach(() => {
-  vi.useRealTimers();
-});
+    const result = await makeClient().api.fetch<{ pointValue: number; currencyValue: number }>(
+      "/whatever",
+      { method: "GET" },
+    );
 
-afterEach(() => {
-  globalThis.fetch = originalFetch;
-  vi.restoreAllMocks();
-});
+    expect(result).toEqual({ pointValue: 5, currencyValue: 100 });
+  });
 
-test("2xx responses are camelCased", async () => {
-  globalThis.fetch = vi.fn(async () =>
-    jsonResponse({ point_value: 5, currency_value: 100 }, { status: 200 }),
-  ) as typeof fetch;
+  test("4xx responses return a (camelCased) ErrorResponse rather than throwing", async () => {
+    const error = errorResponse({ errors: ["bad_request"], status: 400, title: "Bad Request" });
+    fetchMock.mock(async () => jsonResponse(error, { status: 400 }));
 
-  const client = makeClient();
-  const result = await client.api.fetch<{ pointValue: number; currencyValue: number }>(
-    "/whatever",
-    {
+    const result = await makeClient().api.fetch("/whatever", { method: "GET" });
+
+    expect(result).toEqual(error);
+  });
+
+  test("4xx with an unparseable body synthesizes an ErrorResponse from the status line", async () => {
+    // Non-JSON 4xx body: `withCache.fetch` returns `data: null` and `response.json()` rejects,
+    // so `errorBody` is null and the client falls back to the status text.
+    fetchMock.mock(async () => new Response("not json", { status: 404, statusText: "Not Found" }));
+
+    const result = await makeClient().api.fetch("/whatever", { method: "GET" });
+
+    expect(result).toEqual({ errors: [], status: 404, title: "Not Found" });
+  });
+
+  test("4xx with an unparseable body and no status text falls back to a default title", async () => {
+    // Some runtimes give an empty `statusText`; the client should still produce a usable title.
+    fetchMock.mock(async () => new Response("", { status: 400, statusText: "" }));
+
+    const result = await makeClient().api.fetch("/whatever", { method: "GET" });
+
+    expect(result).toEqual({ errors: [], status: 400, title: "Request failed" });
+  });
+
+  test("5xx responses throw LoyaltyClientError", async () => {
+    fetchMock.mock(async () =>
+      jsonResponse({ errors: ["boom"] }, { status: 500, statusText: "Server Error" }),
+    );
+
+    await expect(makeClient().api.fetch("/whatever", { method: "GET" })).rejects.toBeInstanceOf(
+      LoyaltyClientError,
+    );
+  });
+
+  test("429 responses retry honoring Retry-After, then succeed", async () => {
+    const spy = fetchMock.mockOnce(
+      jsonResponse({}, { status: 429, headers: { "Retry-After": "0" } }),
+      jsonResponse({ point_value: 7 }, { status: 200 }),
+    );
+
+    const result = await makeClient().api.fetch<{ pointValue: number }>("/whatever", {
       method: "GET",
-    },
-  );
+    });
 
-  expect(result).toEqual({ pointValue: 5, currencyValue: 100 });
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(result).toEqual({ pointValue: 7 });
+  });
+
+  test("429 stops retrying after the max attempts and returns the ErrorResponse", async () => {
+    const error = errorResponse({
+      errors: ["rate_limited"],
+      status: 429,
+      title: "Too Many Requests",
+    });
+    const spy = fetchMock.mock(async () =>
+      jsonResponse(error, { status: 429, headers: { "Retry-After": "0" } }),
+    );
+
+    const result = await makeClient().api.fetch("/whatever", { method: "GET" });
+
+    // initial attempt + MAX_RETRY_ATTEMPTS (2) retries = 3 calls
+    expect(spy).toHaveBeenCalledTimes(3);
+    expect(result).toEqual(error);
+  });
 });
 
-test("4xx responses return a (camelCased) ErrorResponse rather than throwing", async () => {
-  globalThis.fetch = vi.fn(async () =>
-    jsonResponse({ errors: ["bad_request"], status: 400, title: "Bad Request" }, { status: 400 }),
-  ) as typeof fetch;
-
-  const client = makeClient();
-  const result = await client.api.fetch("/whatever", { method: "GET" });
-
-  expect(result).toEqual({ errors: ["bad_request"], status: 400, title: "Bad Request" });
-});
-
-test("4xx with an unparseable body synthesizes an ErrorResponse from the status line", async () => {
-  // Non-JSON 4xx body: `withCache.fetch` returns `data: null` and `response.json()` rejects,
-  // so `errorBody` is null and the client falls back to the status text.
-  globalThis.fetch = vi.fn(
-    async () => new Response("not json", { status: 404, statusText: "Not Found" }),
-  ) as typeof fetch;
-
-  const client = makeClient();
-  const result = await client.api.fetch("/whatever", { method: "GET" });
-
-  expect(result).toEqual({ errors: [], status: 404, title: "Not Found" });
-});
-
-test("4xx with an unparseable body and no status text falls back to a default title", async () => {
-  // Some runtimes give an empty `statusText`; the client should still produce a usable title.
-  globalThis.fetch = vi.fn(
-    async () => new Response("", { status: 400, statusText: "" }),
-  ) as typeof fetch;
-
-  const client = makeClient();
-  const result = await client.api.fetch("/whatever", { method: "GET" });
-
-  expect(result).toEqual({ errors: [], status: 400, title: "Request failed" });
-});
-
-test("5xx responses throw LoyaltyClientError", async () => {
-  globalThis.fetch = vi.fn(async () =>
-    jsonResponse({ errors: ["boom"] }, { status: 500, statusText: "Server Error" }),
-  ) as typeof fetch;
-
-  const client = makeClient();
-
-  await expect(client.api.fetch("/whatever", { method: "GET" })).rejects.toBeInstanceOf(
-    LoyaltyClientError,
-  );
-});
-
-test("429 responses retry honoring Retry-After, then succeed", async () => {
-  const fetchMock = vi
-    .fn()
-    .mockResolvedValueOnce(jsonResponse({}, { status: 429, headers: { "Retry-After": "0" } }))
-    .mockResolvedValueOnce(jsonResponse({ point_value: 7 }, { status: 200 }));
-  globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-  const client = makeClient();
-  const result = await client.api.fetch<{ pointValue: number }>("/whatever", { method: "GET" });
-
-  expect(fetchMock).toHaveBeenCalledTimes(2);
-  expect(result).toEqual({ pointValue: 7 });
-});
-
-test("429 stops retrying after the max attempts and returns the ErrorResponse", async () => {
-  const fetchMock = vi.fn(async () =>
-    jsonResponse(
-      { errors: ["rate_limited"], status: 429, title: "Too Many Requests" },
-      {
-        status: 429,
-        headers: { "Retry-After": "0" },
-      },
-    ),
-  );
-  globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-  const client = makeClient();
-  const result = await client.api.fetch("/whatever", { method: "GET" });
-
-  // initial attempt + MAX_RETRY_ATTEMPTS (2) retries = 3 calls
-  expect(fetchMock).toHaveBeenCalledTimes(3);
-  expect(result).toEqual({ errors: ["rate_limited"], status: 429, title: "Too Many Requests" });
-});
-
-test("createCoupon serializes its payload to snake_case", async () => {
-  // The API replies in snake_case; `api.fetch` camelCases it before schema validation.
-  const fetchMock = vi.fn(async () =>
-    jsonResponse(
-      {
+describe("api.createCoupon", () => {
+  test("serializes its payload to snake_case and surfaces a camelCased response", async () => {
+    // The API replies in snake_case; `api.fetch` camelCases it before schema validation.
+    const spy = fetchMock.mock(async () =>
+      jsonResponse({
         data: {
           code: "ABC123",
           currency_value: 100,
@@ -147,57 +115,42 @@ test("createCoupon serializes its payload to snake_case", async () => {
           pos_discount: false,
           reimbursement_cascade: false,
         },
-      },
-      { status: 200 },
-    ),
-  );
-  globalThis.fetch = fetchMock as unknown as typeof fetch;
+      }),
+    );
 
-  const client = makeClient();
-  const result = await client.api.createCoupon({
-    customerId: "gid://shopify/Customer/1",
-    pointValue: 500,
-    productIds: ["gid://shopify/Product/1", "gid://shopify/Product/2"],
-  });
-
-  const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
-  expect(url).toBe("https://loyalty.slrs.io/api/shopify/coupons");
-  expect(init.method).toBe("POST");
-  expect(JSON.parse(init.body as string)).toEqual({
-    customer_id: "gid://shopify/Customer/1",
-    point_value: 500,
-    product_ids: ["gid://shopify/Product/1", "gid://shopify/Product/2"],
-  });
-
-  // The response is schema-validated and surfaced camelCase.
-  expect(result).toEqual({
-    data: {
-      code: "ABC123",
-      currencyValue: 100,
-      expiresAt: "2026-12-31",
-      id: 1,
+    const result = await makeClient().api.createCoupon({
+      customerId: "gid://shopify/Customer/1",
       pointValue: 500,
-      pointsReimbursed: 0,
-      posDiscount: false,
-      reimbursementCascade: false,
-    },
-  });
-});
+      productIds: ["gid://shopify/Product/1", "gid://shopify/Product/2"],
+    });
 
-test("createCoupon returns an ErrorResponse when the 2xx body fails schema validation", async () => {
-  const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-  // 200 OK, but the coupon payload is malformed (missing every `data` field).
-  globalThis.fetch = vi.fn(async () =>
-    jsonResponse({ data: { code: "ABC123" } }, { status: 200 }),
-  ) as typeof fetch;
+    const [url, init] = spy.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("https://loyalty.slrs.io/api/shopify/coupons");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body as string)).toEqual({
+      customer_id: "gid://shopify/Customer/1",
+      point_value: 500,
+      product_ids: ["gid://shopify/Product/1", "gid://shopify/Product/2"],
+    });
 
-  const client = makeClient();
-  const result = await client.api.createCoupon({
-    customerId: "gid://shopify/Customer/1",
-    pointValue: 500,
-    productIds: ["gid://shopify/Product/1"],
+    // The response is schema-validated and surfaced camelCase — matches the coupon fixture defaults.
+    expect(result).toEqual(couponResponse());
   });
 
-  expect(result).toEqual({ errors: [], status: 200, title: "Invalid response from loyalty API" });
-  expect(errorSpy).toHaveBeenCalled();
+  test("returns an ErrorResponse when the 2xx body fails schema validation", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    // 200 OK, but the coupon payload is malformed (missing every `data` field).
+    fetchMock.mock(async () => jsonResponse({ data: { code: "ABC123" } }));
+
+    const result = await makeClient().api.createCoupon({
+      customerId: "gid://shopify/Customer/1",
+      pointValue: 500,
+      productIds: ["gid://shopify/Product/1"],
+    });
+
+    expect(result).toEqual(
+      errorResponse({ status: 200, title: "Invalid response from loyalty API" }),
+    );
+    expect(errorSpy).toHaveBeenCalled();
+  });
 });

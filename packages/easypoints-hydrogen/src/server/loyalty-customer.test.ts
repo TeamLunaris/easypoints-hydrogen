@@ -3,23 +3,9 @@ import { afterEach, describe, expect, test, vi } from "vite-plus/test";
 import { ContextError } from "./errors";
 import { queryCustomerLoyalty } from "./loyalty-customer";
 
+import { makeCustomerContext } from "../test-support/context";
+
 import type { Context } from "./loyalty";
-
-type QueryResult = { data?: unknown; errors?: { message: string }[] };
-
-/** Builds a fake loyalty `Context` whose `customerAccount` only implements what the query uses. */
-function makeContext(account: {
-  isLoggedIn?: () => Promise<boolean>;
-  query?: () => Promise<QueryResult>;
-}): Context {
-  return {
-    customerAccount: {
-      isLoggedIn: account.isLoggedIn ?? (async () => true),
-      query: account.query ?? (async () => ({ data: { customer: null } })),
-    },
-    storefront: {},
-  } as unknown as Context;
-}
 
 /** A complete (snake_case) metafield value as the API returns it. */
 const METAFIELD_VALUE = JSON.stringify({
@@ -53,11 +39,12 @@ const METAFIELD_VALUE = JSON.stringify({
   },
 });
 
-const loggedInWith = (loyalty: { value: string | null } | null) =>
-  makeContext({
+const loggedInWith = (loyalty: { value: string | null } | null) => {
+  return makeCustomerContext({
     isLoggedIn: async () => true,
     query: async () => ({ data: { customer: { id: "gid://shopify/Customer/1", loyalty } } }),
   });
+};
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -71,13 +58,13 @@ describe("queryCustomerLoyalty", () => {
   });
 
   test("returns null when the customer is not logged in", async () => {
-    const context = makeContext({ isLoggedIn: async () => false });
+    const context = makeCustomerContext({ isLoggedIn: async () => false });
 
     expect(await queryCustomerLoyalty(context)).toBe(null);
   });
 
   test("returns null when the query reports GraphQL errors", async () => {
-    const context = makeContext({
+    const context = makeCustomerContext({
       query: async () => ({
         data: { customer: { id: "1", loyalty: { value: METAFIELD_VALUE } } },
         errors: [{ message: "boom" }],
@@ -88,7 +75,7 @@ describe("queryCustomerLoyalty", () => {
   });
 
   test("returns null when there is no customer in the response", async () => {
-    const context = makeContext({ query: async () => ({ data: { customer: null } }) });
+    const context = makeCustomerContext({ query: async () => ({ data: { customer: null } }) });
 
     expect(await queryCustomerLoyalty(context)).toBe(null);
   });
@@ -153,7 +140,7 @@ describe("queryCustomerLoyalty", () => {
 
   test("returns null and logs when the query throws", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const context = makeContext({
+    const context = makeCustomerContext({
       query: async () => {
         throw new Error("network down");
       },

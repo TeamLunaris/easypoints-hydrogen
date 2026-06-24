@@ -9,84 +9,22 @@ import {
   sortTierRules,
 } from "./tiers";
 
-import type {
-  AmountCurrency,
-  CustomerLoyaltyMetafield,
-  LoyaltyCustomer,
-  Tier,
-  TierRule,
-} from "../types";
+import { loyaltyCustomer, tier } from "../test-support/fixtures/loyalty";
 
-// --- fixture helpers --------------------------------------------------------
+import type { LoyaltyCustomer, TierRule } from "../types";
 
-const amount = (raw: number | null): AmountCurrency => ({
-  amount: raw === null ? null : String(raw),
-  currency: "JPY",
-  rawAmount: raw,
-});
+// --- tier scenarios ---------------------------------------------------------
 
-const tier = (uid: string, name: string, raw: number, ratio = 0.01): Tier => ({
-  ...amount(raw),
-  uid,
-  name,
-  ratio,
-  spentRequirement: amount(raw),
-});
+const standardTiers = [tier("tier-current", "Silver", -100), tier("tier-next", "Gold", 8000)];
 
-const makeCustomer = (
-  loyalty: Partial<CustomerLoyaltyMetafield> & {
-    maintenanceRaw: number | null;
-    tiers: Tier[];
-  },
-): LoyaltyCustomer => {
-  const { maintenanceRaw, tiers, ...rest } = loyalty;
+// Mid-maintenance: still owes spend to hold the current tier.
+const maintenanceCustomer = loyaltyCustomer({ maintenanceRaw: 5000, tiers: standardTiers });
 
-  return {
-    loyalty: {
-      customerId: "gid://shopify/Customer/1",
-      balance: 1000,
-      currencyValue: 100,
-      tier: "Silver",
-      tierUid: "tier-current",
-      pointValue: 1,
-      expirationDate: null,
-      tierName: "Silver",
-      percentage: 1,
-      includeTax: false,
-      tierMaintenanceData: {
-        maintenanceData: {
-          ...amount(maintenanceRaw),
-          deadline: "2026-12-31",
-          spentRequirement: amount(maintenanceRaw),
-        },
-        advancementData: {
-          ...amount(0),
-          deadline: "2027-06-30",
-          spentRequirement: amount(0),
-          tierUid: "tier-next",
-          tierName: "Gold",
-          tiers,
-        },
-      },
-      ...rest,
-    },
-  };
-};
+// Met maintenance, can still advance to a higher tier.
+const nextTierCustomer = loyaltyCustomer({ maintenanceRaw: 0, tiers: standardTiers });
 
-// A customer mid-maintenance: still owes spend to hold the current tier.
-const maintenanceCustomer = makeCustomer({
-  maintenanceRaw: 5000,
-  tiers: [tier("tier-current", "Silver", -100), tier("tier-next", "Gold", 8000)],
-});
-
-// A customer who has met maintenance and can still advance to a higher tier.
-const nextTierCustomer = makeCustomer({
-  maintenanceRaw: 0,
-  tiers: [tier("tier-current", "Silver", -100), tier("tier-next", "Gold", 8000)],
-});
-
-// A customer who has met maintenance with no remaining tier to advance to.
-const highestTierCustomer = makeCustomer({
+// Met maintenance with no remaining tier to advance to.
+const highestTierCustomer = loyaltyCustomer({
   maintenanceRaw: 0,
   tiers: [tier("tier-current", "Silver", -100), tier("tier-top", "Platinum", -50)],
 });

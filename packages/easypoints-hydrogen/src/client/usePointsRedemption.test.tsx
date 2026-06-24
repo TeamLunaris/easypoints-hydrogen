@@ -1,47 +1,33 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, test, vi } from "vite-plus/test";
+import { describe, expect, test, vi } from "vite-plus/test";
 
-import { EasyPointsProvider } from "./context";
 import { usePointsRedemption } from "./hooks/usePointsRedemption";
 
-import type { EasyPointsContext } from "./context";
+import { account } from "../test-support/fixtures/loyalty";
+import { createWrapper, setupFetcherMock } from "../test-support/react";
+
 import type { RedeemPointsResponse } from "../server/routes/cartPoints";
-import type { CustomerLoyaltyMetafield } from "../types";
-import type { ReactNode } from "react";
+import type { FetcherMock } from "../test-support/react";
 
 // A single mutable fetcher stands in for `useFetcher`. Tests drive it by mutating `data` / `state`
-// and re-rendering, then assert on `submit`.
-const mock = vi.hoisted(() => {
+// and re-rendering, then assert on `submit`. Hoisted so the `vi.mock` factory can close over it.
+const mock = vi.hoisted((): FetcherMock<RedeemPointsResponse> => {
   const submit = vi.fn();
-  const fetcher: {
-    data: RedeemPointsResponse | null | undefined;
-    state: string;
-    submit: typeof submit;
-  } = { data: undefined, state: "idle", submit };
-  return { submit, fetcher };
+
+  return {
+    submit,
+    fetcher: { data: undefined, state: "idle", submit },
+  };
 });
 
 vi.mock("react-router", () => ({
   useFetcher: () => mock.fetcher,
 }));
 
-beforeEach(() => {
-  mock.fetcher.data = undefined;
-  mock.fetcher.state = "idle";
-  mock.submit.mockClear();
-});
+setupFetcherMock(mock);
 
 const ROUTE = { method: "POST", action: "/api/cart/points" };
-
-// Only `.balance` is read via the provider fallback; cast keeps the fixture small.
-const account = (balance: number) => ({ balance }) as CustomerLoyaltyMetafield;
-
-const wrapper =
-  (value: EasyPointsContext) =>
-  ({ children }: { children: ReactNode }) => (
-    <EasyPointsProvider {...value}>{children}</EasyPointsProvider>
-  );
 
 describe("usePointsRedemption", () => {
   describe("input validation + clamping", () => {
@@ -278,7 +264,7 @@ describe("usePointsRedemption", () => {
   describe("provider fallback", () => {
     test("reads balance, customerId, and route from the provider", () => {
       const { result } = renderHook(() => usePointsRedemption(), {
-        wrapper: wrapper({
+        wrapper: createWrapper({
           route: "/custom/cart/points",
           customerId: "gid://shopify/Customer/42",
           customerLoyalty: account(800),
@@ -297,7 +283,7 @@ describe("usePointsRedemption", () => {
 
     test("explicit params win over the provider", () => {
       const { result } = renderHook(() => usePointsRedemption({ pointsBalance: 50 }), {
-        wrapper: wrapper({ customerLoyalty: account(800) }),
+        wrapper: createWrapper({ customerLoyalty: account(800) }),
       });
 
       act(() => result.current.input.setValue("800"));

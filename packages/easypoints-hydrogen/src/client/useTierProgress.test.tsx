@@ -2,80 +2,18 @@
 import { renderHook } from "@testing-library/react";
 import { describe, expect, test } from "vite-plus/test";
 
-import { EasyPointsProvider } from "./context";
 import { BASE_TIER_PROGRESS_PERCENTAGE, useTierProgress } from "./hooks/useTierProgress";
 
-import type { EasyPointsContext } from "./context";
-import type { AmountCurrency, CustomerLoyaltyMetafield, Tier } from "../types";
-import type { ReactNode } from "react";
+import { loyaltyMetafield, tier } from "../test-support/fixtures/loyalty";
+import { createWrapper } from "../test-support/react";
 
-// --- fixtures (mirrors shared/tiers.test.ts) --------------------------------
-
-const amount = (raw: number | null): AmountCurrency => ({
-  amount: raw === null ? null : String(raw),
-  currency: "JPY",
-  rawAmount: raw,
-});
-
-const tier = (uid: string, name: string, raw: number, ratio = 0.01): Tier => ({
-  ...amount(raw),
-  uid,
-  name,
-  ratio,
-  spentRequirement: amount(raw),
-});
-
-const makeLoyalty = (
-  loyalty: Partial<CustomerLoyaltyMetafield> & { maintenanceRaw: number | null; tiers: Tier[] },
-): CustomerLoyaltyMetafield => {
-  const { maintenanceRaw, tiers, ...rest } = loyalty;
-  return {
-    customerId: "gid://shopify/Customer/1",
-    balance: 1000,
-    currencyValue: 100,
-    tier: "Silver",
-    tierUid: "tier-current",
-    pointValue: 1,
-    expirationDate: null,
-    tierName: "Silver",
-    percentage: 1,
-    includeTax: false,
-    tierMaintenanceData: {
-      maintenanceData: {
-        ...amount(maintenanceRaw),
-        deadline: "2026-12-31",
-        spentRequirement: amount(maintenanceRaw),
-      },
-      advancementData: {
-        ...amount(0),
-        deadline: "2027-06-30",
-        spentRequirement: amount(0),
-        tierUid: "tier-next",
-        tierName: "Gold",
-        tiers,
-      },
-    },
-    ...rest,
-  };
-};
+const standardTiers = [tier("tier-current", "Silver", -100), tier("tier-next", "Gold", 8000)];
 
 // Mid-maintenance: still owes 5000 spend to hold the current tier.
-const maintenanceLoyalty = makeLoyalty({
-  maintenanceRaw: 5000,
-  tiers: [tier("tier-current", "Silver", -100), tier("tier-next", "Gold", 8000)],
-});
+const maintenanceLoyalty = loyaltyMetafield({ maintenanceRaw: 5000, tiers: standardTiers });
 
 // Met maintenance, can still advance to a higher tier.
-const nextTierLoyalty = makeLoyalty({
-  maintenanceRaw: 0,
-  tiers: [tier("tier-current", "Silver", -100), tier("tier-next", "Gold", 8000)],
-});
-
-const wrapper =
-  (value: EasyPointsContext) =>
-  ({ children }: { children: ReactNode }) => (
-    <EasyPointsProvider {...value}>{children}</EasyPointsProvider>
-  );
+const nextTierLoyalty = loyaltyMetafield({ maintenanceRaw: 0, tiers: standardTiers });
 
 describe("useTierProgress", () => {
   test("returns an empty, floored result for null loyalty", () => {
@@ -90,7 +28,7 @@ describe("useTierProgress", () => {
 
   test("explicit null forces an empty result even with a provider", () => {
     const { result } = renderHook(() => useTierProgress(null), {
-      wrapper: wrapper({ customerLoyalty: maintenanceLoyalty }),
+      wrapper: createWrapper({ customerLoyalty: maintenanceLoyalty }),
     });
     expect(result.current.dataType).toBe(null);
     expect(result.current.currentTier).toBe(null);
@@ -104,7 +42,7 @@ describe("useTierProgress", () => {
 
   test("falls back to the provider's customerLoyalty", () => {
     const { result } = renderHook(() => useTierProgress(), {
-      wrapper: wrapper({ customerLoyalty: maintenanceLoyalty }),
+      wrapper: createWrapper({ customerLoyalty: maintenanceLoyalty }),
     });
     expect(result.current.dataType).toBe("MAINTENANCE_TIER");
     expect(result.current.currentTier?.uid).toBe("tier-current");

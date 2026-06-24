@@ -1,37 +1,32 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, test, vi } from "vite-plus/test";
+import { describe, expect, test, vi } from "vite-plus/test";
 
-import { EasyPointsProvider } from "./context";
 import { useCartPoints } from "./hooks/useCartPoints";
 
-import type { EasyPointsContext } from "./context";
+import { account } from "../test-support/fixtures/loyalty";
+import { createWrapper, setupFetcherMock } from "../test-support/react";
+
 import type { PointsCart } from "./hooks/useCartPoints";
 import type { CalculatePointsResponse } from "../server/routes/cartPoints";
-import type { CustomerLoyaltyMetafield } from "../types";
-import type { ReactNode } from "react";
+import type { FetcherMock } from "../test-support/react";
 
 // A single mutable fetcher stands in for `useFetcher`. Tests drive it by mutating `data` and
-// re-rendering, then assert on `submit`.
-const mock = vi.hoisted(() => {
+// re-rendering, then assert on `submit`. Hoisted so the `vi.mock` factory can close over it.
+const mock = vi.hoisted((): FetcherMock<CalculatePointsResponse> => {
   const submit = vi.fn();
-  const fetcher: {
-    data: CalculatePointsResponse | undefined;
-    state: string;
-    submit: typeof submit;
-  } = { data: undefined, state: "idle", submit };
-  return { submit, fetcher };
+
+  return {
+    submit,
+    fetcher: { data: undefined, state: "idle", submit },
+  };
 });
 
 vi.mock("react-router", () => ({
   useFetcher: () => mock.fetcher,
 }));
 
-beforeEach(() => {
-  mock.fetcher.data = undefined;
-  mock.fetcher.state = "idle";
-  mock.submit.mockClear();
-});
+setupFetcherMock(mock);
 
 const ROUTE = { method: "post", action: "/api/cart/points" };
 
@@ -39,15 +34,6 @@ const settledCart = (...ids: string[]): PointsCart => ({
   isOptimistic: false,
   lines: { nodes: ids.map((id) => ({ id })) },
 });
-
-// Only `.balance` is read by the hook; cast keeps the fixture small.
-const account = (balance: number) => ({ balance }) as CustomerLoyaltyMetafield;
-
-const wrapper =
-  (value: EasyPointsContext) =>
-  ({ children }: { children: ReactNode }) => (
-    <EasyPointsProvider {...value}>{children}</EasyPointsProvider>
-  );
 
 describe("useCartPoints", () => {
   test("submits CALCULATE_POINTS with the balance once the cart settles", () => {
@@ -168,7 +154,7 @@ describe("useCartPoints", () => {
 
   test("falls back to the provider route", () => {
     renderHook(() => useCartPoints(settledCart("l1"), account(500)), {
-      wrapper: wrapper({ route: "/provider/points" }),
+      wrapper: createWrapper({ route: "/provider/points" }),
     });
     expect(mock.submit).toHaveBeenCalledWith(
       { action: "CalculatePoints", pointsBalance: 500 },

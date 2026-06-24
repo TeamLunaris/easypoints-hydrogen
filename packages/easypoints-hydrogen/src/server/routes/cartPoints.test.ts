@@ -1,37 +1,12 @@
-import { describe, expect, test, vi } from "vite-plus/test";
-
-import { PRODUCT_LOYALTY_QUERY, SHOP_LOYALTY_QUERY } from "../graphql";
+import { describe, expect, test } from "vite-plus/test";
 
 import { ACTIONS, createCartPointsAction } from "./cartPoints";
 
+import { makeCart, makeLine, makeLoyaltyClient } from "../../test-support/context";
+import { shopValue } from "../../test-support/fixtures/shop";
+
 import type { CartLine } from "./cartPoints";
-import type { EasyPointsClient } from "../loyalty";
 import type { CreateCouponParams, CustomerLoyaltyMetafield, ShopLoyaltyValue } from "../../types";
-import type { Storefront } from "@shopify/hydrogen";
-
-/** Minimal shop loyalty value; only `percentage` matters for the calculate-path math. */
-function shopValue(percentage: number): ShopLoyaltyValue {
-  return {
-    live: true,
-    percentage,
-    currency_value: 100,
-    point_value: 1,
-    point_rules: {},
-  };
-}
-
-/** Builds a cart line, defaulting to product `1` / handle `a-product`, quantity 1. */
-function makeLine(overrides: Partial<CartLine> = {}): CartLine {
-  return {
-    id: "gid://shopify/CartLine/1",
-    quantity: 1,
-    merchandise: {
-      product: { id: "gid://shopify/Product/1", handle: "a-product" },
-      selectedOptions: [],
-    },
-    ...overrides,
-  };
-}
 
 interface ContextFixture {
   lines?: CartLine[];
@@ -52,46 +27,17 @@ interface ContextFixture {
 function makeContext({
   lines = [makeLine()],
   customerLoyalty = { customerId: "gid://shopify/Customer/1" } as CustomerLoyaltyMetafield,
-  createCoupon = async () => ({ data: { code: "DISCOUNT10" } }),
+  createCoupon,
   priceAmount = "10.00",
   shopLoyalty = shopValue(5),
 }: ContextFixture = {}) {
-  const updateDiscountCodes = vi.fn(async () => ({}));
-  const createCouponSpy = vi.fn(createCoupon);
-
-  const storefront = {
-    CacheLong: () => ({}),
-    query: async (query: string) => {
-      if (query === SHOP_LOYALTY_QUERY) {
-        return { shop: { loyalty: shopLoyalty ? { value: JSON.stringify(shopLoyalty) } : null } };
-      }
-      if (query === PRODUCT_LOYALTY_QUERY) {
-        return {
-          product: {
-            id: "gid://shopify/Product/1",
-            selectedOrFirstAvailableVariant: {
-              price: { amount: priceAmount, currencyCode: "USD" },
-            },
-            collections: { nodes: [] },
-          },
-        };
-      }
-      throw new Error(`Unexpected query: ${query}`);
-    },
-  } as unknown as Storefront;
-
-  const loyalty = {
-    context: () => ({ storefront, customerAccount: {} as never }),
-    getCustomerLoyalty: async () => customerLoyalty,
-    api: { createCoupon: createCouponSpy },
-  } as unknown as EasyPointsClient;
-
-  const cart = {
-    get: async (): Promise<{ lines: { nodes: CartLine[] } } | null> => ({
-      lines: { nodes: lines },
-    }),
-    updateDiscountCodes,
-  };
+  const { loyalty, createCoupon: createCouponSpy } = makeLoyaltyClient({
+    customerLoyalty,
+    createCoupon,
+    priceAmount,
+    shopLoyalty,
+  });
+  const { cart, updateDiscountCodes } = makeCart(lines);
 
   return { context: { cart, loyalty }, cart, updateDiscountCodes, createCoupon: createCouponSpy };
 }
