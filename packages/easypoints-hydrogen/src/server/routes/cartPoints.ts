@@ -52,8 +52,9 @@ export interface PointsActionError {
   message: string;
 }
 
+type PointsMap = Record<string, number | null>;
 /** Response for the `CALCULATE_POINTS` action: line id → points (or `null` when uncomputable). */
-export type CalculatePointsResponse = { pointsMap: Record<string, number | null> } | null;
+export type CalculatePointsResponse = { pointsMap: PointsMap } | null;
 
 /** Response for the `REDEEM_POINTS` action. */
 export interface RedeemPointsResponse {
@@ -96,7 +97,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
   /**
    * Calculates the total loyalty points for each eligible line in the current cart.
    */
-  async function totalPoints(context: ActionContext): Promise<CalculatePointsResponse> {
+  async function calculatePoints(context: ActionContext): Promise<CalculatePointsResponse> {
     const cart = await context.cart.get();
     if (!cart) return null;
 
@@ -113,7 +114,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
       ),
     );
 
-    const pointsMap: Record<string, number | null> = {};
+    const pointsMap: PointsMap = {};
     cartLines.forEach((line, index) => {
       pointsMap[line.id] = points[index]?.totalPoints ?? null;
     });
@@ -192,7 +193,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
 
     switch (actionType) {
       case ACTIONS.CALCULATE_POINTS:
-        return totalPoints(context);
+        return calculatePoints(context);
 
       case ACTIONS.REDEEM_POINTS:
         return redeemPoints(context, formData);

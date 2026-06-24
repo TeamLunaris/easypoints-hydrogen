@@ -5,11 +5,13 @@ import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
 
-import type { CustomerLoyaltyMetafield } from "../../types";
 import type { CalculatePointsResponse } from "../../server/routes/cartPoints";
 
 /** Type handle to the cart-points route module — used only in type position (erased at build). */
 type CartPointsModule = typeof import("../../server/routes/cartPoints");
+
+/** Per-line points map, derived from the route's response so it stays the single source of truth. */
+type PointsMap = NonNullable<CalculatePointsResponse>["pointsMap"];
 
 /** Default route path, pinned to the route's `CART_POINTS_ROUTE_PATH` const type. */
 const CART_POINTS_ROUTE_PATH: CartPointsModule["CART_POINTS_ROUTE_PATH"] = "/api/cart/points";
@@ -48,43 +50,41 @@ export interface UseCartPointsOptions {
  * whenever the cart leaves its optimistic state or the balance changes. Clears the map when the
  * cart has no eligible lines.
  *
- * @param cart - The (optionally optimistic) cart.
- * @param accountPoints - The customer's loyalty metafield, or `null` when signed out.
+ * Accepts a nullable cart so it can be wired directly to Hydrogen's loader cart or
+ * `useOptimisticCart` output. When `cart` is `null`/`undefined` (not yet loaded) or has no
+ * eligible lines, the hook skips the fetch and returns an empty map — it never throws.
+ *
+ * @param cart - The (optionally optimistic) cart, or `null`/`undefined` before it loads.
  * @param options - See {@link UseCartPointsOptions}.
- * @returns `{ pointsMap, totalPoints }` — the per-line map and the summed total.
+ * @returns `{ pointsMap, totalPoints }` — the per-line map and the summed total
+ *   (`{}` and `0` until an eligible cart resolves).
  */
 export function useCartPoints(
   cart: PointsCart | null | undefined,
-  accountPoints: CustomerLoyaltyMetafield | null,
   options: UseCartPointsOptions = {},
 ) {
   const context = useEasyPoints();
+  const fetcher = useFetcher<CalculatePointsResponse>();
+
   const route = options.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
   const lineFilter = options.lineFilter ?? (() => true);
 
-  const fetcher = useFetcher<CalculatePointsResponse>();
-
   const isOptimistic = cart?.isOptimistic ?? false;
-  const balance = accountPoints?.balance ?? 0;
-
   const eligibleLines = (cart?.lines?.nodes ?? []).filter(lineFilter);
   const linesSignature = eligibleLines.map((l) => `${l.id}:${l.quantity ?? 1}`).join(",");
 
   useEffect(() => {
     if (!cart || isOptimistic) return;
 
-    void fetcher.submit(
-      { action: CALCULATE_POINTS, pointsBalance: balance },
-      { method: "post", action: route },
-    );
-  }, [isOptimistic, balance, route, linesSignature]);
+    void fetcher.submit({ action: CALCULATE_POINTS }, { method: "post", action: route });
+  }, [isOptimistic, route, linesSignature]);
 
-  const pointsMap = eligibleLines.length === 0 ? {} : (fetcher.data?.pointsMap ?? {});
+  let pointsMap: PointsMap = {};
+  if (eligibleLines.length > 0) {
+    pointsMap = fetcher.data?.pointsMap ?? {};
+  }
 
-  const totalPoints = Object.values(pointsMap).reduce(
-    (sum: number, val) => (typeof val === "number" ? sum + val : sum),
-    0,
-  );
+  const totalPoints = Object.values(pointsMap).reduce<number>((sum, val) => sum + (val ?? 0), 0);
 
   return { pointsMap, totalPoints };
 }

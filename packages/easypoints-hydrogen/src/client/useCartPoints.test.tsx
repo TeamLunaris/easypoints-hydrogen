@@ -4,7 +4,6 @@ import { describe, expect, test, vi } from "vite-plus/test";
 
 import { useCartPoints } from "./hooks/useCartPoints";
 
-import { account } from "../test-support/fixtures/loyalty";
 import { createWrapper, setupFetcherMock } from "../test-support/react";
 
 import type { PointsCart } from "./hooks/useCartPoints";
@@ -36,36 +35,23 @@ const settledCart = (...ids: string[]): PointsCart => ({
 });
 
 describe("useCartPoints", () => {
-  test("submits CALCULATE_POINTS with the balance once the cart settles", () => {
-    renderHook(() => useCartPoints(settledCart("l1"), account(500)));
-    expect(mock.submit).toHaveBeenCalledWith(
-      { action: "CalculatePoints", pointsBalance: 500 },
-      ROUTE,
-    );
-  });
-
-  test("uses a zero balance when the customer is signed out", () => {
-    renderHook(() => useCartPoints(settledCart("l1"), null));
-    expect(mock.submit).toHaveBeenCalledWith(
-      { action: "CalculatePoints", pointsBalance: 0 },
-      ROUTE,
-    );
+  test("submits CALCULATE_POINTS once the cart settles", () => {
+    renderHook(() => useCartPoints(settledCart("l1")));
+    expect(mock.submit).toHaveBeenCalledWith({ action: "CalculatePoints" }, ROUTE);
   });
 
   test("does not submit while the cart is optimistic", () => {
-    renderHook(() => useCartPoints({ ...settledCart("l1"), isOptimistic: true }, account(500)));
+    renderHook(() => useCartPoints({ ...settledCart("l1"), isOptimistic: true }));
     expect(mock.submit).not.toHaveBeenCalled();
   });
 
   test("does not submit when there is no cart", () => {
-    renderHook(() => useCartPoints(null, account(500)));
+    renderHook(() => useCartPoints(null));
     expect(mock.submit).not.toHaveBeenCalled();
   });
 
   test("maps fetcher results and sums numeric points, ignoring null", () => {
-    const { result, rerender } = renderHook(() =>
-      useCartPoints(settledCart("l1", "l2", "l3"), account(500)),
-    );
+    const { result, rerender } = renderHook(() => useCartPoints(settledCart("l1", "l2", "l3")));
 
     mock.fetcher.data = { pointsMap: { l1: 100, l2: 50, l3: null } };
     act(() => rerender());
@@ -77,7 +63,7 @@ describe("useCartPoints", () => {
   test("clears the map once lineFilter excludes every line", () => {
     let include = true;
     const { result, rerender } = renderHook(() =>
-      useCartPoints(settledCart("l1"), account(500), { lineFilter: () => include }),
+      useCartPoints(settledCart("l1"), { lineFilter: () => include }),
     );
 
     mock.fetcher.data = { pointsMap: { l1: 100 } };
@@ -93,7 +79,7 @@ describe("useCartPoints", () => {
 
   test("re-submits when the cart lines change", () => {
     let cart = settledCart("l1");
-    const { rerender } = renderHook(() => useCartPoints(cart, account(500)));
+    const { rerender } = renderHook(() => useCartPoints(cart));
     expect(mock.submit).toHaveBeenCalledTimes(1);
 
     cart = settledCart("l1", "l2");
@@ -101,24 +87,8 @@ describe("useCartPoints", () => {
     expect(mock.submit).toHaveBeenCalledTimes(2);
   });
 
-  test("re-submits when the balance changes", () => {
-    let balance = 500;
-    const { rerender } = renderHook(() => useCartPoints(settledCart("l1"), account(balance)));
-    expect(mock.submit).toHaveBeenCalledTimes(1);
-
-    balance = 600;
-    act(() => rerender());
-    expect(mock.submit).toHaveBeenCalledTimes(2);
-    expect(mock.submit).toHaveBeenLastCalledWith(
-      { action: "CalculatePoints", pointsBalance: 600 },
-      ROUTE,
-    );
-  });
-
   test("reflects the latest fetcher data across refetches", () => {
-    const { result, rerender } = renderHook(() =>
-      useCartPoints(settledCart("l1", "l2"), account(500)),
-    );
+    const { result, rerender } = renderHook(() => useCartPoints(settledCart("l1", "l2")));
 
     mock.fetcher.data = { pointsMap: { l1: 100, l2: 50 } };
     act(() => rerender());
@@ -132,7 +102,7 @@ describe("useCartPoints", () => {
 
   test("clears the map when the cart has no lines", () => {
     let cart = settledCart("l1");
-    const { result, rerender } = renderHook(() => useCartPoints(cart, account(500)));
+    const { result, rerender } = renderHook(() => useCartPoints(cart));
 
     mock.fetcher.data = { pointsMap: { l1: 100 } };
     act(() => rerender());
@@ -145,19 +115,19 @@ describe("useCartPoints", () => {
   });
 
   test("submits to an explicit route override", () => {
-    renderHook(() => useCartPoints(settledCart("l1"), account(500), { route: "/custom/points" }));
+    renderHook(() => useCartPoints(settledCart("l1"), { route: "/custom/points" }));
     expect(mock.submit).toHaveBeenCalledWith(
-      { action: "CalculatePoints", pointsBalance: 500 },
+      { action: "CalculatePoints" },
       { method: "post", action: "/custom/points" },
     );
   });
 
   test("falls back to the provider route", () => {
-    renderHook(() => useCartPoints(settledCart("l1"), account(500)), {
+    renderHook(() => useCartPoints(settledCart("l1")), {
       wrapper: createWrapper({ route: "/provider/points" }),
     });
     expect(mock.submit).toHaveBeenCalledWith(
-      { action: "CalculatePoints", pointsBalance: 500 },
+      { action: "CalculatePoints" },
       { method: "post", action: "/provider/points" },
     );
   });
