@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
@@ -62,7 +62,6 @@ export function useCartPoints(
   const route = options.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
   const lineFilter = options.lineFilter ?? (() => true);
 
-  const [pointsMap, setPointsMap] = useState<Record<string, number | null>>({});
   const fetcher = useFetcher<CalculatePointsResponse>();
 
   const isOptimistic = cart?.isOptimistic ?? false;
@@ -78,18 +77,9 @@ export function useCartPoints(
       { action: CALCULATE_POINTS, pointsBalance: balance },
       { method: "post", action: route },
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOptimistic, balance, route, linesSignature]);
 
-  useEffect(() => {
-    setPointsMap(fetcher.data?.pointsMap ?? {});
-  }, [fetcher.data]);
-
-  useEffect(() => {
-    if (eligibleLines.length === 0) {
-      setPointsMap({});
-    }
-  }, [eligibleLines.length]);
+  const pointsMap = eligibleLines.length === 0 ? {} : (fetcher.data?.pointsMap ?? {});
 
   const totalPoints = Object.values(pointsMap).reduce(
     (sum: number, val) => (typeof val === "number" ? sum + val : sum),

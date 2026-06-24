@@ -105,6 +105,59 @@ describe("useCartPoints", () => {
     expect(result.current.totalPoints).toBe(0);
   });
 
+  test("re-submits when the cart lines change", () => {
+    let cart = settledCart("l1");
+    const { rerender } = renderHook(() => useCartPoints(cart, account(500)));
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+
+    cart = settledCart("l1", "l2");
+    act(() => rerender());
+    expect(mock.submit).toHaveBeenCalledTimes(2);
+  });
+
+  test("re-submits when the balance changes", () => {
+    let balance = 500;
+    const { rerender } = renderHook(() => useCartPoints(settledCart("l1"), account(balance)));
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+
+    balance = 600;
+    act(() => rerender());
+    expect(mock.submit).toHaveBeenCalledTimes(2);
+    expect(mock.submit).toHaveBeenLastCalledWith(
+      { action: "CalculatePoints", pointsBalance: 600 },
+      ROUTE,
+    );
+  });
+
+  test("reflects the latest fetcher data across refetches", () => {
+    const { result, rerender } = renderHook(() =>
+      useCartPoints(settledCart("l1", "l2"), account(500)),
+    );
+
+    mock.fetcher.data = { pointsMap: { l1: 100, l2: 50 } };
+    act(() => rerender());
+    expect(result.current.totalPoints).toBe(150);
+
+    mock.fetcher.data = { pointsMap: { l1: 200, l2: 50 } };
+    act(() => rerender());
+    expect(result.current.pointsMap).toEqual({ l1: 200, l2: 50 });
+    expect(result.current.totalPoints).toBe(250);
+  });
+
+  test("clears the map when the cart has no lines", () => {
+    let cart = settledCart("l1");
+    const { result, rerender } = renderHook(() => useCartPoints(cart, account(500)));
+
+    mock.fetcher.data = { pointsMap: { l1: 100 } };
+    act(() => rerender());
+    expect(result.current.pointsMap).toEqual({ l1: 100 });
+
+    cart = { isOptimistic: false, lines: { nodes: [] } };
+    act(() => rerender());
+    expect(result.current.pointsMap).toEqual({});
+    expect(result.current.totalPoints).toBe(0);
+  });
+
   test("submits to an explicit route override", () => {
     renderHook(() => useCartPoints(settledCart("l1"), account(500), { route: "/custom/points" }));
     expect(mock.submit).toHaveBeenCalledWith(

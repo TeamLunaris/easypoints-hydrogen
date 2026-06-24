@@ -6,7 +6,7 @@ import { useFetcher } from "react-router";
 import { useEasyPoints } from "../context";
 import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
-import type { PointsActionError, RedeemPointsResponse } from "../../server/routes/cartPoints";
+import type { RedeemPointsResponse } from "../../server/routes/cartPoints";
 
 /** Type handle to the cart-points route module — used only in type position (erased at build). */
 type CartPointsModule = typeof import("../../server/routes/cartPoints");
@@ -122,11 +122,16 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   const fetcher = useFetcher<RedeemPointsResponse | null>({ key: FETCHER_REDEMPTION_KEY });
 
   const { field, amount, reset } = useRedeemInput(pointsBalance ?? 0);
-  const [redeemedPoints, setRedeemedPoints] = useState<number | null>(null);
-  const [error, setError] = useState<PointsActionError | null>(null);
 
   const isSubmitting = fetcher.state === "submitting";
   const isValid = !isOptimistic && amount > 0;
+
+  // `redeemedPoints` / `error` reflect the settled (not in-flight) fetcher result. A new submit
+  // (isSubmitting) clears both until it resolves; UNDO resolves to a null body, which also clears
+  // them — so neither needs its own state nor an effect to copy `fetcher.data`.
+  const settled = !isSubmitting && fetcher.data && "success" in fetcher.data ? fetcher.data : null;
+  const redeemedPoints = settled?.success ? settled.points : null;
+  const error = settled && !settled.success ? (settled.error ?? null) : null;
 
   const submit = useCallback(() => {
     if (isOptimistic) return;
@@ -140,32 +145,12 @@ export function usePointsRedemption(params: UsePointsRedemptionParams = {}) {
   }, [amount, customerId, route, isOptimistic]);
 
   const undo = useCallback(() => {
-    setRedeemedPoints(null);
     reset();
-    setError(null);
 
     void fetcher.submit({ action: UNDO_REDEEM }, { method: "POST", action: route });
     // `fetcher` is intentionally excluded — including it can loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route, reset]);
-
-  // Reflect the redeem/undo result: lock in points on success, surface the structured error.
-  useEffect(() => {
-    const data = fetcher.data;
-    if (!data || !("success" in data)) return;
-
-    if (data.success) {
-      setError(null);
-      setRedeemedPoints(data.points);
-    } else if (data.error) {
-      setError(data.error);
-    }
-  }, [fetcher.data]);
-
-  // Clear stale errors as soon as a new submit starts.
-  useEffect(() => {
-    if (isSubmitting) setError(null);
-  }, [isSubmitting]);
 
   // Undo any active redemption when the cart changes (and on mount), mirroring the source.
   useEffect(() => {

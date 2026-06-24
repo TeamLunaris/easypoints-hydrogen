@@ -175,8 +175,16 @@ describe("usePointsRedemption", () => {
       expect(result.current.result.redeemedPoints).toBe(200);
 
       act(() => result.current.form.undo());
-
       expect(mock.submit).toHaveBeenCalledWith({ action: "UndoRedeem" }, ROUTE);
+
+      // UNDO puts the fetcher in flight, then resolves to a null body — both clear the points.
+      mock.fetcher.state = "submitting";
+      act(() => rerender());
+      expect(result.current.result.redeemedPoints).toBe(null);
+
+      mock.fetcher.state = "idle";
+      mock.fetcher.data = null;
+      act(() => rerender());
       expect(result.current.result.redeemedPoints).toBe(null);
     });
   });
@@ -197,6 +205,19 @@ describe("usePointsRedemption", () => {
         message: "Coupon could not be created",
       });
       expect(result.current.result.redeemedPoints).toBe(null);
+    });
+
+    test("clears a prior error once a redeem succeeds", () => {
+      const { result, rerender } = renderHook(() => usePointsRedemption({ pointsBalance: 1000 }));
+
+      mock.fetcher.data = { success: false, points: 0, error: { message: "nope" } };
+      act(() => rerender());
+      expect(result.current.result.error).not.toBe(null);
+
+      mock.fetcher.data = { success: true, points: 100 };
+      act(() => rerender());
+      expect(result.current.result.error).toBe(null);
+      expect(result.current.result.redeemedPoints).toBe(100);
     });
 
     test("clears a previous error when a new submit starts", () => {
