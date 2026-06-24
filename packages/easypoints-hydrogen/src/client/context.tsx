@@ -9,8 +9,7 @@ import type { ReactNode } from "react";
  * The shared value an {@link EasyPointsProvider} supplies to descendant hooks/components.
  *
  * Not all of it is configuration: `route` and `currencyCode` are static storefront config, while
- * `customerLoyalty` and `customerId` are per-request data about the current customer. Every field
- * is optional.
+ * `customerLoyalty` is per-request data about the current customer. Every field is optional.
  */
 export interface EasyPointsContext {
   /**
@@ -22,8 +21,6 @@ export interface EasyPointsContext {
   currencyCode?: string;
   /** The current customer's loyalty metafield, if the storefront resolved it server-side. */
   customerLoyalty?: CustomerLoyaltyMetafield | null;
-  /** The current customer's Shopify GID (`gid://shopify/Customer/…`). */
-  customerId?: string | null;
 }
 
 const Context = createContext<EasyPointsContext | null>(null);

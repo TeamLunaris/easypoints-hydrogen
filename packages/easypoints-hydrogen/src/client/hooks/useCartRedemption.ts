@@ -28,8 +28,6 @@ export const FETCHER_REDEMPTION_KEY = "redemption";
 export interface UseCartRedemptionParams {
   /** Redeemable balance. Falls back to the provider's `customerLoyalty.balance`. */
   pointsBalance?: number | null;
-  /** Customer GID submitted with the redeem action. Falls back to the provider's `customerId`. */
-  customerId?: string | null;
   /** Override the cart-points route path (else provider, else the route default). */
   route?: string;
   /** Disable submitting while the optimistic cart settles. */
@@ -115,7 +113,6 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
 
   const { isOptimistic = false } = params;
   const pointsBalance = params.pointsBalance ?? loyalty?.balance ?? null;
-  const customerId = params.customerId ?? context.customerId ?? null;
   const route = params.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
 
   const fetcher = useFetcher<RedeemPointsResponse | null>({ key: FETCHER_REDEMPTION_KEY });
@@ -123,10 +120,6 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
 
   if (pointsBalance === null) {
     throw new MissingContextError("pointsBalance", "a customer loyalty metafield");
-  }
-
-  if (customerId === null) {
-    throw new MissingContextError("customerId", "a customer ID");
   }
 
   const isSubmitting = fetcher.state === "submitting";
@@ -143,12 +136,12 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
     if (isOptimistic) return;
 
     void fetcher.submit(
-      { action: REDEEM_POINTS, customerId, points: amount },
+      { action: REDEEM_POINTS, points: amount },
       { method: "POST", action: route },
     );
     // `fetcher` is intentionally excluded — including it can loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amount, customerId, route, isOptimistic]);
+  }, [amount, route, isOptimistic]);
 
   const undo = useCallback(() => {
     reset();
