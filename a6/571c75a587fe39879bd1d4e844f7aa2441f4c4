@@ -1,0 +1,30 @@
+packages/easypoints-hydrogen/src/server/routes/cartPoints.ts
+  s_d3347afced6fe6::t_81b069205616fe 3
+  s_d3347afced6fe6::t_cf92473fcc1d6c 134
+  h_8c8bb3a0db3180 162,166,172,175
+packages/easypoints-hydrogen/src/server/errors.ts
+  s_d3347afced6fe6::t_bb695f22fa9405 40-52
+packages/easypoints-hydrogen/src/server.ts
+  s_d3347afced6fe6::t_3cfd106b6bc52c 33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.11",
+  "base_commit_sha": "a6571c75a587fe39879bd1d4e844f7aa2441f4c4",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_d3347afced6fe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "107cf90d-1cce-4c3c-a312-c61b520fc821",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
