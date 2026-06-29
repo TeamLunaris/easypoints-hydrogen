@@ -138,7 +138,6 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
       { method: "POST", action: route },
     );
     // `fetcher` is intentionally excluded — including it can loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount, route, isValid]);
 
   const undo = useCallback(() => {
@@ -146,7 +145,6 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
 
     void fetcher.submit({ action: UNDO_REDEEM }, { method: "POST", action: route });
     // `fetcher` is intentionally excluded — including it can loop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [route, reset]);
 
   return {
