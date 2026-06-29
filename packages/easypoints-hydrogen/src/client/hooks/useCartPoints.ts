@@ -71,7 +71,7 @@ export function useCartPoints(
   useEffect(() => {
     if (!cart || isOptimistic) return;
 
-    void fetcher.submit({ action: CALCULATE_POINTS }, { method: "post", action: route });
+    void fetcher.submit({ action: CALCULATE_POINTS }, { method: "POST", action: route });
   }, [isOptimistic, route, linesSignature]);
 
   let pointsMap: PointsMap = {};
