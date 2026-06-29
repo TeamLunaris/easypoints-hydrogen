@@ -27,7 +27,7 @@ vi.mock("react-router", () => ({
 
 setupFetcherMock(mock);
 
-const ROUTE = { method: "post", action: "/api/cart/points" };
+const ROUTE = { method: "POST", action: "/api/cart/points" };
 
 const settledCart = (...ids: string[]): PointsCart => ({
   isOptimistic: false,
@@ -101,7 +101,7 @@ describe("useCartPoints", () => {
     renderHook(() => useCartPoints(settledCart("l1"), { route: "/custom/points" }));
     expect(mock.submit).toHaveBeenCalledWith(
       { action: "CalculatePoints" },
-      { method: "post", action: "/custom/points" },
+      { method: "POST", action: "/custom/points" },
     );
   });
 
@@ -111,7 +111,7 @@ describe("useCartPoints", () => {
     });
     expect(mock.submit).toHaveBeenCalledWith(
       { action: "CalculatePoints" },
-      { method: "post", action: "/provider/points" },
+      { method: "POST", action: "/provider/points" },
     );
   });
 });
