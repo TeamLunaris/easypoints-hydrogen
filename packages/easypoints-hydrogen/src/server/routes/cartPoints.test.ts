@@ -17,6 +17,10 @@ interface ContextFixture {
   priceAmount?: string;
   /** Shop loyalty value the storefront fixture reports; `null` makes `productPoints` resolve `null`. */
   shopLoyalty?: ShopLoyaltyValue | null;
+  /** Discount codes already on the cart (exercises the merge paths). */
+  discountCodes?: { code: string; applicable?: boolean }[];
+  /** Cart attributes already on the cart (e.g. a tracked loyalty code). */
+  attributes?: { key: string; value?: string | null }[];
 }
 
 /**
@@ -30,6 +34,8 @@ function makeContext({
   createCoupon,
   priceAmount = "10.00",
   shopLoyalty = shopValue(5),
+  discountCodes,
+  attributes,
 }: ContextFixture = {}) {
   const { loyalty, createCoupon: createCouponSpy } = makeLoyaltyClient({
     customerLoyalty,
@@ -37,9 +43,18 @@ function makeContext({
     priceAmount,
     shopLoyalty,
   });
-  const { cart, updateDiscountCodes } = makeCart(lines);
+  const { cart, updateDiscountCodes, updateAttributes } = makeCart(lines, {
+    discountCodes,
+    attributes,
+  });
 
-  return { context: { cart, loyalty }, cart, updateDiscountCodes, createCoupon: createCouponSpy };
+  return {
+    context: { cart, loyalty },
+    cart,
+    updateDiscountCodes,
+    updateAttributes,
+    createCoupon: createCouponSpy,
+  };
 }
 
 /** Builds a POST request whose form body carries the given fields (e.g. `action`, `points`). */
@@ -70,9 +85,12 @@ describe("dispatcher", () => {
     );
   });
 
-  test("UNDO_REDEEM clears the discount codes and resolves null", async () => {
+  test("UNDO_REDEEM removes only the tracked loyalty code and resolves null", async () => {
     const action = createCartPointsAction();
-    const { context, updateDiscountCodes } = makeContext();
+    const { context, updateDiscountCodes, updateAttributes } = makeContext({
+      discountCodes: [{ code: "DISCOUNT10" }, { code: "PROMO20" }],
+      attributes: [{ key: "_loyaltyDiscountCode", value: "DISCOUNT10" }],
+    });
 
     const result = await action({
       context,
@@ -80,7 +98,20 @@ describe("dispatcher", () => {
     });
 
     expect(result).toBe(null);
-    expect(updateDiscountCodes).toHaveBeenCalledWith([]);
+    // Loyalty code dropped, the customer's other discount preserved.
+    expect(updateDiscountCodes).toHaveBeenCalledWith(["PROMO20"]);
+    expect(updateAttributes).toHaveBeenCalledWith([{ key: "_loyaltyDiscountCode", value: "" }]);
+  });
+
+  test("UNDO_REDEEM with no tracked code leaves existing codes untouched", async () => {
+    const action = createCartPointsAction();
+    const { context, updateDiscountCodes } = makeContext({
+      discountCodes: [{ code: "PROMO20" }],
+    });
+
+    await action({ context, request: makeRequest({ action: ACTIONS.UNDO_REDEEM }) });
+
+    expect(updateDiscountCodes).toHaveBeenCalledWith(["PROMO20"]);
   });
 });
 
@@ -149,6 +180,42 @@ describe("REDEEM_POINTS", () => {
       productIds: ["1"],
     });
     expect(updateDiscountCodes).toHaveBeenCalledWith(["DISCOUNT10"]);
+  });
+
+  test("records the applied code in the loyalty cart attribute", async () => {
+    const action = createCartPointsAction();
+    const { context, updateAttributes } = makeContext();
+
+    await redeem(action, context, "100");
+
+    expect(updateAttributes).toHaveBeenCalledWith([
+      { key: "_loyaltyDiscountCode", value: "DISCOUNT10" },
+    ]);
+  });
+
+  test("merges the loyalty code with existing non-loyalty codes", async () => {
+    const action = createCartPointsAction();
+    const { context, updateDiscountCodes } = makeContext({
+      discountCodes: [{ code: "PROMO20" }],
+    });
+
+    await redeem(action, context, "100");
+
+    // The customer's PROMO20 survives; the loyalty code is appended.
+    expect(updateDiscountCodes).toHaveBeenCalledWith(["PROMO20", "DISCOUNT10"]);
+  });
+
+  test("replaces a prior loyalty code instead of stacking it", async () => {
+    const action = createCartPointsAction();
+    const { context, updateDiscountCodes } = makeContext({
+      discountCodes: [{ code: "OLDLOYALTY" }, { code: "PROMO20" }],
+      attributes: [{ key: "_loyaltyDiscountCode", value: "OLDLOYALTY" }],
+    });
+
+    await redeem(action, context, "100");
+
+    // OLDLOYALTY (the tracked prior code) is dropped, PROMO20 kept, new code appended.
+    expect(updateDiscountCodes).toHaveBeenCalledWith(["PROMO20", "DISCOUNT10"]);
   });
 
   test("dedupes product ids and honors lineFilter when building the coupon", async () => {

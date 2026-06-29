@@ -107,20 +107,41 @@ export function makeLine(overrides: Partial<CartLine> = {}): CartLine {
   };
 }
 
-/** Builds the Hydrogen cart handler plus the `updateDiscountCodes` spy tests assert on. */
-export function makeCart(lines: CartLine[] = [makeLine()]) {
+interface CartState {
+  /** Discount codes already on the cart (loyalty and otherwise). */
+  discountCodes?: { code: string; applicable?: boolean }[];
+  /** Cart attributes, e.g. the tracked loyalty code. */
+  attributes?: { key: string; value?: string | null }[];
+}
+
+type CartGetResult = {
+  lines: { nodes: CartLine[] };
+  discountCodes: { code: string; applicable?: boolean }[];
+  attributes: { key: string; value?: string | null }[];
+};
+
+/**
+ * Builds the Hydrogen cart handler plus the `updateDiscountCodes` / `updateAttributes` spies tests
+ * assert on. Seed existing discount codes / attributes via `state` to exercise the merge paths.
+ */
+export function makeCart(lines: CartLine[] = [makeLine()], state: CartState = {}) {
   const updateDiscountCodes = vi.fn(async () => ({}));
+  const updateAttributes = vi.fn(async () => ({}));
 
   const cart = {
-    get: async (): Promise<{ lines: { nodes: CartLine[] } } | null> => ({
+    get: async (): Promise<CartGetResult | null> => ({
       lines: { nodes: lines },
+      discountCodes: state.discountCodes ?? [],
+      attributes: state.attributes ?? [],
     }),
     updateDiscountCodes,
+    updateAttributes,
   };
 
   return {
     cart,
     updateDiscountCodes,
+    updateAttributes,
   };
 }
 

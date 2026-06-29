@@ -9,6 +9,14 @@ import type { SelectedOptionInput } from "@shopify/hydrogen/storefront-api-types
 /** Default path the merchant should mount the resource route at. Consumed type-side by the client hooks. */
 export const CART_POINTS_ROUTE_PATH = "/api/cart/points";
 
+/**
+ * Cart attribute key that records the discount code applied by the most recent redemption. Lets
+ * `UNDO_REDEEM` remove only the loyalty code (and `REDEEM_POINTS` replace a prior one) without
+ * clobbering other discount codes the customer has on the cart. Leading underscore marks it private
+ * to Shopify (hidden from the storefront).
+ */
+export const LOYALTY_DISCOUNT_CODE_ATTRIBUTE = "_loyaltyDiscountCode";
+
 /** The `action` form-field values the dispatcher switches on. */
 export const ACTIONS = {
   CALCULATE_POINTS: "CalculatePoints",
@@ -26,13 +34,18 @@ export interface CartLine {
   };
 }
 
-/** Cart shape returned by `cart.get()`, narrowed to its line nodes. */
-type CartData = { lines?: { nodes?: CartLine[] } | null } | null;
+/** Cart shape returned by `cart.get()`, narrowed to the fields the points actions read. */
+type CartData = {
+  lines?: { nodes?: CartLine[] } | null;
+  discountCodes?: { code: string; applicable?: boolean }[] | null;
+  attributes?: { key: string; value?: string | null }[] | null;
+} | null;
 
 /** The Hydrogen cart handler surface the actions use. */
 interface Cart {
   get: () => Promise<CartData>;
   updateDiscountCodes: (codes: string[]) => Promise<unknown>;
+  updateAttributes: (attributes: { key: string; value: string }[]) => Promise<unknown>;
 }
 
 /** The request context the dispatcher operates against. */
@@ -81,8 +94,10 @@ export interface CreateCartPointsActionOptions {
  * {@link CART_POINTS_ROUTE_PATH}). It reads the `action` form field and dispatches to one of
  * {@link ACTIONS}:
  * - `CALCULATE_POINTS` → `{ pointsMap }` keyed by line id;
- * - `REDEEM_POINTS` → creates a coupon then applies its code via `cart.updateDiscountCodes`;
- * - `UNDO_REDEEM` → clears the cart's discount codes.
+ * - `REDEEM_POINTS` → creates a coupon, merges its code into the cart's existing discount codes
+ *   (replacing a prior loyalty code, preserving the rest), and records it in the
+ *   {@link LOYALTY_DISCOUNT_CODE_ATTRIBUTE} cart attribute;
+ * - `UNDO_REDEEM` → removes only the tracked loyalty discount code, leaving other codes intact.
  *
  * @param options - See {@link CreateCartPointsActionOptions} (notably `lineFilter`).
  * @returns The `action` dispatcher.
@@ -93,6 +108,17 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
   /** Returns the cart's eligible lines (after `lineFilter`). */
   function eligibleLines(cart: CartData): CartLine[] {
     return (cart?.lines?.nodes ?? []).filter(lineFilter);
+  }
+
+  /** All discount codes currently on the cart, loyalty and otherwise. */
+  function existingDiscountCodes(cart: CartData): string[] {
+    return (cart?.discountCodes ?? []).map((dc) => dc.code);
+  }
+
+  /** The loyalty code recorded by the last redemption, or `null` if none is tracked. */
+  function trackedLoyaltyCode(cart: CartData): string | null {
+    const attr = (cart?.attributes ?? []).find((a) => a.key === LOYALTY_DISCOUNT_CODE_ATTRIBUTE);
+    return attr?.value || null;
   }
 
   /**
@@ -170,7 +196,23 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
     }
 
     if ("data" in resp && resp.data?.code) {
-      await context.cart.updateDiscountCodes([resp.data.code]);
+      const newCode = resp.data.code;
+
+      // Merge our code into the cart's existing codes rather than replacing them — preserve any
+      // non-loyalty discount the customer applied, and drop a prior loyalty code so repeat
+      // redemptions don't stack. Record the applied code so UNDO_REDEEM can remove just this one.
+      const priorCode = trackedLoyaltyCode(cart);
+      const kept = existingDiscountCodes(cart).filter(
+        (code) => code !== priorCode && code !== newCode,
+      );
+
+      // Run both updates concurrently: a cart provably exists here (we created a coupon against
+      // its lines), so neither call hits the handler's lazy-create branch, and they write disjoint
+      // cart fields (discount codes vs. attributes), so there's no race to lose.
+      await Promise.all([
+        context.cart.updateDiscountCodes([...kept, newCode]),
+        context.cart.updateAttributes([{ key: LOYALTY_DISCOUNT_CODE_ATTRIBUTE, value: newCode }]),
+      ]);
 
       return {
         success: true,
@@ -186,10 +228,19 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
   }
 
   /**
-   * Clears the cart's discount codes, undoing a redemption.
+   * Removes the tracked loyalty discount code, undoing a redemption while leaving any other
+   * discount codes on the cart intact.
    */
   async function undoRedeem(context: ActionContext): Promise<null> {
-    await context.cart.updateDiscountCodes([]);
+    const cart = await context.cart.get();
+    const loyaltyCode = trackedLoyaltyCode(cart);
+
+    const kept = existingDiscountCodes(cart).filter((code) => code !== loyaltyCode);
+
+    await Promise.all([
+      context.cart.updateDiscountCodes(kept),
+      context.cart.updateAttributes([{ key: LOYALTY_DISCOUNT_CODE_ATTRIBUTE, value: "" }]),
+    ]);
     return null;
   }
 
