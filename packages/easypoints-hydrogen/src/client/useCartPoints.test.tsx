@@ -60,23 +60,6 @@ describe("useCartPoints", () => {
     expect(result.current.totalPoints).toBe(150);
   });
 
-  test("clears the map once lineFilter excludes every line", () => {
-    let include = true;
-    const { result, rerender } = renderHook(() =>
-      useCartPoints(settledCart("l1"), { lineFilter: () => include }),
-    );
-
-    mock.fetcher.data = { pointsMap: { l1: 100 } };
-    act(() => rerender());
-    expect(result.current.pointsMap).toEqual({ l1: 100 });
-
-    // Eligible count transitions 1 -> 0, which clears the accumulated map.
-    include = false;
-    act(() => rerender());
-    expect(result.current.pointsMap).toEqual({});
-    expect(result.current.totalPoints).toBe(0);
-  });
-
   test("re-submits when the cart lines change", () => {
     let cart = settledCart("l1");
     const { rerender } = renderHook(() => useCartPoints(cart));

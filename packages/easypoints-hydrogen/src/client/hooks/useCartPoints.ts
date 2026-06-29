@@ -36,28 +36,24 @@ export interface PointsCart {
 export interface UseCartPointsOptions {
   /** Override the cart-points route path (else provider, else the route default). */
   route?: string;
-  /**
-   * Predicate selecting which cart lines participate. Defaults to including every line. Mirror the
-   * server `lineFilter` (e.g. exclude shipping protection) so the client count stays in sync.
-   */
-  lineFilter?: (line: PointsCartLine) => boolean;
 }
 
 /**
  * Tracks loyalty points for the items in a cart.
  *
  * Maintains a `pointsMap` keyed by cart-line id and refetches it from the cart-points route
- * whenever the cart leaves its optimistic state or the eligible line ids/quantities change.
- * Clears the map when the cart has no eligible lines.
+ * whenever the cart leaves its optimistic state or its line ids/quantities change. The server
+ * route is the single source of truth for which lines earn points and how many; this hook
+ * surfaces its response verbatim. Clears the map when the cart has no lines.
  *
  * Accepts a nullable cart so it can be wired directly to Hydrogen's loader cart or
  * `useOptimisticCart` output. When `cart` is `null`/`undefined` (not yet loaded) or has no
- * eligible lines, the hook skips the fetch and returns an empty map — it never throws.
+ * lines, the hook skips the fetch and returns an empty map — it never throws.
  *
  * @param cart - The (optionally optimistic) cart, or `null`/`undefined` before it loads.
  * @param options - See {@link UseCartPointsOptions}.
  * @returns `{ pointsMap, totalPoints }` — the per-line map and the summed total
- *   (`{}` and `0` until an eligible cart resolves).
+ *   (`{}` and `0` until a cart resolves).
  */
 export function useCartPoints(
   cart: PointsCart | null | undefined,
@@ -67,11 +63,10 @@ export function useCartPoints(
   const fetcher = useFetcher<CalculatePointsResponse>();
 
   const route = options.route ?? context.route ?? CART_POINTS_ROUTE_PATH;
-  const lineFilter = options.lineFilter ?? (() => true);
 
   const isOptimistic = cart?.isOptimistic ?? false;
-  const eligibleLines = (cart?.lines?.nodes ?? []).filter(lineFilter);
-  const linesSignature = eligibleLines.map((l) => `${l.id}:${l.quantity ?? 1}`).join(",");
+  const lines = cart?.lines?.nodes ?? [];
+  const linesSignature = lines.map((l) => `${l.id}:${l.quantity ?? 1}`).join(",");
 
   useEffect(() => {
     if (!cart || isOptimistic) return;
@@ -80,7 +75,7 @@ export function useCartPoints(
   }, [isOptimistic, route, linesSignature]);
 
   let pointsMap: PointsMap = {};
-  if (eligibleLines.length > 0) {
+  if (lines.length > 0) {
     pointsMap = fetcher.data?.pointsMap ?? {};
   }
 
