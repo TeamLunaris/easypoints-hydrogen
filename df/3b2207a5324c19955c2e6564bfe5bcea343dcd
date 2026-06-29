@@ -1,0 +1,14 @@
+packages/easypoints-hydrogen/src/client/hooks/useCartPoints.ts
+  h_8c8bb3a0db3180 74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "df3b2207a5324c19955c2e6564bfe5bcea343dcd",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
