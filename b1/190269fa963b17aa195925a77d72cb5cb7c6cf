@@ -1,0 +1,20 @@
+packages/easypoints-hydrogen/src/client/hooks/useCartPoints.ts
+  s_6077e93f5285ac::t_16dfb6c5d2d8ac 45-47,51,56
+  s_6077e93f5285ac::t_219b527a29ef44 68-69,78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "b1190269fa963b17aa195925a77d72cb5cb7c6cf",
+  "prompts": {},
+  "sessions": {
+    "s_6077e93f5285ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5cba7b19-eea2-4535-83ca-fa1d540a77dc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
