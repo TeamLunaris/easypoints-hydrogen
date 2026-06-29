@@ -1,0 +1,31 @@
+packages/easypoints-hydrogen/src/server/routes/cartPoints.ts
+  s_6077e93f5285ac::t_656d858ca53817 37-42,48
+  s_6077e93f5285ac::t_717908879ee8fc 228-229,232-238
+  s_6077e93f5285ac::t_ecf73fa38c5c50 12-19
+  s_6077e93f5285ac::t_1cf1dedefcd5c8 97-100
+  s_6077e93f5285ac::t_63a5dbaff037fd 199-212
+  s_6077e93f5285ac::t_8356c3e0302947 113-123
+packages/easypoints-hydrogen/src/test-support/context.ts
+  s_6077e93f5285ac::t_94c6efb7c91152 110-127,129,132,134-135,138,144
+packages/easypoints-hydrogen/src/server/routes/cartPoints.test.ts
+  s_6077e93f5285ac::t_294b43119d8da8 37-38,46-49,51-57
+  s_6077e93f5285ac::t_e724869b98b7d1 20-23
+  s_6077e93f5285ac::t_048c5e42ec7f97 88,90-93,101-114
+  s_6077e93f5285ac::t_b0e24b12117488 185-220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "f46cabe1c077ecf7c1bdf4054a59889ae3e5a938",
+  "prompts": {},
+  "sessions": {
+    "s_6077e93f5285ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5cba7b19-eea2-4535-83ca-fa1d540a77dc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
