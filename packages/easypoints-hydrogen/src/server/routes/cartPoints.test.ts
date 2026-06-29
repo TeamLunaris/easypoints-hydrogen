@@ -269,7 +269,11 @@ describe("REDEEM_POINTS", () => {
     const action = createCartPointsAction();
     const { context, createCoupon, updateDiscountCodes } = makeContext();
 
-    expect(await redeem(action, context, "1.5")).toEqual({ success: false, points: 1.5 });
+    expect(await redeem(action, context, "1.5")).toEqual({
+      success: false,
+      points: 1.5,
+      error: { code: "invalid_points", message: "Points must be a positive integer" },
+    });
     expect(createCoupon).not.toHaveBeenCalled();
     expect(updateDiscountCodes).not.toHaveBeenCalled();
   });
@@ -278,7 +282,11 @@ describe("REDEEM_POINTS", () => {
     const action = createCartPointsAction();
     const { context, createCoupon } = makeContext();
 
-    expect(await redeem(action, context, "abc")).toEqual({ success: false, points: NaN });
+    expect(await redeem(action, context, "abc")).toEqual({
+      success: false,
+      points: 0,
+      error: { code: "invalid_points", message: "Points must be a positive integer" },
+    });
     expect(createCoupon).not.toHaveBeenCalled();
   });
 
@@ -286,8 +294,20 @@ describe("REDEEM_POINTS", () => {
     const action = createCartPointsAction();
     const { context, createCoupon } = makeContext();
 
-    expect(await redeem(action, context, "0")).toEqual({ success: false, points: 0 });
-    expect(await redeem(action, context, "-5")).toEqual({ success: false, points: -5 });
+    const invalidPointsError = {
+      code: "invalid_points",
+      message: "Points must be a positive integer",
+    };
+    expect(await redeem(action, context, "0")).toEqual({
+      success: false,
+      points: 0,
+      error: invalidPointsError,
+    });
+    expect(await redeem(action, context, "-5")).toEqual({
+      success: false,
+      points: -5,
+      error: invalidPointsError,
+    });
     expect(createCoupon).not.toHaveBeenCalled();
   });
 

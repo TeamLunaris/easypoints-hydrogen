@@ -164,7 +164,9 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
       return {
         success: false,
         error: { code: "invalid_points", message: "Points must be a positive integer" },
-        points: 0,
+        // Echo the attempted value, but coerce non-numeric input (NaN/Infinity) to 0 so we never
+        // return NaN (which serializes to null) to the client.
+        points: Number.isFinite(points) ? points : 0,
       };
     }
 
