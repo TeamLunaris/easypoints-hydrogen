@@ -1,20 +1,40 @@
 # @examples/storefront
 
-A minimal consumer of [`@lunaris/easypoints-hydrogen`](../../packages/easypoints-hydrogen) used
-for local development of the library.
+A minimal **real Hydrogen** storefront (scaffolded with `pnpm create @shopify/hydrogen@latest`,
+Mock.shop data) that consumes [`@teamlunaris/easypoints-hydrogen`](../../packages/easypoints-hydrogen)
+end-to-end. It exists to prove the library is consumable by a real merchant and for local dev.
 
-At the scaffolding stage this is a smoke-test consumer: it imports the library across the pnpm
-workspace link (proving single-React resolution) and logs the version. There is no full Hydrogen
-runtime yet.
+## easyPoints wiring
 
-## Turning this into a real Hydrogen storefront
+| Concern | File |
+| --- | --- |
+| Mount `createEasyPointsClient` as `context.loyalty` + `.init(...)` | [`app/lib/context.ts`](./app/lib/context.ts) |
+| Cart-points resource route (`createCartPointsAction()`) at `/api/cart/points` | [`app/routes/api.cart.points.tsx`](./app/routes/api.cart.points.tsx) |
+| Embed the `CustomerLoyaltyMetafield` fragment in the customer query | [`app/graphql/customer-account/CustomerDetailsQuery.ts`](./app/graphql/customer-account/CustomerDetailsQuery.ts) |
+| `EasyPointsProvider` (shared config) | [`app/root.tsx`](./app/root.tsx) |
+| `<ProductPoints>` (server-side points calc) | [`app/routes/products.$handle.tsx`](./app/routes/products.$handle.tsx) |
+| `<CustomerLoyalty>` + `<TierProgress>` | [`app/routes/account._index.tsx`](./app/routes/account._index.tsx) |
+| `useCartPoints` + `<CartRedemption>` | [`app/routes/cart.tsx`](./app/routes/cart.tsx) |
 
-Run the Hydrogen scaffolder and merge its output into this directory (it is interactive):
+## Environment
+
+The merchant supplies easyPoints credentials via env vars (see [`.env.example`](./.env.example)),
+read in `app/lib/context.ts`:
+
+- `EASY_POINTS_API_TOKEN` — Bearer token (requests are unauthenticated without it).
+- `EASY_POINTS_API_ENDPOINT` — optional base override (default `https://loyalty.slrs.io/api`).
+
+## Scripts
 
 ```sh
-pnpm create @shopify/hydrogen@latest
+pnpm --filter @examples/storefront dev      # shopify hydrogen dev (MiniOxygen)
+pnpm --filter @examples/storefront build    # shopify hydrogen build
+pnpm --filter @examples/storefront check    # react-router typegen && tsc --noEmit
 ```
 
-Then keep the `@lunaris/easypoints-hydrogen` dependency at `workspace:*` and the
-`resolve.dedupe` setting in `vite.config.ts`, and mount the loyalty client into
-`context` following the pattern in `solaris-cards-storefront/app/lib/context.ts`.
+Typecheck and build work without a live store/token (Mock.shop + the loyalty calls degrade to
+"no points"). A full live smoke needs a real Shopify store + easyPoints token.
+
+> This example keeps the standard Hydrogen toolchain (`@shopify/cli` + the Hydrogen/Oxygen Vite
+> plugins) rather than the workspace's Vite+ (`vp`) — a real merchant app builds the way Shopify
+> ships it. The library package still builds/lints with `vp`.

@@ -1,0 +1,152 @@
+import { afterEach, describe, expect, test, vi } from "vite-plus/test";
+
+import { ContextError } from "./errors";
+import { queryCustomerLoyalty } from "./loyalty-customer";
+
+import { makeCustomerContext } from "../test-support/context";
+
+import type { Context } from "./loyalty";
+
+/** A complete (snake_case) metafield value as the API returns it. */
+const METAFIELD_VALUE = JSON.stringify({
+  balance: 100,
+  currency_value: 100,
+  tier: "Gold",
+  tier_uid: "abc",
+  point_value: 1,
+  expiration_date: null,
+  tier_name: "Gold",
+  percentage: 1,
+  include_tax: false,
+  tier_maintenance_data: {
+    maintenance_data: {
+      amount: "¥0",
+      currency: "JPY",
+      raw_amount: 0,
+      deadline: null,
+      spent_requirement: { amount: "¥0", currency: "JPY", raw_amount: 0 },
+    },
+    advancement_data: {
+      amount: "¥0",
+      currency: "JPY",
+      raw_amount: 0,
+      deadline: null,
+      spent_requirement: { amount: "¥0", currency: "JPY", raw_amount: 0 },
+      tier_uid: "abc",
+      tier_name: "Gold",
+      tiers: [],
+    },
+  },
+});
+
+const loggedInWith = (loyalty: { value: string | null } | null) => {
+  return makeCustomerContext({
+    isLoggedIn: async () => true,
+    query: async () => ({ data: { customer: { id: "gid://shopify/Customer/1", loyalty } } }),
+  });
+};
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
+describe("queryCustomerLoyalty", () => {
+  test("throws ContextError when customerAccount is missing", async () => {
+    const context = { customerAccount: undefined, storefront: {} } as unknown as Context;
+
+    await expect(queryCustomerLoyalty(context)).rejects.toBeInstanceOf(ContextError);
+  });
+
+  test("returns null when the customer is not logged in", async () => {
+    const context = makeCustomerContext({ isLoggedIn: async () => false });
+
+    expect(await queryCustomerLoyalty(context)).toBe(null);
+  });
+
+  test("returns null when the query reports GraphQL errors", async () => {
+    const context = makeCustomerContext({
+      query: async () => ({
+        data: { customer: { id: "1", loyalty: { value: METAFIELD_VALUE } } },
+        errors: [{ message: "boom" }],
+      }),
+    });
+
+    expect(await queryCustomerLoyalty(context)).toBe(null);
+  });
+
+  test("returns null when there is no customer in the response", async () => {
+    const context = makeCustomerContext({ query: async () => ({ data: { customer: null } }) });
+
+    expect(await queryCustomerLoyalty(context)).toBe(null);
+  });
+
+  test("returns null when the loyalty metafield is absent", async () => {
+    expect(await queryCustomerLoyalty(loggedInWith(null))).toBe(null);
+  });
+
+  test("returns null when the loyalty metafield value is empty", async () => {
+    expect(await queryCustomerLoyalty(loggedInWith({ value: "" }))).toBe(null);
+  });
+
+  test("parses and camelCases a valid loyalty metafield", async () => {
+    const result = await queryCustomerLoyalty(loggedInWith({ value: METAFIELD_VALUE }));
+
+    expect(result).toEqual({
+      customerId: "gid://shopify/Customer/1",
+      balance: 100,
+      currencyValue: 100,
+      tier: "Gold",
+      tierUid: "abc",
+      pointValue: 1,
+      expirationDate: null,
+      tierName: "Gold",
+      percentage: 1,
+      includeTax: false,
+      tierMaintenanceData: {
+        maintenanceData: {
+          amount: "¥0",
+          currency: "JPY",
+          rawAmount: 0,
+          deadline: null,
+          spentRequirement: { amount: "¥0", currency: "JPY", rawAmount: 0 },
+        },
+        advancementData: {
+          amount: "¥0",
+          currency: "JPY",
+          rawAmount: 0,
+          deadline: null,
+          spentRequirement: { amount: "¥0", currency: "JPY", rawAmount: 0 },
+          tierUid: "abc",
+          tierName: "Gold",
+          tiers: [],
+        },
+      },
+    });
+  });
+
+  test("returns null and logs when the metafield shape is incomplete", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    // Missing tier, tierMaintenanceData, etc. — the shape consumers like useTierProgress rely on.
+    const partial = JSON.stringify({
+      balance: 100,
+      currency_value: 100,
+      tier_uid: "abc",
+      point_value: 1,
+    });
+
+    expect(await queryCustomerLoyalty(loggedInWith({ value: partial }))).toBe(null);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  test("returns null and logs when the query throws", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const context = makeCustomerContext({
+      query: async () => {
+        throw new Error("network down");
+      },
+    });
+
+    expect(await queryCustomerLoyalty(context)).toBe(null);
+    expect(errorSpy).toHaveBeenCalled();
+  });
+});

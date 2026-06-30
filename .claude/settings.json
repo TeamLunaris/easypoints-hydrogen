@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm exec vp check:*)",
+      "Bash(pnpm exec vp test:*)",
+      "Bash(pnpm exec vp pack:*)",
+      "Bash(pnpm exec vp run:*)",
+      "Bash(pnpm exec vp:*)"
+    ]
+  }
+}

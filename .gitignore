@@ -14,6 +14,10 @@ dist/
 .shopify/
 .cache/
 .turbo/
+.react-router/
+
+# TypeScript incremental build info
+*.tsbuildinfo
 
 # Env / secrets
 .env
@@ -24,6 +28,9 @@ dist/
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# Local-only Claude notes (may reference private repos)
+CLAUDE.local.md
 
 # OS / editor
 .DS_Store
