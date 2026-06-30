@@ -1,6 +1,6 @@
 {
   "name": "@teamlunaris/easypoints-hydrogen",
-  "version": "0.1.0",
+  "version": "0.1.0-rc.1",
   "description": "Headless React building blocks and a server-side client to integrate the easyPoints loyalty program into Shopify Hydrogen storefronts.",
   "license": "GPL-3.0-only",
   "files": [
