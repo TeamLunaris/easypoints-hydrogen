@@ -70,6 +70,19 @@ describe("useCartPoints", () => {
     expect(mock.submit).toHaveBeenCalledTimes(2);
   });
 
+  test("does not re-submit when revalidation re-renders with the same (reordered) lines", () => {
+    // A fetcher POST revalidates page loaders, re-rendering this hook with a fresh cart object
+    // whose lines may come back in a different order. Same content must not re-fetch, else the
+    // fetch ⇆ revalidate cycle loops forever.
+    let cart = settledCart("l1", "l2");
+    const { rerender } = renderHook(() => useCartPoints(cart));
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+
+    cart = settledCart("l2", "l1");
+    act(() => rerender());
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+  });
+
   test("reflects the latest fetcher data across refetches", () => {
     const { result, rerender } = renderHook(() => useCartPoints(settledCart("l1", "l2")));
 
