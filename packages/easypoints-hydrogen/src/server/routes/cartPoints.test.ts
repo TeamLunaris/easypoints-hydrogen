@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vite-plus/test";
 
-import { ACTIONS, createCartPointsAction } from "./cartPoints";
+import { createCartPointsAction } from "./cartPoints";
+import { CART_POINTS_ACTIONS as ACTIONS } from "../../shared/cartPoints";
 
 import { makeCart, makeLine, makeLoyaltyClient } from "../../test-support/context";
 import { shopValue } from "../../test-support/fixtures/shop";

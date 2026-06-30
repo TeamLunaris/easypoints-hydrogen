@@ -2,12 +2,13 @@ import { parseGid } from "@shopify/hydrogen";
 
 import { CustomerNotAuthenticatedError } from "../errors";
 import { productPoints } from "../product";
+// Browser-safe route contract (action ids + response types). The server handler and the client
+// hooks share this single source of truth; see `shared/cartPoints`.
+import { CART_POINTS_ACTIONS as ACTIONS } from "../../shared/cartPoints";
 
 import type { EasyPointsClient } from "../loyalty";
+import type { CalculatePointsResponse, RedeemPointsResponse } from "../../shared/cartPoints";
 import type { SelectedOptionInput } from "@shopify/hydrogen/storefront-api-types";
-
-/** Default path the merchant should mount the resource route at. Consumed type-side by the client hooks. */
-export const CART_POINTS_ROUTE_PATH = "/api/cart/points";
 
 /**
  * Cart attribute key that records the discount code applied by the most recent redemption. Lets
@@ -16,13 +17,6 @@ export const CART_POINTS_ROUTE_PATH = "/api/cart/points";
  * to Shopify (hidden from the storefront).
  */
 export const LOYALTY_DISCOUNT_CODE_ATTRIBUTE = "_loyaltyDiscountCode";
-
-/** The `action` form-field values the dispatcher switches on. */
-export const ACTIONS = {
-  CALCULATE_POINTS: "CalculatePoints",
-  REDEEM_POINTS: "RedeemPoints",
-  UNDO_REDEEM: "UndoRedeem",
-} as const;
 
 /** A cart line, narrowed to the fields the points actions read. */
 export interface CartLine {
@@ -58,23 +52,6 @@ interface ActionContext {
 interface ActionArgs {
   request: Request;
   context: ActionContext;
-}
-
-/** Structured error returned by the redeem action (replaces the source's `t::` strings). */
-export interface PointsActionError {
-  code?: string;
-  message: string;
-}
-
-type PointsMap = Record<string, number | null>;
-/** Response for the `CALCULATE_POINTS` action: line id → points (or `null` when uncomputable). */
-export type CalculatePointsResponse = { pointsMap: PointsMap } | null;
-
-/** Response for the `REDEEM_POINTS` action. */
-export interface RedeemPointsResponse {
-  success: boolean;
-  points: number;
-  error?: PointsActionError;
 }
 
 /** Options for {@link createCartPointsAction}. */
@@ -141,7 +118,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
       ),
     );
 
-    const pointsMap: PointsMap = {};
+    const pointsMap: NonNullable<CalculatePointsResponse>["pointsMap"] = {};
     cartLines.forEach((line, index) => {
       pointsMap[line.id] = points[index]?.totalPoints ?? null;
     });

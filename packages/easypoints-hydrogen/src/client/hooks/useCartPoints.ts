@@ -5,19 +5,12 @@ import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
 
-import type { CalculatePointsResponse } from "../../server/routes/cartPoints";
+import { CART_POINTS_ACTIONS, CART_POINTS_ROUTE_PATH } from "../../shared/cartPoints";
 
-/** Type handle to the cart-points route module — used only in type position (erased at build). */
-type CartPointsModule = typeof import("../../server/routes/cartPoints");
+import type { CalculatePointsResponse } from "../../shared/cartPoints";
 
 /** Per-line points map, derived from the route's response so it stays the single source of truth. */
 type PointsMap = NonNullable<CalculatePointsResponse>["pointsMap"];
-
-/** Default route path, pinned to the route's `CART_POINTS_ROUTE_PATH` const type. */
-const CART_POINTS_ROUTE_PATH: CartPointsModule["CART_POINTS_ROUTE_PATH"] = "/api/cart/points";
-
-/** `CALCULATE_POINTS` action value, pinned to the route's `ACTIONS` const type. */
-const CALCULATE_POINTS: CartPointsModule["ACTIONS"]["CALCULATE_POINTS"] = "CalculatePoints";
 
 /** A cart line, narrowed to the fields this hook reads. Compatible with Hydrogen cart lines. */
 export interface PointsCartLine {
@@ -85,7 +78,11 @@ export function useCartPoints(
     if (lastFetchedSignature.current === linesSignature) return;
 
     lastFetchedSignature.current = linesSignature;
-    void fetcher.submit({ action: CALCULATE_POINTS }, { method: "POST", action: route });
+
+    void fetcher.submit(
+      { action: CART_POINTS_ACTIONS.CALCULATE_POINTS },
+      { method: "POST", action: route },
+    );
   }, [isOptimistic, route, linesSignature]);
 
   let pointsMap: PointsMap = {};

@@ -7,7 +7,7 @@ import { useCartPoints } from "./hooks/useCartPoints";
 import { createWrapper, setupFetcherMock } from "../test-support/react";
 
 import type { PointsCart } from "./hooks/useCartPoints";
-import type { CalculatePointsResponse } from "../server/routes/cartPoints";
+import type { CalculatePointsResponse } from "../shared/cartPoints";
 import type { FetcherMock } from "../test-support/react";
 
 // A single mutable fetcher stands in for `useFetcher`. Tests drive it by mutating `data` and

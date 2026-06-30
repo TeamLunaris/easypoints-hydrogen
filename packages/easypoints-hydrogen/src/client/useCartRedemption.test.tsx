@@ -7,7 +7,7 @@ import { useCartRedemption } from "./hooks/useCartRedemption";
 import { account } from "../test-support/fixtures/loyalty";
 import { createWrapper, setupFetcherMock } from "../test-support/react";
 
-import type { RedeemPointsResponse } from "../server/routes/cartPoints";
+import type { RedeemPointsResponse } from "../shared/cartPoints";
 import type { FetcherMock } from "../test-support/react";
 
 // A single mutable fetcher stands in for `useFetcher`. Tests drive it by mutating `data` / `state`

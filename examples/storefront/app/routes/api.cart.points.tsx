@@ -1,21 +1,18 @@
 import type {Route} from './+types/api.cart.points';
 
-// Keep these route action ids local and browser-safe. Route modules are lazy-loaded in the client,
-// so importing `@lunaris/easypoints-hydrogen/server` at module scope crashes with the server-only
-// guard before the action can run on the server.
-export const CART_POINTS_ACTIONS = {
-  CALCULATE_POINTS: 'CalculatePoints',
-  REDEEM_POINTS: 'RedeemPoints',
-  UNDO_REDEEM: 'UndoRedeem',
-} as const;
-
-export type CalculatePointsResponse = {
-  pointsMap: Record<string, number | null>;
-} | null;
+// The route contract (action ids + response type) is browser-safe, so it comes from the root
+// entry — re-exporting it here keeps it colocated with the route for consumers of this module.
+export {CART_POINTS_ACTIONS} from '@lunaris/easypoints-hydrogen';
+export type {CalculatePointsResponse} from '@lunaris/easypoints-hydrogen';
 
 // Mounted at `/api/cart/points` (matches the library's `CART_POINTS_ROUTE_PATH` default).
 // Dispatches the CalculatePoints / RedeemPoints / UndoRedeem actions against `context.cart`
-// + `context.loyalty`. Pass a `lineFilter` here to exclude lines that shouldn't earn points.
+// + `context.loyalty`. Pass a `lineFilter` to `createCartPointsAction` to exclude lines that
+// shouldn't earn points.
+//
+// The server entry is imported dynamically *inside* the action: route modules are lazy-loaded in
+// the client, and a module-scope import of `@lunaris/easypoints-hydrogen/server` would trip its
+// server-only guard in the browser before the action ever runs on the server.
 export async function action(args: Route.ActionArgs) {
   const {createCartPointsAction} = await import('@lunaris/easypoints-hydrogen/server');
   const handleAction = createCartPointsAction();

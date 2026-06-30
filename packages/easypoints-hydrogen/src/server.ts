@@ -20,14 +20,9 @@ export { queryCustomerLoyalty } from "./server/loyalty-customer";
 export { fetchShopLoyalty } from "./server/shop";
 export { productPoints } from "./server/product";
 
-// Cart points action dispatcher. `CalculatePointsResponse` + the route-path const are
-// consumed type-only by the client hooks.
-export {
-  ACTIONS,
-  CART_POINTS_ROUTE_PATH,
-  createCartPointsAction,
-} from "./server/routes/cartPoints";
-export type { CalculatePointsResponse } from "./server/routes/cartPoints";
+// Cart points action dispatcher. The browser-safe route contract (action ids, route path,
+// response types) lives on the root entry `@lunaris/easypoints-hydrogen`, not here.
+export { createCartPointsAction } from "./server/routes/cartPoints";
 
 // Errors.
 export { ContextError, CustomerNotAuthenticatedError, LoyaltyClientError } from "./server/errors";

@@ -6,19 +6,9 @@ import { useFetcher } from "react-router";
 import { useEasyPoints } from "../context";
 import { useCustomerLoyalty } from "./useCustomerLoyalty";
 
-import type { RedeemPointsResponse } from "../../server/routes/cartPoints";
+import { CART_POINTS_ACTIONS, CART_POINTS_ROUTE_PATH } from "../../shared/cartPoints";
 
-/** Type handle to the cart-points route module — used only in type position (erased at build). */
-type CartPointsModule = typeof import("../../server/routes/cartPoints");
-
-/** Default route path, pinned to the route's `CART_POINTS_ROUTE_PATH` const type. */
-const CART_POINTS_ROUTE_PATH: CartPointsModule["CART_POINTS_ROUTE_PATH"] = "/api/cart/points";
-
-/** `REDEEM_POINTS` action value, pinned to the route's `ACTIONS` const type. */
-const REDEEM_POINTS: CartPointsModule["ACTIONS"]["REDEEM_POINTS"] = "RedeemPoints";
-
-/** `UNDO_REDEEM` action value, pinned to the route's `ACTIONS` const type. */
-const UNDO_REDEEM: CartPointsModule["ACTIONS"]["UNDO_REDEEM"] = "UndoRedeem";
+import type { RedeemPointsResponse } from "../../shared/cartPoints";
 
 /** Shared fetcher key, so the redemption fetcher can be observed across components. */
 export const FETCHER_REDEMPTION_KEY = "redemption";
@@ -134,7 +124,7 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
     if (!isValid) return;
 
     void fetcher.submit(
-      { action: REDEEM_POINTS, points: amount },
+      { action: CART_POINTS_ACTIONS.REDEEM_POINTS, points: amount },
       { method: "POST", action: route },
     );
     // `fetcher` is intentionally excluded — including it can loop.
@@ -143,7 +133,10 @@ export function useCartRedemption(params: UseCartRedemptionParams = {}) {
   const undo = useCallback(() => {
     reset();
 
-    void fetcher.submit({ action: UNDO_REDEEM }, { method: "POST", action: route });
+    void fetcher.submit(
+      { action: CART_POINTS_ACTIONS.UNDO_REDEEM },
+      { method: "POST", action: route },
+    );
     // `fetcher` is intentionally excluded — including it can loop.
   }, [route, reset]);
 
