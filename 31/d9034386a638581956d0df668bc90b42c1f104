@@ -1,0 +1,25 @@
+examples/storefront/app/routes/api.cart.points.tsx
+  h_8c8bb3a0db3180 3-10,12-14,20-21
+  s_7e28be7e64e434::t_c6121be1ec089d 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "31d9034386a638581956d0df668bc90b42c1f104",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_7e28be7e64e434": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "ce5831ff-e3df-4083-9b22-53ee9e3f26c8",
+        "model": "unknown"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
