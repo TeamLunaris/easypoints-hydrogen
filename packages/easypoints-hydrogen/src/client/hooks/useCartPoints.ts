@@ -10,7 +10,7 @@ import { CART_POINTS_ACTIONS, CART_POINTS_ROUTE_PATH } from "../../shared/cartPo
 import type { CalculatePointsResponse } from "../../shared/cartPoints";
 
 /** Per-line points map, derived from the route's response so it stays the single source of truth. */
-type PointsMap = NonNullable<CalculatePointsResponse>["pointsMap"];
+type PointsMap = CalculatePointsResponse["pointsMap"];
 
 /** A cart line, narrowed to the fields this hook reads. Compatible with Hydrogen cart lines. */
 export interface PointsCartLine {

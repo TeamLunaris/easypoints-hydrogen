@@ -103,8 +103,6 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
    */
   async function calculatePoints(context: ActionContext): Promise<CalculatePointsResponse> {
     const cart = await context.cart.get();
-    if (!cart) return null;
-
     const cartLines = eligibleLines(cart);
 
     // COMBAK: if possible this should be done in a single query
@@ -118,7 +116,7 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
       ),
     );
 
-    const pointsMap: NonNullable<CalculatePointsResponse>["pointsMap"] = {};
+    const pointsMap: CalculatePointsResponse["pointsMap"] = {};
     cartLines.forEach((line, index) => {
       pointsMap[line.id] = points[index]?.totalPoints ?? null;
     });

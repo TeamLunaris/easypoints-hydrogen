@@ -22,10 +22,13 @@ export interface PointsActionError {
   message: string;
 }
 
-/** Response for the `CALCULATE_POINTS` action: line id → points (or `null` when uncomputable). */
+/**
+ * Response for the `CALCULATE_POINTS` action: line id → points (or `null` when uncomputable).
+ * Always a present object — an absent or empty cart yields an empty `pointsMap`, never `null`.
+ */
 export type CalculatePointsResponse = {
   pointsMap: Record<string, number | null>;
-} | null;
+};
 
 /** Response for the `REDEEM_POINTS` action. */
 export interface RedeemPointsResponse {
