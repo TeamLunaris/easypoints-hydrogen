@@ -1,0 +1,23 @@
+examples/storefront/app/routes/products.$handle.tsx
+  s_5df378568d1483::t_04826b13332507 125-127
+examples/storefront/app/routes/cart.tsx
+  s_5df378568d1483::t_f986b56ebf9416 154-155,157-158,164,169-171,175-176,180
+examples/storefront/app/routes/account._index.tsx
+  s_5df378568d1483::t_4812cff8f257e1 13-22,25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "51b0f23354115fc8f84243f7588d54fb7140171b",
+  "prompts": {},
+  "sessions": {
+    "s_5df378568d1483": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30813035-f767-4e1d-a4e9-32bcc73345c6",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
