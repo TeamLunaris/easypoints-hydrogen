@@ -68,6 +68,13 @@ export type CustomerLoyaltyMetafield = v.InferOutput<typeof CustomerLoyaltyMetaf
 
 // ---------------------------------------------------------------------------
 // Shop-level loyalty metafield (snake_case — this metafield is NOT camelCased)
+//
+// Why snake_case and not `keysToCamel` like the customer metafield: `point_rules` is a record keyed
+// by *tier UID* (e.g. `"tier-abc"`), and those UIDs contain dashes. `keysToCamel` recurses into all
+// object keys indiscriminately — including record keys — so it would rewrite `"tier-abc"` to
+// `"tierAbc"` while the lookup key (`customerLoyalty.tierUid`) stays `"tier-abc"`. The
+// `point_rules[tierUid]` lookup in `productPoints` would then miss and silently fall back to the
+// default earn rate for every tiered customer. Consuming the value raw keeps the UID keys intact.
 // ---------------------------------------------------------------------------
 
 /** Snake-cased base point-conversion rule, exactly as the shop metafield stores it. */
@@ -80,7 +87,8 @@ const SnakePointRuleSchema = v.object({
 /**
  * Raw (snake_case) shop-level loyalty attributes from the `easy_points_attributes` metafield.
  * Unlike the customer metafield, this value is consumed as-is (no `keysToCamel`), so its keys stay
- * snake_case.
+ * snake_case — `keysToCamel` would also mangle the dashed tier-UID keys of `point_rules` (see the
+ * section comment above), so this metafield must not be camelCased.
  */
 export const ShopLoyaltyValueSchema = v.object({
   ...SnakePointRuleSchema.entries,
