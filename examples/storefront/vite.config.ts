@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
     // Belt-and-suspenders alongside the root .npmrc hoist patterns: guarantee the linked
-    // `@lunaris/easypoints-hydrogen` library and this app share a single copy of React /
+    // `@teamlunaris/easypoints-hydrogen` library and this app share a single copy of React /
     // React Router / Hydrogen, so hooks and context resolve to one instance.
     dedupe: ['react', 'react-dom', 'react-router', '@shopify/hydrogen'],
   },

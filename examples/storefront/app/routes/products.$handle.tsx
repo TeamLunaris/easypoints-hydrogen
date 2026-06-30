@@ -8,8 +8,8 @@ import {
   getAdjacentAndFirstAvailableVariants,
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
-import {ProductPoints} from '@lunaris/easypoints-hydrogen';
-import {productPoints} from '@lunaris/easypoints-hydrogen/server';
+import {ProductPoints} from '@teamlunaris/easypoints-hydrogen';
+import {productPoints} from '@teamlunaris/easypoints-hydrogen/server';
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';

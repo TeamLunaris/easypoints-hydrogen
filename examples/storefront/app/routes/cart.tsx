@@ -2,9 +2,9 @@ import {useLoaderData, data, type HeadersFunction} from 'react-router';
 import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm, useOptimisticCart} from '@shopify/hydrogen';
-import {useCartPoints} from '@lunaris/easypoints-hydrogen/client';
-import {CartRedemption} from '@lunaris/easypoints-hydrogen';
-import type {CustomerLoyaltyMetafield} from '@lunaris/easypoints-hydrogen';
+import {useCartPoints} from '@teamlunaris/easypoints-hydrogen/client';
+import {CartRedemption} from '@teamlunaris/easypoints-hydrogen';
+import type {CustomerLoyaltyMetafield} from '@teamlunaris/easypoints-hydrogen';
 import {CartMain} from '~/components/CartMain';
 
 export const meta: Route.MetaFunction = () => {

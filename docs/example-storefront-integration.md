@@ -1,6 +1,6 @@
 # Integrating easyPoints into a Hydrogen storefront
 
-A step-by-step guide to wiring [`@lunaris/easypoints-hydrogen`](../packages/easypoints-hydrogen)
+A step-by-step guide to wiring [`@teamlunaris/easypoints-hydrogen`](../packages/easypoints-hydrogen)
 into a Shopify Hydrogen app. For the per-file changelog of what changed in `examples/storefront`
 when this example was built, see
 [`examples/storefront/CHANGELOG.md`](../examples/storefront/CHANGELOG.md).
@@ -17,9 +17,9 @@ The library splits into three import entries; respect the boundary:
 
 | Entry | Use from | Holds the token? |
 | --- | --- | --- |
-| `@lunaris/easypoints-hydrogen/server` | loaders, actions, `context.ts` | **Yes — server only** |
-| `@lunaris/easypoints-hydrogen/client` | hooks + provider (browser) | No |
-| `@lunaris/easypoints-hydrogen` | isomorphic types, components, `keysToCamel` | No |
+| `@teamlunaris/easypoints-hydrogen/server` | loaders, actions, `context.ts` | **Yes — server only** |
+| `@teamlunaris/easypoints-hydrogen/client` | hooks + provider (browser) | No |
+| `@teamlunaris/easypoints-hydrogen` | isomorphic types, components, `keysToCamel` | No |
 
 Never import `/server` from browser code — the entry guards against it, and it carries
 `EASY_POINTS_API_TOKEN`.
@@ -30,7 +30,7 @@ In `app/lib/context.ts`, construct the client and add it to the additional-conte
 call `.init(hydrogenContext)` so it can reach the storefront + customer-account handles.
 
 ```ts
-import {createEasyPointsClient, type EasyPointsClient} from '@lunaris/easypoints-hydrogen/server';
+import {createEasyPointsClient, type EasyPointsClient} from '@teamlunaris/easypoints-hydrogen/server';
 
 interface LoyaltyContext {
   loyalty: EasyPointsClient;
@@ -68,11 +68,11 @@ library's `CART_POINTS_ROUTE_PATH` default. It dispatches CalculatePoints / Rede
 UndoRedeem against `context.cart` + `context.loyalty`.
 
 ```ts
-import {createCartPointsAction} from '@lunaris/easypoints-hydrogen/server';
+import {createCartPointsAction} from '@teamlunaris/easypoints-hydrogen/server';
 import type {Route} from './+types/api.cart.points';
 
-export {ACTIONS as CART_POINTS_ACTIONS} from '@lunaris/easypoints-hydrogen/server';
-export type {CalculatePointsResponse} from '@lunaris/easypoints-hydrogen/server';
+export {ACTIONS as CART_POINTS_ACTIONS} from '@teamlunaris/easypoints-hydrogen/server';
+export type {CalculatePointsResponse} from '@teamlunaris/easypoints-hydrogen/server';
 
 const handleAction = createCartPointsAction(); // pass a `lineFilter` to exclude lines
 
@@ -100,7 +100,7 @@ fragment CustomerLoyaltyMetafield on Customer {
 At load time, parse the raw JSON and camelCase it before handing to components:
 
 ```ts
-import {keysToCamel, type CustomerLoyaltyMetafield} from '@lunaris/easypoints-hydrogen';
+import {keysToCamel, type CustomerLoyaltyMetafield} from '@teamlunaris/easypoints-hydrogen';
 
 const raw = data.customer.loyalty?.value;
 const loyalty = raw ? keysToCamel<CustomerLoyaltyMetafield>(JSON.parse(raw)) : null;
@@ -113,7 +113,7 @@ cart-points route) with the hooks/components. Optional — every hook also accep
 explicitly.
 
 ```tsx
-import {EasyPointsProvider} from '@lunaris/easypoints-hydrogen/client';
+import {EasyPointsProvider} from '@teamlunaris/easypoints-hydrogen/client';
 // …
 <EasyPointsProvider currencyCode="USD">{/* app */}</EasyPointsProvider>
 ```
@@ -131,7 +131,7 @@ All components are unstyled — they expose data via render props; the markup is
 Product points (server side, in the loader):
 
 ```ts
-import {productPoints} from '@lunaris/easypoints-hydrogen/server';
+import {productPoints} from '@teamlunaris/easypoints-hydrogen/server';
 const points = await productPoints(context.loyalty, {handle, selectedOptions});
 ```
 

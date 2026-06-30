@@ -9,7 +9,7 @@ import type {Route} from './+types/account';
 import {
   keysToCamel,
   type CustomerLoyaltyMetafield,
-} from '@lunaris/easypoints-hydrogen';
+} from '@teamlunaris/easypoints-hydrogen';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
 
 // Context shape handed to nested account routes via `<Outlet>` (read with `useOutletContext`).

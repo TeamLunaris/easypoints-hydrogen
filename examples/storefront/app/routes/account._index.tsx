@@ -1,5 +1,5 @@
 import {useOutletContext} from 'react-router';
-import {CustomerLoyalty, TierProgress} from '@lunaris/easypoints-hydrogen';
+import {CustomerLoyalty, TierProgress} from '@teamlunaris/easypoints-hydrogen';
 import type {AccountOutletContext} from './account';
 
 // Account landing page: a headless demonstration of the loyalty components. `<CustomerLoyalty>`

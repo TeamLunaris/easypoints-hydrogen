@@ -1,7 +1,7 @@
 # @examples/storefront
 
 A minimal **real Hydrogen** storefront (scaffolded with `pnpm create @shopify/hydrogen@latest`,
-Mock.shop data) that consumes [`@lunaris/easypoints-hydrogen`](../../packages/easypoints-hydrogen)
+Mock.shop data) that consumes [`@teamlunaris/easypoints-hydrogen`](../../packages/easypoints-hydrogen)
 end-to-end. It exists to prove the library is consumable by a real merchant and for local dev.
 
 ## easyPoints wiring

@@ -2,14 +2,14 @@ import {createHydrogenContext} from '@shopify/hydrogen';
 import {
   createEasyPointsClient,
   type EasyPointsClient,
-} from '@lunaris/easypoints-hydrogen/server';
+} from '@teamlunaris/easypoints-hydrogen/server';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 
 // The easyPoints loyalty client is mounted as `context.loyalty` so loaders/actions can read
 // the customer's balance and calculate/redeem points. It holds the Bearer token and is
-// server-only (the `@lunaris/easypoints-hydrogen/server` entry guards against browser imports).
+// server-only (the `@teamlunaris/easypoints-hydrogen/server` entry guards against browser imports).
 interface LoyaltyContext {
   loyalty: EasyPointsClient;
 }

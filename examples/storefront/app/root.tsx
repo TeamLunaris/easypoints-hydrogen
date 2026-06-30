@@ -10,7 +10,7 @@ import {
   ScrollRestoration,
   useRouteLoaderData,
 } from 'react-router';
-import {EasyPointsProvider} from '@lunaris/easypoints-hydrogen/client';
+import {EasyPointsProvider} from '@teamlunaris/easypoints-hydrogen/client';
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';

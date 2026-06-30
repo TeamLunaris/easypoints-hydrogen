@@ -1,4 +1,4 @@
-// Root (browser-safe) entry for `@lunaris/easypoints-hydrogen`.
+// Root (browser-safe) entry for `@teamlunaris/easypoints-hydrogen`.
 //
 // Re-exports the secret-free isomorphic surface — domain types, the `keysToCamel` case utility, and
 // the tier logic shared by client and server — plus the headless render-prop components. The

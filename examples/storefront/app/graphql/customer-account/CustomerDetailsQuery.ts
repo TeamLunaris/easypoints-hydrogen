@@ -1,5 +1,5 @@
 // Mirrors the library's exported `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`
-// (`@lunaris/easypoints-hydrogen/server`). The library ships the fragment string as the
+// (`@teamlunaris/easypoints-hydrogen/server`). The library ships the fragment string as the
 // source of truth; merchants embed it in a file their own GraphQL codegen scans (the
 // `app/graphql/customer-account/*` glob) so the generated types include `customer.loyalty`.
 // Parse it with `keysToCamel` + `JSON.parse` and hand the result to `<CustomerLoyalty>` /

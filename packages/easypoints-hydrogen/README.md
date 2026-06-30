@@ -1,4 +1,4 @@
-# @lunaris/easypoints-hydrogen
+# @teamlunaris/easypoints-hydrogen
 
 Headless React building blocks and a server-side client to integrate the
 [easyPoints](https://www.easypoints.jp/) loyalty program into
@@ -10,7 +10,7 @@ Headless React building blocks and a server-side client to integrate the
 ## Install
 
 ```sh
-pnpm add @lunaris/easypoints-hydrogen
+pnpm add @teamlunaris/easypoints-hydrogen
 ```
 
 Peer dependencies (provided by your Hydrogen app): `@shopify/hydrogen`, `react`,
@@ -18,11 +18,11 @@ Peer dependencies (provided by your Hydrogen app): `@shopify/hydrogen`, `react`,
 
 ## Entry points
 
-| Import                                | Environment   | Contents                                                                |
-| ------------------------------------- | ------------- | ----------------------------------------------------------------------- |
-| `@lunaris/easypoints-hydrogen`        | browser + SSR | React provider, hooks, headless components, isomorphic utilities        |
-| `@lunaris/easypoints-hydrogen/server` | server only   | loyalty client (holds the API token), route handlers, GraphQL fragments |
-| `@lunaris/easypoints-hydrogen/types`  | types only    | TypeScript types for loyalty data                                       |
+| Import                                    | Environment   | Contents                                                                |
+| ----------------------------------------- | ------------- | ----------------------------------------------------------------------- |
+| `@teamlunaris/easypoints-hydrogen`        | browser + SSR | React provider, hooks, headless components, isomorphic utilities        |
+| `@teamlunaris/easypoints-hydrogen/server` | server only   | loyalty client (holds the API token), route handlers, GraphQL fragments |
+| `@teamlunaris/easypoints-hydrogen/types`  | types only    | TypeScript types for loyalty data                                       |
 
 The `/server` entry is server-only and throws if imported in the browser. Configure it with
 `EASY_POINTS_API_TOKEN` (and optionally `EASY_POINTS_API_ENDPOINT`) from your Hydrogen

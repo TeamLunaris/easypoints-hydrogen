@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-`@lunaris/easypoints-hydrogen`: headless React building blocks plus a server-side
+`@teamlunaris/easypoints-hydrogen`: headless React building blocks plus a server-side
 client that integrates the easyPoints loyalty program into Shopify Hydrogen storefronts.
 
 ## Architecture facts

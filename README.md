@@ -1,6 +1,6 @@
 # easypoints-hydrogen
 
-Monorepo for [`@lunaris/easypoints-hydrogen`](./packages/easypoints-hydrogen) — a React +
+Monorepo for [`@teamlunaris/easypoints-hydrogen`](./packages/easypoints-hydrogen) — a React +
 TypeScript library that integrates the [easyPoints](https://www.easypoints.jp/) loyalty program
 into [Shopify Hydrogen](https://shopify.dev/docs/storefronts/headless/hydrogen) storefronts.
 

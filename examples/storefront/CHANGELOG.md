@@ -38,7 +38,7 @@ Replaced the plain-Vite smoke app with a real Hydrogen skeleton and layered easy
 
 - **`package.json`** — swapped to the standard Hydrogen toolchain: `@shopify/cli`,
   `@shopify/hydrogen`, `@shopify/mini-oxygen`, React Router 7.16, codegen tooling. Scripts now run
-  `shopify hydrogen dev/build` + `react-router typegen && tsc`. Keeps `@lunaris/easypoints-hydrogen:
+  `shopify hydrogen dev/build` + `react-router typegen && tsc`. Keeps `@teamlunaris/easypoints-hydrogen:
   workspace:*`.
 - **`vite.config.ts`** — `vite-plus` → standard `vite` with `hydrogen()` / `oxygen()` /
   `reactRouter()` plugins. `resolve.dedupe` extended to include `@shopify/hydrogen` so the linked

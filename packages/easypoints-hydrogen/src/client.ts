@@ -1,4 +1,4 @@
-// Client (browser/React) entry for `@lunaris/easypoints-hydrogen/client`.
+// Client (browser/React) entry for `@teamlunaris/easypoints-hydrogen/client`.
 //
 // The headless React building blocks: hooks plus the optional context provider. Consumers import
 // these in browser/SSR React code; the isomorphic helpers (types, `keysToCamel`, tier logic) live

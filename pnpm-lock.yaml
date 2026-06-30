@@ -17,12 +17,12 @@ importers:
 
   examples/storefront:
     dependencies:
-      '@lunaris/easypoints-hydrogen':
-        specifier: workspace:*
-        version: link:../../packages/easypoints-hydrogen
       '@shopify/hydrogen':
         specifier: ^2026.0.0
         version: 2026.4.4(@react-router/dev@7.16.0(@types/node@25.9.3)(jiti@2.7.0)(lightningcss@1.32.0)(react-router@7.16.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.0))(yaml@2.9.0))(react-dom@19.2.7(react@19.2.7))(react-router@7.16.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(three@0.183.2)(vite@8.0.16(@types/node@25.9.3)(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.0))
+      '@teamlunaris/easypoints-hydrogen':
+        specifier: workspace:*
+        version: link:../../packages/easypoints-hydrogen
       graphql:
         specifier: ^16.10.0
         version: 16.14.2

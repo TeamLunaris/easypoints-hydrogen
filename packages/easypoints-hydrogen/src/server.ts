@@ -1,11 +1,11 @@
-// Server-only entry for `@lunaris/easypoints-hydrogen/server`.
+// Server-only entry for `@teamlunaris/easypoints-hydrogen/server`.
 //
 // This module holds the easyPoints API token and talks to the loyalty API from within
 // Hydrogen loaders/actions. It must NEVER be bundled into the browser. The guard below
 // fails loudly if it is imported in a client context (workerd/SSR has no `window`).
 if (typeof window !== "undefined") {
   throw new Error(
-    "@lunaris/easypoints-hydrogen/server is server-only and must not be imported in the browser.",
+    "@teamlunaris/easypoints-hydrogen/server is server-only and must not be imported in the browser.",
   );
 }
 
@@ -21,7 +21,7 @@ export { fetchShopLoyalty } from "./server/shop";
 export { productPoints } from "./server/product";
 
 // Cart points action dispatcher. The browser-safe route contract (action ids, route path,
-// response types) lives on the root entry `@lunaris/easypoints-hydrogen`, not here.
+// response types) lives on the root entry `@teamlunaris/easypoints-hydrogen`, not here.
 export { createCartPointsAction } from "./server/routes/cartPoints";
 
 // Errors.

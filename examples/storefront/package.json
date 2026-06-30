@@ -13,7 +13,7 @@
     "codegen": "shopify hydrogen codegen && react-router typegen"
   },
   "dependencies": {
-    "@lunaris/easypoints-hydrogen": "workspace:*",
+    "@teamlunaris/easypoints-hydrogen": "workspace:*",
     "@shopify/hydrogen": "^2026.0.0",
     "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",

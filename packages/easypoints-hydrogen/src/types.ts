@@ -1,4 +1,4 @@
-// Public type surface for `@lunaris/easypoints-hydrogen`.
+// Public type surface for `@teamlunaris/easypoints-hydrogen`.
 //
 // Isomorphic and secret-free: domain types ported from solaris-cards-storefront
 // (app/lib/easy-points/types.d.ts, api/types.d.ts, types-utils.d.ts). No runtime code.
