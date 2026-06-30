@@ -1,23 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useFetcher } from "react-router";
 
 import { useEasyPoints } from "../context";
 
-import type { CalculatePointsResponse } from "../../server/routes/cartPoints";
+import { CART_POINTS_ACTIONS, CART_POINTS_ROUTE_PATH } from "../../shared/cartPoints";
 
-/** Type handle to the cart-points route module — used only in type position (erased at build). */
-type CartPointsModule = typeof import("../../server/routes/cartPoints");
+import type { CalculatePointsResponse } from "../../shared/cartPoints";
 
 /** Per-line points map, derived from the route's response so it stays the single source of truth. */
-type PointsMap = NonNullable<CalculatePointsResponse>["pointsMap"];
-
-/** Default route path, pinned to the route's `CART_POINTS_ROUTE_PATH` const type. */
-const CART_POINTS_ROUTE_PATH: CartPointsModule["CART_POINTS_ROUTE_PATH"] = "/api/cart/points";
-
-/** `CALCULATE_POINTS` action value, pinned to the route's `ACTIONS` const type. */
-const CALCULATE_POINTS: CartPointsModule["ACTIONS"]["CALCULATE_POINTS"] = "CalculatePoints";
+type PointsMap = CalculatePointsResponse["pointsMap"];
 
 /** A cart line, narrowed to the fields this hook reads. Compatible with Hydrogen cart lines. */
 export interface PointsCartLine {
@@ -66,12 +59,30 @@ export function useCartPoints(
 
   const isOptimistic = cart?.isOptimistic ?? false;
   const lines = cart?.lines?.nodes ?? [];
-  const linesSignature = lines.map((l) => `${l.id}:${l.quantity ?? 1}`).join(",");
+
+  // Order-stable signature: Shopify can return cart lines in a different order across calls, so
+  // sort the tokens. Without this, the signature churns on every revalidation and re-triggers the
+  // effect below — an endless fetch ⇆ revalidate loop.
+  const linesSignature = lines
+    .map((l) => `${l.id}:${l.quantity ?? 1}`)
+    .sort()
+    .join(",");
+
+  // Tracks the signature we last fetched for. A fetcher POST revalidates all page loaders, which
+  // re-renders this hook with a fresh cart object; guarding on the signature ensures we only
+  // re-fetch when the cart's lines actually changed, never just because revalidation ran.
+  const lastFetchedSignature = useRef<string | null>(null);
 
   useEffect(() => {
     if (!cart || isOptimistic) return;
+    if (lastFetchedSignature.current === linesSignature) return;
 
-    void fetcher.submit({ action: CALCULATE_POINTS }, { method: "POST", action: route });
+    lastFetchedSignature.current = linesSignature;
+
+    void fetcher.submit(
+      { action: CART_POINTS_ACTIONS.CALCULATE_POINTS },
+      { method: "POST", action: route },
+    );
   }, [isOptimistic, route, linesSignature]);
 
   let pointsMap: PointsMap = {};

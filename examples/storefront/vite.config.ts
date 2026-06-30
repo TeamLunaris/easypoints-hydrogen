@@ -1,19 +1,42 @@
-import { defineConfig } from "vite-plus";
+import {defineConfig} from 'vite';
+import {hydrogen} from '@shopify/hydrogen/vite';
+import {oxygen} from '@shopify/mini-oxygen/vite';
+import {reactRouter} from '@react-router/dev/vite';
 
-// Minimal example consumer. Full Hydrogen setup (server entry, @shopify/hydrogen Vite
-// plugin, routes) is added when fleshing this out into a real storefront — see README.
-//
-// `resolve.dedupe` is belt-and-suspenders alongside the root .npmrc hoist patterns: it
-// guarantees the linked library and this app share one copy of React / React Router.
 export default defineConfig({
+  plugins: [hydrogen(), oxygen(), reactRouter()],
   resolve: {
-    dedupe: ["react", "react-dom", "react-router"],
+    tsconfigPaths: true,
+    // Belt-and-suspenders alongside the root .npmrc hoist patterns: guarantee the linked
+    // `@lunaris/easypoints-hydrogen` library and this app share a single copy of React /
+    // React Router / Hydrogen, so hooks and context resolve to one instance.
+    dedupe: ['react', 'react-dom', 'react-router', '@shopify/hydrogen'],
   },
-  // Make `vp check` type-check this app too (via tsgolint / TypeScript-Go).
-  lint: {
-    options: {
-      typeAware: true,
-      typeCheck: true,
+  build: {
+    // Allow a strict Content-Security-Policy
+    // without inlining assets as base64:
+    assetsInlineLimit: 0,
+  },
+  ssr: {
+    optimizeDeps: {
+      /**
+       * Include dependencies here if they throw CJS<>ESM errors.
+       * For example, for the following error:
+       *
+       * > ReferenceError: module is not defined
+       * >   at /Users/.../node_modules/example-dep/index.js:1:1
+       *
+       * Include 'example-dep' in the array below.
+       * @see https://vitejs.dev/config/dep-optimization-options
+       */
+      include: [
+        'react-router > set-cookie-parser',
+        'react-router > cookie',
+        'react-router',
+      ],
     },
+  },
+  server: {
+    allowedHosts: ['.tryhydrogen.dev'],
   },
 });

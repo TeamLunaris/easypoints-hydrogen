@@ -1,0 +1,185 @@
+import {useLoaderData, data, type HeadersFunction} from 'react-router';
+import type {Route} from './+types/cart';
+import type {CartQueryDataReturn} from '@shopify/hydrogen';
+import {CartForm, useOptimisticCart} from '@shopify/hydrogen';
+import {useCartPoints} from '@lunaris/easypoints-hydrogen/client';
+import {CartRedemption} from '@lunaris/easypoints-hydrogen';
+import type {CustomerLoyaltyMetafield} from '@lunaris/easypoints-hydrogen';
+import {CartMain} from '~/components/CartMain';
+
+export const meta: Route.MetaFunction = () => {
+  return [{title: `Hydrogen | Cart`}];
+};
+
+export const headers: HeadersFunction = ({actionHeaders}) => actionHeaders;
+
+export async function action({request, context}: Route.ActionArgs) {
+  const {cart} = context;
+
+  const formData = await request.formData();
+
+  const {action, inputs} = CartForm.getFormInput(formData);
+
+  if (!action) {
+    throw new Error('No action provided');
+  }
+
+  let status = 200;
+  let result: CartQueryDataReturn;
+
+  switch (action) {
+    case CartForm.ACTIONS.LinesAdd:
+      result = await cart.addLines(inputs.lines);
+      break;
+    case CartForm.ACTIONS.LinesUpdate:
+      result = await cart.updateLines(inputs.lines);
+      break;
+    case CartForm.ACTIONS.LinesRemove:
+      result = await cart.removeLines(inputs.lineIds);
+      break;
+    case CartForm.ACTIONS.DiscountCodesUpdate: {
+      const formDiscountCode = inputs.discountCode;
+
+      // User inputted discount code
+      const discountCodes = (
+        formDiscountCode ? [formDiscountCode] : []
+      ) as string[];
+
+      // Combine discount codes already applied on cart
+      discountCodes.push(...inputs.discountCodes);
+
+      result = await cart.updateDiscountCodes(discountCodes);
+      break;
+    }
+    case CartForm.ACTIONS.GiftCardCodesAdd: {
+      const formGiftCardCode = inputs.giftCardCode;
+
+      const giftCardCodes = (
+        formGiftCardCode ? [formGiftCardCode] : []
+      ) as string[];
+
+      result = await cart.addGiftCardCodes(giftCardCodes);
+      break;
+    }
+    case CartForm.ACTIONS.GiftCardCodesRemove: {
+      const appliedGiftCardIds = inputs.giftCardCodes as string[];
+      result = await cart.removeGiftCardCodes(appliedGiftCardIds);
+      break;
+    }
+    case CartForm.ACTIONS.BuyerIdentityUpdate: {
+      result = await cart.updateBuyerIdentity({
+        ...inputs.buyerIdentity,
+      });
+      break;
+    }
+    default:
+      throw new Error(`${action} cart action is not defined`);
+  }
+
+  const cartId = result?.cart?.id;
+  const headers = cartId ? cart.setCartId(result.cart.id) : new Headers();
+  const {cart: cartResult, errors, warnings} = result;
+
+  const redirectTo = formData.get('redirectTo') ?? null;
+  if (typeof redirectTo === 'string') {
+    status = 303;
+    headers.set('Location', redirectTo);
+  }
+
+  return data(
+    {
+      cart: cartResult,
+      errors,
+      warnings,
+      analytics: {
+        cartId,
+      },
+    },
+    {status, headers},
+  );
+}
+
+export async function loader({context}: Route.LoaderArgs) {
+  const {cart, loyalty} = context;
+
+  // The customer's loyalty metafield (balance + tier) drives the redemption form. Returns
+  // `null` when signed out / no loyalty, so the cart still renders for anonymous shoppers.
+  let accountPoints = null;
+  try {
+    accountPoints = await loyalty.getCustomerLoyalty();
+  } catch (error) {
+    console.error('Failed to load customer loyalty', error);
+  }
+
+  return {cart: await cart.get(), accountPoints};
+}
+
+export default function Cart() {
+  const {cart, accountPoints} = useLoaderData<typeof loader>();
+
+  return (
+    <div className="cart">
+      <h1>Cart</h1>
+      <CartPoints cart={cart} accountPoints={accountPoints} />
+      <CartMain layout="page" cart={cart} />
+    </div>
+  );
+}
+
+/**
+ * Loyalty panel for the cart. `useCartPoints` keeps a live per-line points total in sync with the
+ * cart-points resource route, and `<CartRedemption>` drives the redeem/undo flow against the
+ * customer's balance. Both are headless — all markup below belongs to this example.
+ */
+function CartPoints({
+  cart,
+  accountPoints,
+}: {
+  cart: Route.ComponentProps['loaderData']['cart'];
+  accountPoints: CustomerLoyaltyMetafield | null;
+}) {
+  const optimisticCart = useOptimisticCart(cart);
+  const {totalPoints} = useCartPoints(optimisticCart);
+
+  return (
+    <section className="cart-points" aria-label="Loyalty points">
+      <p>You will earn {totalPoints.toLocaleString()} points on this order.</p>
+
+      <CartRedemption
+        pointsBalance={accountPoints?.balance ?? null}
+        isOptimistic={optimisticCart?.isOptimistic}
+      >
+        {({input, form, result}) =>
+          result.redeemedPoints ? (
+            <div>
+              <p>Redeemed {result.redeemedPoints.toLocaleString()} points.</p>
+              <button type="button" onClick={form.undo} disabled={form.isSubmitting}>
+                Undo
+              </button>
+            </div>
+          ) : (
+            <div>
+              <label htmlFor="points-to-redeem">Redeem points (step {input.step})</label>
+              <input
+                id="points-to-redeem"
+                type="number"
+                inputMode="numeric"
+                step={input.step}
+                value={input.value}
+                onChange={(event) => input.setValue(event.target.value)}
+              />
+              <button
+                type="button"
+                onClick={form.submit}
+                disabled={!form.isValid || form.isSubmitting}
+              >
+                Redeem
+              </button>
+              {result.error ? <p role="alert">{result.error.message}</p> : null}
+            </div>
+          )
+        }
+      </CartRedemption>
+    </section>
+  );
+}

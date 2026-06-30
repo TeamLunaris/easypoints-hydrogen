@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vite-plus/test";
 
-import { ACTIONS, createCartPointsAction } from "./cartPoints";
+import { createCartPointsAction } from "./cartPoints";
+import { CART_POINTS_ACTIONS as ACTIONS } from "../../shared/cartPoints";
 
 import { makeCart, makeLine, makeLoyaltyClient } from "../../test-support/context";
 import { shopValue } from "../../test-support/fixtures/shop";
@@ -141,12 +142,12 @@ describe("CALCULATE_POINTS", () => {
     expect(await calc(action, context)).toEqual({ pointsMap: { keep: 50 } });
   });
 
-  test("resolves null when the cart is empty", async () => {
+  test("resolves an empty points map when there is no cart", async () => {
     const action = createCartPointsAction();
     const { context } = makeContext();
     context.cart.get = async () => null;
 
-    expect(await calc(action, context)).toBe(null);
+    expect(await calc(action, context)).toEqual({ pointsMap: {} });
   });
 
   test("maps a line to null when its points are uncomputable", async () => {

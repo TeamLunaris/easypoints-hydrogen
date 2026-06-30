@@ -7,7 +7,7 @@ import { useCartPoints } from "./hooks/useCartPoints";
 import { createWrapper, setupFetcherMock } from "../test-support/react";
 
 import type { PointsCart } from "./hooks/useCartPoints";
-import type { CalculatePointsResponse } from "../server/routes/cartPoints";
+import type { CalculatePointsResponse } from "../shared/cartPoints";
 import type { FetcherMock } from "../test-support/react";
 
 // A single mutable fetcher stands in for `useFetcher`. Tests drive it by mutating `data` and
@@ -60,14 +60,53 @@ describe("useCartPoints", () => {
     expect(result.current.totalPoints).toBe(150);
   });
 
-  test("re-submits when the cart lines change", () => {
-    let cart = settledCart("l1");
+  test("re-submits once the cart settles after an optimistic update", () => {
+    // A cart line mutation (add / remove / quantity) flips the cart optimistic, then settles. The
+    // settle edge is what triggers the refetch, mirroring the source storefront.
+    let cart: PointsCart = { ...settledCart("l1"), isOptimistic: true };
     const { rerender } = renderHook(() => useCartPoints(cart));
-    expect(mock.submit).toHaveBeenCalledTimes(1);
+    expect(mock.submit).not.toHaveBeenCalled();
 
     cart = settledCart("l1", "l2");
     act(() => rerender());
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+  });
+
+  test("does not re-submit when revalidation re-renders with the same settled lines", () => {
+    // A fetcher POST revalidates page loaders, re-rendering this hook with a fresh cart object
+    // (useOptimisticCart structuredClones it once a fetcher is active). As long as the cart stays
+    // settled, the effect must not re-fire — otherwise fetch -> revalidate -> fetch loops forever.
+    let cart = settledCart("l1", "l2");
+    const { rerender } = renderHook(() => useCartPoints(cart));
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+
+    // New object with the same lines (even reordered) must not re-submit.
+    cart = settledCart("l2", "l1");
+    act(() => rerender());
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+  });
+
+  test("re-submits when settled cart lines actually change", () => {
+    let cart = settledCart("l1", "l2");
+    const { rerender } = renderHook(() => useCartPoints(cart));
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+
+    cart = settledCart("l1", "l2", "l3");
+    act(() => rerender());
     expect(mock.submit).toHaveBeenCalledTimes(2);
+  });
+
+  test("does not loop on an optimistic bounce with unchanged lines", () => {
+    let cart: PointsCart = settledCart("l1");
+    const { rerender } = renderHook(() => useCartPoints(cart));
+    expect(mock.submit).toHaveBeenCalledTimes(1);
+
+    cart = { ...settledCart("l1"), isOptimistic: true };
+    act(() => rerender());
+
+    cart = settledCart("l1");
+    act(() => rerender());
+    expect(mock.submit).toHaveBeenCalledTimes(1);
   });
 
   test("reflects the latest fetcher data across refetches", () => {

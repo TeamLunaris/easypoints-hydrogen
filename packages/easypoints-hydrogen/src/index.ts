@@ -12,6 +12,16 @@ export type * from "./types";
 export { keysToCamel } from "./shared/case";
 export { getCurrentTier, getMaintenanceTier, getNextTier, getProgressTier } from "./shared/tiers";
 
+// Browser-safe cart-points route contract: action ids + path the merchant mounts the resource
+// route at, plus the action response types. Secret-free, so it lives on the root entry — the
+// merchant's route module and the client hooks import it instead of duplicating it.
+export { CART_POINTS_ACTIONS, CART_POINTS_ROUTE_PATH } from "./shared/cartPoints";
+export type {
+  CalculatePointsResponse,
+  PointsActionError,
+  RedeemPointsResponse,
+} from "./shared/cartPoints";
+
 // Headless render-prop components. Thin children-as-function wrappers over the client hooks: they
 // render no markup, apply no styling, and (apart from `ProductPoints`'s locale-formatted count) do
 // no formatting — they hand raw values to the consumer to render.
