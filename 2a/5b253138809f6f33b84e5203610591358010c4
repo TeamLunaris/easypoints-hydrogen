@@ -1,0 +1,20 @@
+packages/easypoints-hydrogen/src/shared/loyalty-schema.ts
+  s_98cc829c65e920::t_f0ea87b1548214 71-77
+  s_98cc829c65e920::t_5f6773902c2089 90-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "2a5b253138809f6f33b84e5203610591358010c4",
+  "prompts": {},
+  "sessions": {
+    "s_98cc829c65e920": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "20bea7ee-2d10-466e-ac32-9b9dd9d1cd33",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
