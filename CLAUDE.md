@@ -38,4 +38,4 @@ vite-plugin-dts, vitest, or any `@teamlunaris/*` shared config.
 
 ## Targets
 
-Hydrogen 2026.x, React Router 7.12+, React 19. Node >=20.
+Hydrogen 2026.x, React Router 7.12+, React 19. Node >=22.13 (pnpm 11.7 floor).
