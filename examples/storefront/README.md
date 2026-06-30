@@ -14,7 +14,7 @@ end-to-end. It exists to prove the library is consumable by a real merchant and 
 | `EasyPointsProvider` (shared config) | [`app/root.tsx`](./app/root.tsx) |
 | `<ProductPoints>` (server-side points calc) | [`app/routes/products.$handle.tsx`](./app/routes/products.$handle.tsx) |
 | `<CustomerLoyalty>` + `<TierProgress>` | [`app/routes/account._index.tsx`](./app/routes/account._index.tsx) |
-| `useCartPoints` + `<PointsRedemption>` | [`app/routes/cart.tsx`](./app/routes/cart.tsx) |
+| `useCartPoints` + `<CartRedemption>` | [`app/routes/cart.tsx`](./app/routes/cart.tsx) |
 
 ## Environment
 

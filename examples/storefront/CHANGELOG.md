@@ -30,7 +30,7 @@ Replaced the plain-Vite smoke app with a real Hydrogen skeleton and layered easy
 | `app/routes/account.tsx` | Parse loyalty metafield (`keysToCamel` + `JSON.parse`) in loader; thread via outlet context. |
 | `app/routes/account._index.tsx` | Render `<CustomerLoyalty>` + `<TierProgress>`. |
 | `app/routes/products.$handle.tsx` | Server-side `productPoints(context.loyalty, …)`; render `<ProductPoints>`. |
-| `app/routes/cart.tsx` | Load `context.loyalty.getCustomerLoyalty()`; render `useCartPoints` + `<PointsRedemption>`. |
+| `app/routes/cart.tsx` | Load `context.loyalty.getCustomerLoyalty()`; render `useCartPoints` + `<CartRedemption>`. |
 | `.env.example` | New — `EASY_POINTS_API_TOKEN` / `EASY_POINTS_API_ENDPOINT` (+ `SESSION_SECRET`). |
 | `README.md` | Rewritten as the wiring map + scripts. |
 

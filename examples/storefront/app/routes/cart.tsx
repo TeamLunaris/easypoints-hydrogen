@@ -3,7 +3,7 @@ import type {Route} from './+types/cart';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
 import {CartForm, useOptimisticCart} from '@shopify/hydrogen';
 import {useCartPoints} from '@lunaris/easypoints-hydrogen/client';
-import {PointsRedemption} from '@lunaris/easypoints-hydrogen';
+import {CartRedemption} from '@lunaris/easypoints-hydrogen';
 import type {CustomerLoyaltyMetafield} from '@lunaris/easypoints-hydrogen';
 import {CartMain} from '~/components/CartMain';
 
@@ -128,7 +128,7 @@ export default function Cart() {
 
 /**
  * Loyalty panel for the cart. `useCartPoints` keeps a live per-line points total in sync with the
- * cart-points resource route, and `<PointsRedemption>` drives the redeem/undo flow against the
+ * cart-points resource route, and `<CartRedemption>` drives the redeem/undo flow against the
  * customer's balance. Both are headless — all markup below belongs to this example.
  */
 function CartPoints({
@@ -139,16 +139,14 @@ function CartPoints({
   accountPoints: CustomerLoyaltyMetafield | null;
 }) {
   const optimisticCart = useOptimisticCart(cart);
-  const {totalPoints} = useCartPoints(optimisticCart, accountPoints);
+  const {totalPoints} = useCartPoints(optimisticCart);
 
   return (
     <section className="cart-points" aria-label="Loyalty points">
       <p>You will earn {totalPoints.toLocaleString()} points on this order.</p>
 
-      <PointsRedemption
+      <CartRedemption
         pointsBalance={accountPoints?.balance ?? null}
-        customerId={accountPoints?.customerId ?? null}
-        cartTotalQuantity={optimisticCart?.totalQuantity}
         isOptimistic={optimisticCart?.isOptimistic}
       >
         {({input, form, result}) =>
@@ -181,7 +179,7 @@ function CartPoints({
             </div>
           )
         }
-      </PointsRedemption>
+      </CartRedemption>
     </section>
   );
 }

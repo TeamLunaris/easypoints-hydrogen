@@ -126,7 +126,7 @@ All components are unstyled — they expose data via render props; the markup is
 | --- | --- | --- |
 | `products.$handle.tsx` | `ProductPoints` (isomorphic), `productPoints` (`/server`) | points earned per product (server-calculated; `null` → "no points") |
 | `account._index.tsx` | `CustomerLoyalty`, `TierProgress` | balance + current tier, progress to next tier |
-| `cart.tsx` | `useCartPoints` (`/client`), `PointsRedemption` (isomorphic) | live cart points total + redeem/undo flow |
+| `cart.tsx` | `useCartPoints` (`/client`), `CartRedemption` (isomorphic) | live cart points total + redeem/undo flow |
 
 Product points (server side, in the loader):
 
@@ -138,9 +138,9 @@ const points = await productPoints(context.loyalty, {handle, selectedOptions});
 Cart points + redemption (client side):
 
 ```tsx
-const {totalPoints} = useCartPoints(useOptimisticCart(cart), accountPoints);
-// <PointsRedemption pointsBalance={…} customerId={…} cartTotalQuantity={…} isOptimistic={…}>
-//   {({pointsToRedeem, setPointsToRedeem, canRedeem, step, redeem, undo, redeemedPoints, error, isSubmitting}) => …}
+const {totalPoints} = useCartPoints(useOptimisticCart(cart));
+// <CartRedemption pointsBalance={accountPoints?.balance ?? null} isOptimistic={…}>
+//   {({input, form, result}) => …}  // input.{value,setValue,step}, form.{submit,undo,isValid,isSubmitting}, result.{redeemedPoints,error}
 ```
 
 Cart loyalty is loaded with `await context.loyalty.getCustomerLoyalty()` (returns `null` when
