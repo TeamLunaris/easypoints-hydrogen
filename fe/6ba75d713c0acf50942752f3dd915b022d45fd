@@ -1,0 +1,32 @@
+docs/example-storefront-integration.md
+  s_0bf1f829a0ecd7::t_5a5b0da5de8bc6 141-143
+  s_0bf1f829a0ecd7::t_d3d925f8fcd9ae 129
+examples/storefront/app/routes/cart.tsx
+  s_0bf1f829a0ecd7::t_56f0cb31d515c7 131
+  s_0bf1f829a0ecd7::t_538fb1bb6aad3a 142
+  s_0bf1f829a0ecd7::t_0ac414193d91b3 148
+  s_0bf1f829a0ecd7::t_cdc29e227f46b3 182
+  s_0bf1f829a0ecd7::t_e50dffbb535182 6
+examples/storefront/app/routes/api.cart.points.tsx
+  s_0bf1f829a0ecd7::t_2bbaf333c90dbc 5
+examples/storefront/CHANGELOG.md
+  s_0bf1f829a0ecd7::t_ff13bc1c6b7945 33
+examples/storefront/README.md
+  s_0bf1f829a0ecd7::t_6a3dc6ec0f817d 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "fe6ba75d713c0acf50942752f3dd915b022d45fd",
+  "prompts": {},
+  "sessions": {
+    "s_0bf1f829a0ecd7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0a742594-acbe-4f6f-a1f2-d571a03581d4",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
