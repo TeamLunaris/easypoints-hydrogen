@@ -1,0 +1,62 @@
+packages/easypoints-hydrogen/package.json
+  s_640af6f20642b6::t_a8d9fc93943995 2
+packages/easypoints-hydrogen/README.md
+  s_640af6f20642b6::t_f2056ddd1683dd 21-22
+  s_640af6f20642b6::t_a8d9fc93943995 1,13,23-25
+packages/easypoints-hydrogen/src/types.ts
+  s_640af6f20642b6::t_a8d9fc93943995 1
+examples/storefront/app/routes/cart.tsx
+  s_640af6f20642b6::t_a8d9fc93943995 5-7
+examples/storefront/vite.config.ts
+  s_640af6f20642b6::t_a8d9fc93943995 11
+examples/storefront/app/routes/account.tsx
+  s_640af6f20642b6::t_a8d9fc93943995 12
+examples/storefront/app/routes/api.cart.points.tsx
+  s_640af6f20642b6::t_a8d9fc93943995 5-6,14,17
+examples/storefront/CHANGELOG.md
+  s_640af6f20642b6::t_a8d9fc93943995 41
+examples/storefront/package.json
+  s_640af6f20642b6::t_a8d9fc93943995 16
+examples/storefront/app/root.tsx
+  s_640af6f20642b6::t_a8d9fc93943995 13
+examples/storefront/README.md
+  s_640af6f20642b6::t_a8d9fc93943995 4
+packages/easypoints-hydrogen/src/client.ts
+  s_640af6f20642b6::t_a8d9fc93943995 1
+CLAUDE.md
+  s_640af6f20642b6::t_a8d9fc93943995 3
+packages/easypoints-hydrogen/src/index.ts
+  s_640af6f20642b6::t_a8d9fc93943995 1
+examples/storefront/app/lib/context.ts
+  s_640af6f20642b6::t_a8d9fc93943995 5,12
+packages/easypoints-hydrogen/src/server.ts
+  s_640af6f20642b6::t_a8d9fc93943995 1,8,24
+examples/storefront/app/routes/account._index.tsx
+  s_640af6f20642b6::t_a8d9fc93943995 2
+docs/example-storefront-integration.md
+  s_640af6f20642b6::t_a8d9fc93943995 3,20-22,33,71,74-75,103,116,134
+examples/storefront/app/graphql/customer-account/CustomerDetailsQuery.ts
+  s_640af6f20642b6::t_a8d9fc93943995 2
+examples/storefront/app/routes/products.$handle.tsx
+  s_640af6f20642b6::t_a8d9fc93943995 11-12
+README.md
+  s_640af6f20642b6::t_a8d9fc93943995 3
+pnpm-lock.yaml
+  s_640af6f20642b6::t_c83e7b02090186 23-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "0043710d50218a48f081cf93f6b063e1762308bc",
+  "prompts": {},
+  "sessions": {
+    "s_640af6f20642b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0045371c-e5f3-46e2-9db7-98a2e49a99b1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
