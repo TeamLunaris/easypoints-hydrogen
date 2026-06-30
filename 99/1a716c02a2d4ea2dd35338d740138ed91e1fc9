@@ -1,0 +1,14 @@
+packages/easypoints-hydrogen/package.json
+  h_8c8bb3a0db3180 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "991a716c02a2d4ea2dd35338d740138ed91e1fc9",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
