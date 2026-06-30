@@ -1,0 +1,34 @@
+.github/workflows/ci.yml
+  s_640af6f20642b6::t_42b7eacb15859c 22
+examples/storefront/package.json
+  s_640af6f20642b6::t_95bb6420acb1e1 42
+mise.toml
+  s_640af6f20642b6::t_e4ae568054a8c9 2
+CLAUDE.md
+  s_640af6f20642b6::t_1acc8ba7736e0e 41
+.github/workflows/release.yml
+  s_640af6f20642b6::t_9503d0e3e49322 21,49
+package.json
+  s_640af6f20642b6::t_adf73994b1d0f8 17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "6b870b7939a29c3d217be343fd036ec0aa6064a8",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_640af6f20642b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0045371c-e5f3-46e2-9db7-98a2e49a99b1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
