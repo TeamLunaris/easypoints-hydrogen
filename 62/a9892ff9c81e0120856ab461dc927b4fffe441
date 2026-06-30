@@ -1,0 +1,26 @@
+.github/workflows/ci.yml
+  s_640af6f20642b6::t_b417abb90b7136 1-15,17,19,21-26,29,32
+  s_640af6f20642b6::t_004a8a3723f323 16,18,20
+  s_640af6f20642b6::t_8dff40022c70f2 27-28,30-31,33-37
+.github/workflows/release.yml
+  s_640af6f20642b6::t_a8ef16e8fad091 1-7,10,14,16,18,20-29,31-33,63
+  s_640af6f20642b6::t_70da30e71aca26 15,17,19
+  s_640af6f20642b6::t_55d790f7ecb03e 8-9,11-13,34-62
+  s_640af6f20642b6::t_9ef87bcc492d78 30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "62a9892ff9c81e0120856ab461dc927b4fffe441",
+  "prompts": {},
+  "sessions": {
+    "s_640af6f20642b6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0045371c-e5f3-46e2-9db7-98a2e49a99b1",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
