@@ -11,7 +11,6 @@ Requires Hydrogen 2026.x, React Router 7.12+, React 19, Node ≥ 22.13.
 
 ## Guides
 
-- [Getting started](../../docs/getting-started.md): step-by-step Hydrogen integration (context client → resource route → provider → components).
 - [Package README](./README.md): install, entry points, and a four-step quickstart.
 - [Example storefront](../../examples/storefront): a complete Hydrogen app wiring every entry point.
 - [Changelog](../../CHANGELOG.md): release notes.
@@ -32,7 +31,3 @@ Requires Hydrogen 2026.x, React Router 7.12+, React 19, Node ≥ 22.13.
 ## For AI agents
 
 - [AGENTS.md](./AGENTS.md): how to consume the library from a Hydrogen storefront. Covers the trust boundary, config (`EASY_POINTS_API_TOKEN` Bearer auth), the wiring recipe, and gotchas.
-
-## API reference
-
-- [JSR docs](https://jsr.io/@teamlunaris/easypoints-hydrogen): full API reference generated from source doc comments.

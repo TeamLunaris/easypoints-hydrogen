@@ -64,17 +64,26 @@ const loyalty = createEasyPointsClient({
   token: env.EASY_POINTS_API_TOKEN ?? "",
   endpoint: env.EASY_POINTS_API_ENDPOINT, // optional, defaults to https://loyalty.slrs.io/api
 });
+
 // after createHydrogenContext(...):
 hydrogenContext.loyalty.init(hydrogenContext); // bind storefront + customer-account handles
 ```
 
-**2. Add the cart-points resource route** at `/api/cart/points` (`app/routes/api.cart.points.tsx`):
+**2. Add the cart-points resource route** at `/api/cart/points` (`app/routes/api.cart.points.tsx`).
+Import `/server` dynamically inside the action so its server-only guard isn't tripped when the route
+module is lazy-loaded in the browser:
 
 ```ts
-import { createCartPointsAction } from "@teamlunaris/easypoints-hydrogen/server";
+import type { Route } from "./+types/api.cart.points";
 
-const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude cart lines
-export const action = (args) => handleAction(args);
+export async function action(args: Route.ActionArgs) {
+  const { createCartPointsAction } = await import(
+    "@teamlunaris/easypoints-hydrogen/server"
+  );
+
+  const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude cart lines
+  return handleAction<Route.ActionArgs>(args);
+}
 ```
 
 **3. Wrap your app in the provider** (`app/root.tsx`) to share currency + route config:

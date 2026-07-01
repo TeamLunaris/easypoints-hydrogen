@@ -41,6 +41,7 @@ Set in the Hydrogen environment (`context.env`):
 
    ```ts
    import { createEasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
+
    const loyalty = createEasyPointsClient({
      cache,
      waitUntil,
@@ -48,6 +49,7 @@ Set in the Hydrogen environment (`context.env`):
      token: env.EASY_POINTS_API_TOKEN ?? "",
      endpoint: env.EASY_POINTS_API_ENDPOINT,
    });
+
    // add `loyalty` to the additional-context object passed to createHydrogenContext(...), then:
    hydrogenContext.loyalty.init(hydrogenContext);
    ```
@@ -55,12 +57,21 @@ Set in the Hydrogen environment (`context.env`):
    Loaders/actions then read `context.loyalty`.
 
 2. **Add the cart-points resource route** at `app/routes/api.cart.points.tsx`. The filename **must**
-   map to `/api/cart/points` (the `CART_POINTS_ROUTE_PATH` default the hooks post to):
+   map to `/api/cart/points` (the `CART_POINTS_ROUTE_PATH` default the hooks post to). Import
+   `/server` **dynamically inside the action** — a module-scope import would trip its server-only
+   guard when the route module is lazy-loaded in the browser:
 
    ```ts
-   import { createCartPointsAction } from "@teamlunaris/easypoints-hydrogen/server";
-   const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude lines
-   export const action = (args) => handleAction(args);
+   import type { Route } from "./+types/api.cart.points";
+
+   export async function action(args: Route.ActionArgs) {
+     const { createCartPointsAction } = await import(
+       "@teamlunaris/easypoints-hydrogen/server"
+     );
+
+     const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude lines
+     return handleAction<Route.ActionArgs>(args);
+   }
    ```
 
 3. **Embed the customer loyalty GraphQL fragment** where the merchant's codegen scans it (the
@@ -106,9 +117,3 @@ Set in the Hydrogen environment (`context.env`):
 - **Snake vs camel:** the library already camelCases all API and metafield data at the boundary, so
   you normally never touch this. The exported `keysToCamel` helper is only needed in the one case
   where you parse a raw metafield value yourself (see the customer loyalty fragment step).
-
-## Reference
-
-- Getting started: `docs/getting-started.md` in the repo.
-- Full working example: `examples/storefront`.
-- API reference: https://jsr.io/@teamlunaris/easypoints-hydrogen
