@@ -7,7 +7,7 @@ interface ApiErrorParams {
 /**
  * Thrown when the loyalty API responds with a 5xx (server) error.
  */
-export class LoyaltyClientError extends Error {
+export class EasyPointsClientError extends Error {
   endpoint: string;
   response: Response;
 
@@ -17,7 +17,7 @@ export class LoyaltyClientError extends Error {
 
   constructor({ message = null, endpoint, response }: ApiErrorParams) {
     super(
-      `[easyPoints] ${message ?? LoyaltyClientError.getDefaultErrorMessage(endpoint, response)}`,
+      `[easyPoints] ${message ?? EasyPointsClientError.getDefaultErrorMessage(endpoint, response)}`,
     );
 
     this.endpoint = endpoint;

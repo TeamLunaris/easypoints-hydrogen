@@ -120,7 +120,7 @@ Set in the Hydrogen environment (`context.env`):
 - **Server** (`/server`): `createEasyPointsClient`, `createCartPointsAction`, `productPoints`,
   `queryCustomerLoyalty`, `fetchShopLoyalty`, GraphQL constants
   (`CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`, `SHOP_LOYALTY_QUERY`, `PRODUCT_LOYALTY_QUERY`, …), errors
-  (`ContextError`, `CustomerNotAuthenticatedError`, `LoyaltyClientError`).
+  (`ContextError`, `CustomerNotAuthenticatedError`, `EasyPointsClientError`).
 - **Client** (`/client`): `EasyPointsProvider`, `useCartPoints`, `useCartRedemption`,
   `useTierProgress`, `useCustomerLoyalty`.
 - **Isomorphic** (root): components `CustomerLoyalty`, `TierProgress`, `ProductPoints`,
