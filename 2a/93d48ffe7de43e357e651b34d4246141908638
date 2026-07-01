@@ -1,0 +1,30 @@
+.github/workflows/release.yml
+  h_8c8bb3a0db3180 62,82-85
+packages/easypoints-hydrogen/README.md
+  s_5e511419011956::t_a71e0bb3f9f25c 55-56,59,61-71,73-83,85
+packages/easypoints-hydrogen/AGENTS.md
+  s_5e511419011956::t_9e599b593a89c3 40-42,45-69,71
+docs/getting-started.md
+  s_5e511419011956::t_8b5d6c19de94c0 70-73,77-78,81-82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "2a93d48ffe7de43e357e651b34d4246141908638",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_5e511419011956": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4bea18c9-f3b9-4881-b7c4-9c84ba736d38",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
