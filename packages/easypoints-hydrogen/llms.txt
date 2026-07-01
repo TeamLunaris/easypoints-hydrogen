@@ -12,8 +12,8 @@ Requires Hydrogen 2026.x, React Router 7.12+, React 19, Node ≥ 22.13.
 ## Guides
 
 - [Package README](./README.md): install, entry points, and a four-step quickstart.
-- [Example storefront](../../examples/storefront): a complete Hydrogen app wiring every entry point.
-- [Changelog](../../CHANGELOG.md): release notes.
+- [Example storefront](https://github.com/TeamLunaris/easypoints-hydrogen/tree/main/examples/storefront): a complete Hydrogen app wiring every entry point.
+- [Changelog](https://github.com/TeamLunaris/easypoints-hydrogen/blob/main/CHANGELOG.md): release notes.
 
 ## Entry points
 

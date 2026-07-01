@@ -49,8 +49,8 @@ The package splits along the browser/server trust boundary. Respect it:
 
 ## Quickstart
 
-The wiring is four steps. See [the getting-started guide](../../docs/getting-started.md) for the full
-walkthrough and [`examples/storefront`](../../examples/storefront) for a complete working app.
+The wiring is four steps. See [the getting-started guide](https://github.com/TeamLunaris/easypoints-hydrogen/blob/main/docs/getting-started.md) for the full
+walkthrough and [`examples/storefront`](https://github.com/TeamLunaris/easypoints-hydrogen/tree/main/examples/storefront) for a complete working app.
 
 **1. Mount the client on the Hydrogen context** (`app/lib/context.ts`), then `init()` it:
 
@@ -112,8 +112,8 @@ const { totalPoints } = useCartPoints(cart);
 
 ## Documentation
 
-- **[Getting started](../../docs/getting-started.md)**: step-by-step Hydrogen integration.
-- **[`examples/storefront`](../../examples/storefront)**: a complete Hydrogen app using every entry point.
+- **[Getting started](https://github.com/TeamLunaris/easypoints-hydrogen/blob/main/docs/getting-started.md)**: step-by-step Hydrogen integration.
+- **[`examples/storefront`](https://github.com/TeamLunaris/easypoints-hydrogen/tree/main/examples/storefront)**: a complete Hydrogen app using every entry point.
 - **API reference**: published to [JSR](https://jsr.io/@teamlunaris/easypoints-hydrogen), generated
   from the source doc comments.
 
