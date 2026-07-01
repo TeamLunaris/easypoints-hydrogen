@@ -1,0 +1,23 @@
+packages/easypoints-hydrogen/LICENSE
+  s_3506df5e5e8266::t_df4f2312a08a3f 1-674
+packages/easypoints-hydrogen/jsr.json
+  s_3506df5e5e8266::t_71b7cfde20fd3b 13
+packages/easypoints-hydrogen/package.json
+  s_3506df5e5e8266::t_e54a904dc3fc3a 10-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "71497d7a11006bd46e33b7e8853eb43455a09e90",
+  "prompts": {},
+  "sessions": {
+    "s_3506df5e5e8266": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9d7f54e-73cc-4c74-af99-2767d3cdf464",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
