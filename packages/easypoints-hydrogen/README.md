@@ -52,21 +52,37 @@ The package splits along the browser/server trust boundary. Respect it:
 The wiring is four steps. See [the getting-started guide](https://github.com/TeamLunaris/easypoints-hydrogen/blob/main/docs/getting-started.md) for the full
 walkthrough and [`examples/storefront`](https://github.com/TeamLunaris/easypoints-hydrogen/tree/main/examples/storefront) for a complete working app.
 
-**1. Mount the client on the Hydrogen context** (`app/lib/context.ts`), then `init()` it:
+**1. Mount the client on the Hydrogen context** (`app/lib/context.ts`): add it to the
+additional-context object passed to `createHydrogenContext(...)`, then `init()` it:
 
 ```ts
-import { createEasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
+import { createEasyPointsClient, type EasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
 
-const loyalty = createEasyPointsClient({
-  cache,
-  waitUntil,
-  request,
-  token: env.EASY_POINTS_API_TOKEN ?? "",
-  endpoint: env.EASY_POINTS_API_ENDPOINT, // optional, defaults to https://loyalty.slrs.io/api
-});
+interface LoyaltyContext {
+  loyalty: EasyPointsClient;
+}
 
-// after createHydrogenContext(...):
+declare global {
+  interface HydrogenAdditionalContext extends LoyaltyContext {}
+  interface Env {
+    EASY_POINTS_API_TOKEN?: string;
+    EASY_POINTS_API_ENDPOINT?: string;
+  }
+}
+
+const additionalContext: LoyaltyContext = {
+  loyalty: createEasyPointsClient({
+    cache,
+    waitUntil,
+    request,
+    token: env.EASY_POINTS_API_TOKEN ?? "",
+    endpoint: env.EASY_POINTS_API_ENDPOINT, // optional, defaults to https://loyalty.slrs.io/api
+  }),
+};
+
+const hydrogenContext = createHydrogenContext({ /* env, request, cache, session, cart… */ }, additionalContext);
 hydrogenContext.loyalty.init(hydrogenContext); // bind storefront + customer-account handles
+return hydrogenContext;
 ```
 
 **2. Add the cart-points resource route** at `/api/cart/points` (`app/routes/api.cart.points.tsx`).

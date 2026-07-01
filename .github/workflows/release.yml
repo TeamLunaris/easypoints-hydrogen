@@ -59,8 +59,7 @@ jobs:
       - run: pnpm publish --no-git-checks
         working-directory: packages/easypoints-hydrogen
 
-  # Publish to JSR (jsr.io) via OIDC (no token). Requires the @teamlunaris scope + package to be
-  # created on jsr.io and linked to this repo first (JSR verifies the repo via the OIDC claim).
+  # Publish to JSR (jsr.io) via OIDC Trusted Publishing (no token).
   # JSR publishes TypeScript source directly and generates the API reference from doc comments.
   jsr:
     runs-on: ubuntu-latest
@@ -80,9 +79,9 @@ jobs:
       # npm deps + peer deps are read from package.json by `jsr publish`.
       - run: pnpm install --frozen-lockfile
 
-      # --allow-slow-types: the public domain types are `v.InferOutput<typeof Schema>` (Valibot is the
-      # source of truth for its types — see CLAUDE.md), so the schema values are transitively public
-      # and can't be explicitly annotated without inverting that invariant. JSR still renders web docs
-      # from the doc comments; npm consumers use the hand-built .d.mts from `vp pack`.
+      # --allow-slow-types: the public domain types are `v.InferOutput<typeof Schema>`,
+      # so the schema values are transitively public and can't be explicitly annotated
+      # without inverting that invariant. JSR still renders web docs from the doc comments;
+      # npm consumers use the hand-built .d.mts from `vp pack`.
       - run: npx jsr publish --allow-slow-types
         working-directory: packages/easypoints-hydrogen

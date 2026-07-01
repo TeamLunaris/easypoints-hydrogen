@@ -67,16 +67,19 @@ Create `app/routes/api.cart.points.tsx`. The filename **must** map to `/api/cart
 library's `CART_POINTS_ROUTE_PATH` default. It dispatches CalculatePoints / RedeemPoints /
 UndoRedeem against `context.cart` + `context.loyalty`.
 
+The browser-safe route contract (`CART_POINTS_ACTIONS`, `CalculatePointsResponse`) comes from the
+**root** entry, not `/server`. Import `/server` **dynamically inside the action** — a module-scope
+import would trip its server-only guard when the route module is lazy-loaded in the browser.
+
 ```ts
-import {createCartPointsAction} from '@teamlunaris/easypoints-hydrogen/server';
 import type {Route} from './+types/api.cart.points';
 
-export {ACTIONS as CART_POINTS_ACTIONS} from '@teamlunaris/easypoints-hydrogen/server';
-export type {CalculatePointsResponse} from '@teamlunaris/easypoints-hydrogen/server';
-
-const handleAction = createCartPointsAction(); // pass a `lineFilter` to exclude lines
+export {CART_POINTS_ACTIONS} from '@teamlunaris/easypoints-hydrogen';
+export type {CalculatePointsResponse} from '@teamlunaris/easypoints-hydrogen';
 
 export async function action(args: Route.ActionArgs) {
+  const {createCartPointsAction} = await import('@teamlunaris/easypoints-hydrogen/server');
+  const handleAction = createCartPointsAction(); // pass a `lineFilter` to exclude lines
   return handleAction<Route.ActionArgs>(args);
 }
 ```

@@ -37,21 +37,38 @@ Set in the Hydrogen environment (`context.env`):
 
 ## The canonical wiring recipe
 
-1. **Mount the client** in `app/lib/context.ts` and `init()` it:
+1. **Mount the client** in `app/lib/context.ts`: add it to the additional-context object passed to
+   `createHydrogenContext(...)`, augment `HydrogenAdditionalContext` so `context.loyalty` is typed,
+   then `init()` it:
 
    ```ts
-   import { createEasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
+   import { createEasyPointsClient, type EasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
 
-   const loyalty = createEasyPointsClient({
-     cache,
-     waitUntil,
-     request,
-     token: env.EASY_POINTS_API_TOKEN ?? "",
-     endpoint: env.EASY_POINTS_API_ENDPOINT,
-   });
+   interface LoyaltyContext {
+     loyalty: EasyPointsClient;
+   }
 
-   // add `loyalty` to the additional-context object passed to createHydrogenContext(...), then:
+   declare global {
+     interface HydrogenAdditionalContext extends LoyaltyContext {}
+     interface Env {
+       EASY_POINTS_API_TOKEN?: string;
+       EASY_POINTS_API_ENDPOINT?: string;
+     }
+   }
+
+   const additionalContext: LoyaltyContext = {
+     loyalty: createEasyPointsClient({
+       cache,
+       waitUntil,
+       request,
+       token: env.EASY_POINTS_API_TOKEN ?? "",
+       endpoint: env.EASY_POINTS_API_ENDPOINT,
+     }),
+   };
+
+   const hydrogenContext = createHydrogenContext({ /* env, request, cache, session, cart… */ }, additionalContext);
    hydrogenContext.loyalty.init(hydrogenContext);
+   return hydrogenContext;
    ```
 
    Loaders/actions then read `context.loyalty`.
