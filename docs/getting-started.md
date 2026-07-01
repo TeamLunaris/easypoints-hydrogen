@@ -6,7 +6,7 @@ when this example was built, see
 [`examples/storefront/CHANGELOG.md`](../examples/storefront/CHANGELOG.md).
 
 The example is a stock Hydrogen skeleton (scaffolded with `pnpm create @shopify/hydrogen@latest`,
-Mock.shop data). Everything below is *additive* to that skeleton — these are the only touch points
+Mock.shop data). Everything below is *additive* to that skeleton; these are the only touch points
 the loyalty integration needs.
 
 ---
@@ -17,11 +17,11 @@ The library splits into three import entries; respect the boundary:
 
 | Entry | Use from | Holds the token? |
 | --- | --- | --- |
-| `@teamlunaris/easypoints-hydrogen/server` | loaders, actions, `context.ts` | **Yes — server only** |
+| `@teamlunaris/easypoints-hydrogen/server` | loaders, actions, `context.ts` | **Yes, server only** |
 | `@teamlunaris/easypoints-hydrogen/client` | hooks + provider (browser) | No |
-| `@teamlunaris/easypoints-hydrogen` | isomorphic types, components, `keysToCamel` | No |
+| `@teamlunaris/easypoints-hydrogen` | isomorphic types, components, tier helpers | No |
 
-Never import `/server` from browser code — the entry guards against it, and it carries
+Never import `/server` from browser code: the entry guards against it, and it carries
 `EASY_POINTS_API_TOKEN`.
 
 ### 1. Mount the loyalty client on the Hydrogen context
@@ -63,7 +63,7 @@ Loaders/actions then read `context.loyalty`.
 
 ### 2. Add the cart-points resource route
 
-Create `app/routes/api.cart.points.tsx` — the filename **must** map to `/api/cart/points`, the
+Create `app/routes/api.cart.points.tsx`. The filename **must** map to `/api/cart/points`, the
 library's `CART_POINTS_ROUTE_PATH` default. It dispatches CalculatePoints / RedeemPoints /
 UndoRedeem against `context.cart` + `context.loyalty`.
 
@@ -109,7 +109,7 @@ const loyalty = raw ? keysToCamel<CustomerLoyaltyMetafield>(JSON.parse(raw)) : n
 ### 4. Wrap the app in the provider
 
 In `app/root.tsx`, wrap the tree in `<EasyPointsProvider>` to share display config (currency +
-cart-points route) with the hooks/components. Optional — every hook also accepts the values
+cart-points route) with the hooks/components. Optional: every hook also accepts the values
 explicitly.
 
 ```tsx
@@ -120,7 +120,7 @@ import {EasyPointsProvider} from '@teamlunaris/easypoints-hydrogen/client';
 
 ### 5. Render the headless components
 
-All components are unstyled — they expose data via render props; the markup is yours.
+All components are unstyled; they expose data via render props, and the markup is yours.
 
 | Where | Imports | What it shows |
 | --- | --- | --- |
@@ -153,5 +153,5 @@ EASY_POINTS_API_TOKEN=          # Bearer token; requests are unauthenticated wit
 EASY_POINTS_API_ENDPOINT=       # optional, default https://loyalty.slrs.io/api
 ```
 
-Read once in `context.ts`. Typecheck + build work without a token — the loyalty calls degrade to
+Read once in `context.ts`. Typecheck + build work without a token; the loyalty calls degrade to
 "no points". A full live smoke needs a real Shopify store + token.

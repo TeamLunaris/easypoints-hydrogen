@@ -5,7 +5,9 @@
   "license": "GPL-3.0-only",
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "AGENTS.md",
+    "llms.txt"
   ],
   "type": "module",
   "sideEffects": false,
