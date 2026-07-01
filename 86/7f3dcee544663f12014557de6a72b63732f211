@@ -1,0 +1,20 @@
+packages/easypoints-hydrogen/README.md
+  s_3506df5e5e8266::t_06896c5a51a80f 122
+  s_3506df5e5e8266::t_a2389ffd1351f9 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "867f3dcee544663f12014557de6a72b63732f211",
+  "prompts": {},
+  "sessions": {
+    "s_3506df5e5e8266": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b9d7f54e-73cc-4c74-af99-2767d3cdf464",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
