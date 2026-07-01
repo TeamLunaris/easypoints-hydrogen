@@ -10,7 +10,7 @@
     "./types": "./src/types.ts"
   },
   "publish": {
-    "include": ["src", "README.md", "AGENTS.md", "llms.txt"],
+    "include": ["src", "README.md", "AGENTS.md", "llms.txt", "LICENSE"],
     "exclude": ["src/test-support", "**/*.test.ts", "**/*.test.tsx", "**/.gitkeep", "dist"]
   }
 }
