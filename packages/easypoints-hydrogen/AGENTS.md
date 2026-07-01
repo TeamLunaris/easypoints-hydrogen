@@ -42,7 +42,10 @@ Set in the Hydrogen environment (`context.env`):
    then `init()` it:
 
    ```ts
-   import { createEasyPointsClient, type EasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
+   import {
+     createEasyPointsClient,
+     type EasyPointsClient,
+   } from "@teamlunaris/easypoints-hydrogen/server";
 
    interface LoyaltyContext {
      loyalty: EasyPointsClient;
@@ -66,7 +69,12 @@ Set in the Hydrogen environment (`context.env`):
      }),
    };
 
-   const hydrogenContext = createHydrogenContext({ /* env, request, cache, session, cart… */ }, additionalContext);
+   const hydrogenContext = createHydrogenContext(
+     {
+       /* env, request, cache, session, cart… */
+     },
+     additionalContext,
+   );
    hydrogenContext.loyalty.init(hydrogenContext);
    return hydrogenContext;
    ```

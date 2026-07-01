@@ -56,7 +56,10 @@ walkthrough and [`examples/storefront`](https://github.com/TeamLunaris/easypoint
 additional-context object passed to `createHydrogenContext(...)`, then `init()` it:
 
 ```ts
-import { createEasyPointsClient, type EasyPointsClient } from "@teamlunaris/easypoints-hydrogen/server";
+import {
+  createEasyPointsClient,
+  type EasyPointsClient,
+} from "@teamlunaris/easypoints-hydrogen/server";
 
 interface LoyaltyContext {
   loyalty: EasyPointsClient;
@@ -80,7 +83,12 @@ const additionalContext: LoyaltyContext = {
   }),
 };
 
-const hydrogenContext = createHydrogenContext({ /* env, request, cache, session, cart… */ }, additionalContext);
+const hydrogenContext = createHydrogenContext(
+  {
+    /* env, request, cache, session, cart… */
+  },
+  additionalContext,
+);
 hydrogenContext.loyalty.init(hydrogenContext); // bind storefront + customer-account handles
 return hydrogenContext;
 ```
