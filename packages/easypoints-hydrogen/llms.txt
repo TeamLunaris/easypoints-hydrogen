@@ -1,0 +1,33 @@
+# @teamlunaris/easypoints-hydrogen
+
+> Headless React building blocks and a server-side client that integrate the easyPoints loyalty
+> program into Shopify Hydrogen storefronts. Server code holds a Bearer API token and runs in
+> Hydrogen loaders/actions; React hooks and unstyled render-prop components surface loyalty data in
+> the browser. Types are validated with Valibot at the trust boundary.
+
+Import from the entry point that matches the environment. `/server` is server-only and throws in the
+browser (it holds `EASY_POINTS_API_TOKEN`). The root and `/client` entries are browser-safe.
+Requires Hydrogen 2026.x, React Router 7.12+, React 19, Node ≥ 22.13.
+
+## Guides
+
+- [Package README](./README.md): install, entry points, and a four-step quickstart.
+- [Example storefront](https://github.com/TeamLunaris/easypoints-hydrogen/tree/main/examples/storefront): a complete Hydrogen app wiring every entry point.
+- [Changelog](https://github.com/TeamLunaris/easypoints-hydrogen/blob/main/CHANGELOG.md): release notes.
+
+## Entry points
+
+- `@teamlunaris/easypoints-hydrogen` (browser-safe): domain types, tier logic, and headless render-prop components.
+- `@teamlunaris/easypoints-hydrogen/client` (browser-safe): React hooks + `EasyPointsProvider`.
+- `@teamlunaris/easypoints-hydrogen/server` (server-only): loyalty client, cart-points route action, GraphQL queries/fragments.
+- `@teamlunaris/easypoints-hydrogen/types`: TypeScript types for loyalty data.
+
+## Key APIs
+
+- Server: `createEasyPointsClient` (mounted as `context.loyalty`), `createCartPointsAction`, `productPoints`, `queryCustomerLoyalty`, `fetchShopLoyalty`, `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`, errors (`ContextError`, `CustomerNotAuthenticatedError`, `LoyaltyClientError`).
+- Client hooks: `useCartPoints`, `useCartRedemption`, `useTierProgress`, `useCustomerLoyalty`; provider `EasyPointsProvider`.
+- Isomorphic: components `CustomerLoyalty`, `TierProgress`, `ProductPoints`, `CartRedemption`; utilities `keysToCamel`, `getCurrentTier`, `getNextTier`, `getMaintenanceTier`, `getProgressTier`; route contract `CART_POINTS_ROUTE_PATH`, `CART_POINTS_ACTIONS`.
+
+## For AI agents
+
+- [AGENTS.md](./AGENTS.md): how to consume the library from a Hydrogen storefront. Covers the trust boundary, config (`EASY_POINTS_API_TOKEN` Bearer auth), the wiring recipe, and gotchas.

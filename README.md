@@ -1,6 +1,6 @@
 # easypoints-hydrogen
 
-Monorepo for [`@teamlunaris/easypoints-hydrogen`](./packages/easypoints-hydrogen) — a React +
+Monorepo for [`@teamlunaris/easypoints-hydrogen`](./packages/easypoints-hydrogen), a React +
 TypeScript library that integrates the [easyPoints](https://www.easypoints.jp/) loyalty program
 into [Shopify Hydrogen](https://shopify.dev/docs/storefronts/headless/hydrogen) storefronts.
 
@@ -10,8 +10,11 @@ It provides:
 - **TypeScript types** for loyalty data, exported to consumers,
 - **headless (unstyled) React building blocks** to surface loyalty data to customers.
 
-> **Status:** scaffolding only. The package currently exposes stub entry points; the loyalty
-> client, types, and components are ported in a follow-up phase.
+## Usage
+
+See the package [`README`](./packages/easypoints-hydrogen/README.md) for install + a quickstart, the
+[getting-started guide](./docs/getting-started.md) for a step-by-step Hydrogen integration, and
+[`examples/storefront`](./examples/storefront) for a complete working consumer.
 
 ## Layout
 
@@ -29,12 +32,6 @@ workspaces.
 corepack enable pnpm          # use the pinned pnpm
 pnpm install                  # install + link the workspace
 vp run build                  # build every package (`vp pack` per package)
-vp run check                  # lint + format + typecheck (Oxlint + Oxfmt + tsc)
+vp run check                  # lint + format + type-aware checks (Oxlint + Oxfmt + tsgolint)
 vp run test                   # run tests (Vitest)
-```
-
-Install Vite+ once on your machine:
-
-```sh
-curl -fsSL https://vite.plus | bash
 ```

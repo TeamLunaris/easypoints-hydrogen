@@ -1,0 +1,16 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@teamlunaris/easypoints-hydrogen",
+  "version": "0.1.0-rc.1",
+  "license": "GPL-3.0-only",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./server": "./src/server.ts",
+    "./types": "./src/types.ts"
+  },
+  "publish": {
+    "include": ["src", "README.md", "AGENTS.md", "llms.txt", "LICENSE"],
+    "exclude": ["src/test-support", "**/*.test.ts", "**/*.test.tsx", "**/.gitkeep", "dist"]
+  }
+}
