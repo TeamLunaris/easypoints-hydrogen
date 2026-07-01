@@ -1,0 +1,28 @@
+packages/easypoints-hydrogen/AGENTS.md
+  s_a8cfda2c4a6035::t_4376d321c74d11 60-62,65-70,72-74
+  h_8c8bb3a0db3180 44,52,71
+packages/easypoints-hydrogen/README.md
+  h_8c8bb3a0db3180 67
+  s_a8cfda2c4a6035::t_3034c4340e3853 72-74,77-82,84-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "48cb53f823d4f98e5692943d3669481024f3ddf2",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_a8cfda2c4a6035": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fa95e71f-ed73-4d4e-8f67-3013d880360e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
