@@ -65,9 +65,7 @@ Set in the Hydrogen environment (`context.env`):
    import type { Route } from "./+types/api.cart.points";
 
    export async function action(args: Route.ActionArgs) {
-     const { createCartPointsAction } = await import(
-       "@teamlunaris/easypoints-hydrogen/server"
-     );
+     const { createCartPointsAction } = await import("@teamlunaris/easypoints-hydrogen/server");
 
      const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude lines
      return handleAction<Route.ActionArgs>(args);

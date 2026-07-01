@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@teamlunaris/easypoints-hydrogen?logo=npm&label=npm)](https://www.npmjs.com/package/@teamlunaris/easypoints-hydrogen)
 [![GitHub Packages](https://img.shields.io/github/v/tag/TeamLunaris/easypoints-hydrogen?logo=github&label=GitHub%20Packages)](https://github.com/TeamLunaris/easypoints-hydrogen/pkgs/npm/easypoints-hydrogen)
 [![JSR](https://jsr.io/badges/@teamlunaris/easypoints-hydrogen)](https://jsr.io/@teamlunaris/easypoints-hydrogen)
-[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](../../LICENSE)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0--only-blue.svg)](./LICENSE)
 
 Headless React building blocks and a server-side client that integrate the
 [easyPoints](https://www.easypoints.jp/) loyalty program into
@@ -77,9 +77,7 @@ module is lazy-loaded in the browser:
 import type { Route } from "./+types/api.cart.points";
 
 export async function action(args: Route.ActionArgs) {
-  const { createCartPointsAction } = await import(
-    "@teamlunaris/easypoints-hydrogen/server"
-  );
+  const { createCartPointsAction } = await import("@teamlunaris/easypoints-hydrogen/server");
 
   const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude cart lines
   return handleAction<Route.ActionArgs>(args);
@@ -121,4 +119,4 @@ const { totalPoints } = useCartPoints(cart);
 
 ## License
 
-[GPL-3.0-only](../../LICENSE)
+[GPL-3.0-only](./LICENSE)
