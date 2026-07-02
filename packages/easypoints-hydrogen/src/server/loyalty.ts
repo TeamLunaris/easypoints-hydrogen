@@ -5,7 +5,7 @@ import { keysToCamel } from "../shared/case";
 import { CreateCouponResponseSchema, ErrorResponseSchema } from "../shared/loyalty-schema";
 
 import { getHeaders, getUrl } from "./client";
-import { ContextError, LoyaltyClientError } from "./errors";
+import { ContextError, EasyPointsClientError } from "./errors";
 import { queryCustomerLoyalty } from "./loyalty-customer";
 
 import type { LoyaltyClientConfig } from "./client";
@@ -163,7 +163,7 @@ export function createEasyPointsClient({
    * - **429** → retries honoring `Retry-After` up to {@link MAX_RETRY_ATTEMPTS}, then falls through
    *   to the 4xx path;
    * - **other 4xx** → resolves a camelCased {@link ErrorResponse} (does not throw);
-   * - **5xx** → throws {@link LoyaltyClientError}.
+   * - **5xx** → throws {@link EasyPointsClientError}.
    *
    * Caching is disabled (`CacheNone`); the request is always sent fresh.
    *
@@ -171,7 +171,7 @@ export function createEasyPointsClient({
    * @param endpoint_ - Path appended to the base endpoint (leading slash optional).
    * @param options - Standard `fetch` request init (method, body, headers, …).
    * @returns The camelCased success body, or an {@link ErrorResponse} for 4xx.
-   * @throws {LoyaltyClientError} On 5xx responses.
+   * @throws {EasyPointsClientError} On 5xx responses.
    */
   async function fetch<T = unknown>(
     endpoint_: string,
@@ -239,7 +239,7 @@ export function createEasyPointsClient({
         return validated.success ? validated.output : fallback;
       }
 
-      throw new LoyaltyClientError({ endpoint: endpoint_, response });
+      throw new EasyPointsClientError({ endpoint: endpoint_, response });
     }
   }
 
@@ -251,7 +251,7 @@ export function createEasyPointsClient({
    *
    * @param params - Customer id, point value to redeem, and eligible product ids.
    * @returns The {@link CreateCouponResponse} on success, or an {@link ErrorResponse} for 4xx.
-   * @throws {LoyaltyClientError} On 5xx responses.
+   * @throws {EasyPointsClientError} On 5xx responses.
    */
   async function createCoupon(params: CreateCouponParams): ApiResponse<CreateCouponResponse> {
     const body = JSON.stringify({

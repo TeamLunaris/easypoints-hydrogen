@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: 24.18.0
           registry-url: https://npm.pkg.github.com
-          scope: '@teamlunaris'
+          scope: "@teamlunaris"
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile

@@ -24,7 +24,7 @@ Requires Hydrogen 2026.x, React Router 7.12+, React 19, Node ≥ 22.13.
 
 ## Key APIs
 
-- Server: `createEasyPointsClient` (mounted as `context.loyalty`), `createCartPointsAction`, `productPoints`, `queryCustomerLoyalty`, `fetchShopLoyalty`, `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`, errors (`ContextError`, `CustomerNotAuthenticatedError`, `LoyaltyClientError`).
+- Server: `createEasyPointsClient` (mounted as `context.loyalty`), `createCartPointsAction`, `productPoints`, `queryCustomerLoyalty`, `fetchShopLoyalty`, `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`, errors (`ContextError`, `CustomerNotAuthenticatedError`, `EasyPointsClientError`).
 - Client hooks: `useCartPoints`, `useCartRedemption`, `useTierProgress`, `useCustomerLoyalty`; provider `EasyPointsProvider`.
 - Isomorphic: components `CustomerLoyalty`, `TierProgress`, `ProductPoints`, `CartRedemption`; utilities `keysToCamel`, `getCurrentTier`, `getNextTier`, `getMaintenanceTier`, `getProgressTier`; route contract `CART_POINTS_ROUTE_PATH`, `CART_POINTS_ACTIONS`.
 

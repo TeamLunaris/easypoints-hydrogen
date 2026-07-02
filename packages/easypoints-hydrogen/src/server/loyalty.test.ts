@@ -1,7 +1,7 @@
 import { InMemoryCache } from "@shopify/hydrogen";
 import { describe, expect, test, vi } from "vite-plus/test";
 
-import { LoyaltyClientError } from "./errors";
+import { EasyPointsClientError } from "./errors";
 import { createEasyPointsClient } from "./loyalty";
 
 import { couponResponse, errorResponse } from "../test-support/fixtures/coupon";
@@ -58,13 +58,13 @@ describe("api.fetch", () => {
     expect(result).toEqual({ errors: [], status: 400, title: "Request failed" });
   });
 
-  test("5xx responses throw LoyaltyClientError", async () => {
+  test("5xx responses throw EasyPointsClientError", async () => {
     fetchMock.mock(async () =>
       jsonResponse({ errors: ["boom"] }, { status: 500, statusText: "Server Error" }),
     );
 
     await expect(makeClient().api.fetch("/whatever", { method: "GET" })).rejects.toBeInstanceOf(
-      LoyaltyClientError,
+      EasyPointsClientError,
     );
   });
 

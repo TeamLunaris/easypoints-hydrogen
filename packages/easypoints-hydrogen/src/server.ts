@@ -25,7 +25,11 @@ export { productPoints } from "./server/product";
 export { createCartPointsAction } from "./server/routes/cartPoints";
 
 // Errors.
-export { ContextError, CustomerNotAuthenticatedError, LoyaltyClientError } from "./server/errors";
+export {
+  ContextError,
+  CustomerNotAuthenticatedError,
+  EasyPointsClientError,
+} from "./server/errors";
 
 // GraphQL queries + fragments (merchants embed the fragments in their own codegen).
 export {

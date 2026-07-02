@@ -1,7 +1,4 @@
-import * as v from "valibot";
-
-import { keysToCamel } from "../shared/case";
-import { CustomerLoyaltyMetafieldValueSchema } from "../shared/loyalty-schema";
+import { parseCustomerLoyalty } from "../shared/customer-loyalty";
 
 import { ContextError } from "./errors";
 import { CUSTOMER_LOYALTY_QUERY } from "./graphql";
@@ -52,24 +49,10 @@ export async function queryCustomerLoyalty(
       await customerAccount.query<CustomerLoyaltyQueryData>(CUSTOMER_LOYALTY_QUERY);
     if (errors?.length || !data?.customer) return null;
 
-    const loyalty = data.customer.loyalty?.value;
-    if (!loyalty) return null;
-
-    // Validate the parsed JSON against the schema rather than trusting its shape: a malformed or
-    // partial metafield would otherwise surface as runtime `undefined` where the type promises a
-    // complete object (e.g. crashing `useTierProgress` on `tierMaintenanceData`).
-    const parsed = v.safeParse(
-      CustomerLoyaltyMetafieldValueSchema,
-      keysToCamel(JSON.parse(loyalty)),
-    );
-    if (!parsed.success) {
-      console.error("Invalid customer loyalty metafield:", v.flatten(parsed.issues));
-      return null;
-    }
-
-    // Carry the session-authenticated customer GID through, so callers (e.g. redeemPoints) can
-    // authorize against it rather than trusting a client-supplied id.
-    return { ...parsed.output, customerId: data.customer.id };
+    // Parse + validate + carry the session-authenticated customer GID through (so callers like
+    // redeemPoints authorize against it rather than a client-supplied id). Shares the isomorphic
+    // helper with merchants who piggyback the fragment onto their own customer-account query.
+    return parseCustomerLoyalty(data.customer);
   } catch (error) {
     console.error("Error fetching customer loyalty:", error);
     return null;

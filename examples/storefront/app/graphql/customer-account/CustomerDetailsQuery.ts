@@ -1,9 +1,9 @@
-// Mirrors the library's exported `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`
-// (`@teamlunaris/easypoints-hydrogen/server`). The library ships the fragment string as the
-// source of truth; merchants embed it in a file their own GraphQL codegen scans (the
-// `app/graphql/customer-account/*` glob) so the generated types include `customer.loyalty`.
-// Parse it with `keysToCamel` + `JSON.parse` and hand the result to `<CustomerLoyalty>` /
-// `<TierProgress>`.
+// Copy of the library's exported `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT`
+// (`@teamlunaris/easypoints-hydrogen/server`). It must be copied, not imported: Hydrogen's GraphQL
+// codegen only inlines fragment strings it finds in the files it scans (this
+// `app/graphql/customer-account/*` glob) — it doesn't follow imports into `node_modules` — so the
+// string has to live here for `customer.loyalty` to land in the generated types. In the loader,
+// hand `data.customer` to `parseCustomerLoyalty` (see `routes/account.tsx`).
 const CUSTOMER_LOYALTY_METAFIELD_FRAGMENT = `#graphql
   fragment CustomerLoyaltyMetafield on Customer {
     loyalty: metafield(namespace: "loyalty", key: "easy_points_attributes") {
