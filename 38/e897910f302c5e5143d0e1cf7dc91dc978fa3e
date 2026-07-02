@@ -1,0 +1,21 @@
+docs/getting-started.md
+  s_410adc8adb6f08::t_5aaa74fc285486 124-126
+examples/storefront/app/graphql/customer-account/CustomerDetailsQuery.ts
+  s_410adc8adb6f08::t_8a1c3462c9fde1 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "38e897910f302c5e5143d0e1cf7dc91dc978fa3e",
+  "prompts": {},
+  "sessions": {
+    "s_410adc8adb6f08": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8019eab5-753f-4724-ae7a-0ced97d153b7",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
