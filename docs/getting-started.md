@@ -121,10 +121,9 @@ malformed), so the page still renders for anonymous shoppers:
 ```ts
 import {parseCustomerLoyalty, type CustomerLoyaltyMetafield} from '@teamlunaris/easypoints-hydrogen';
 
-const loyalty: CustomerLoyaltyMetafield | null = parseCustomerLoyalty(
-  data.customer.loyalty?.value,
-  data.customer.id, // authorized GID, carried onto the result — not part of the metafield JSON
-);
+// Pass the customer node itself: the session GID and the metafield are read from the same object
+// (so they can't be mismatched), and a nullish/signed-out `data.customer` just yields `null`.
+const loyalty: CustomerLoyaltyMetafield | null = parseCustomerLoyalty(data.customer);
 ```
 
 This is the same validation `getCustomerLoyalty()` runs server-side, so the two paths can't drift.

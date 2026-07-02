@@ -3,7 +3,7 @@
 // codegen only inlines fragment strings it finds in the files it scans (this
 // `app/graphql/customer-account/*` glob) — it doesn't follow imports into `node_modules` — so the
 // string has to live here for `customer.loyalty` to land in the generated types. In the loader,
-// hand `data.customer.loyalty?.value` to `parseCustomerLoyalty` (see `routes/account.tsx`).
+// hand `data.customer` to `parseCustomerLoyalty` (see `routes/account.tsx`).
 const CUSTOMER_LOYALTY_METAFIELD_FRAGMENT = `#graphql
   fragment CustomerLoyaltyMetafield on Customer {
     loyalty: metafield(namespace: "loyalty", key: "easy_points_attributes") {
