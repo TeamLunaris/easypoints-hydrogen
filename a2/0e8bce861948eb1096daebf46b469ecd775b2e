@@ -1,0 +1,40 @@
+packages/easypoints-hydrogen/src/server/loyalty-customer.ts
+  s_6b474a03664f23::t_a4059af2872bb4 52-55
+  s_6b474a03664f23::t_c851d15eb7804f 1
+docs/getting-started.md
+  s_6b474a03664f23::t_aaec48cb7310d7 87,89-96,107-119,122,124-127,130-131
+  s_6b474a03664f23::t_62c1f4e1f613ed 132
+packages/easypoints-hydrogen/src/index.ts
+  s_6b474a03664f23::t_2b58b78e2abaa4 13
+packages/easypoints-hydrogen/src/shared/customer-loyalty.ts
+  h_8c8bb3a0db3180 13,21
+  s_6b474a03664f23::t_aad593164569f9 1-12,14-20,22-53
+examples/storefront/app/routes/account.tsx
+  h_8c8bb3a0db3180 9-11
+  s_6b474a03664f23::t_38209656642e06 35
+packages/easypoints-hydrogen/src/shared/customer-loyalty.test.ts
+  s_6b474a03664f23::t_a30a336c61857f 1-81
+examples/storefront/app/graphql/customer-account/CustomerDetailsQuery.ts
+  s_6b474a03664f23::t_964902d58f0f0b 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "a20e8bce861948eb1096daebf46b469ecd775b2e",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_6b474a03664f23": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "46a38828-c2ac-41f5-ac43-62be3370cf4e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
