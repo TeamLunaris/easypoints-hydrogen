@@ -1,0 +1,14 @@
+examples/storefront/app/routes/account.tsx
+  h_8c8bb3a0db3180 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "bbb1b55b3fd21cacff15b3e44f718f3ef209139f",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
