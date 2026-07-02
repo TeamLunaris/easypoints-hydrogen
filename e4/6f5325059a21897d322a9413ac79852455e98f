@@ -1,0 +1,28 @@
+.github/workflows/release.yml
+  s_8f454388769722::t_14a6d1703b2202 51
+vite.config.ts
+  s_8f454388769722::t_68da9c4f315eda 10-11,15,20
+  s_8f454388769722::t_d4f6646b088cab 12,14
+  h_8c8bb3a0db3180 13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "e46f5325059a21897d322a9413ac79852455e98f",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_8f454388769722": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e048d7e-ec00-41b5-a27b-d1ff163a2901",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
