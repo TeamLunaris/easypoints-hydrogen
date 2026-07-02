@@ -5,12 +5,10 @@ import {
   Outlet,
   useLoaderData,
 } from 'react-router';
-import type {Route} from './+types/account';
-import {
-  keysToCamel,
-  type CustomerLoyaltyMetafield,
-} from '@teamlunaris/easypoints-hydrogen';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
+import {parseCustomerLoyalty} from '@teamlunaris/easypoints-hydrogen';
+import type {CustomerLoyaltyMetafield} from '@teamlunaris/easypoints-hydrogen';
+import type {Route} from './+types/account';
 
 // Context shape handed to nested account routes via `<Outlet>` (read with `useOutletContext`).
 export type AccountOutletContext = {
@@ -34,17 +32,7 @@ export async function loader({context}: Route.LoaderArgs) {
     throw new Error('Customer not found');
   }
 
-  // The `CustomerLoyaltyMetafield` fragment puts the raw easy_points JSON on `customer.loyalty`.
-  // Parse + camelCase it into the shape the headless loyalty components expect.
-  const raw = data.customer.loyalty?.value;
-  let loyalty: CustomerLoyaltyMetafield | null = null;
-  if (raw) {
-    try {
-      loyalty = keysToCamel<CustomerLoyaltyMetafield>(JSON.parse(raw));
-    } catch (error) {
-      console.error('Failed to parse loyalty metafield', error);
-    }
-  }
+  const loyalty = parseCustomerLoyalty(data.customer.loyalty?.value, data.customer.id);
 
   return remixData(
     {customer: data.customer, loyalty},

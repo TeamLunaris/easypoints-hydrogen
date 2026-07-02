@@ -10,6 +10,7 @@
 
 export type * from "./types";
 export { keysToCamel } from "./shared/case";
+export { parseCustomerLoyalty } from "./shared/customer-loyalty";
 export { getCurrentTier, getMaintenanceTier, getNextTier, getProgressTier } from "./shared/tiers";
 
 // Browser-safe cart-points route contract: action ids + path the merchant mounts the resource

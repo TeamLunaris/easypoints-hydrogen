@@ -84,12 +84,16 @@ export async function action(args: Route.ActionArgs) {
 }
 ```
 
-### 3. Embed the customer loyalty fragment
+### 3. Read the customer's loyalty metafield
 
-The library ships `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT` as the source of truth, but the **string
-must be embedded in a file the merchant's GraphQL codegen scans** (the
-`app/graphql/customer-account/*` glob) so `customer.loyalty` lands in the generated types. Add the
-fragment to `CustomerDetailsQuery.ts` and spread it into the `Customer` fragment:
+The account page already runs its own customer-account query (`CUSTOMER_DETAILS_QUERY`, for name +
+addresses). Rather than pay a second round-trip with `context.loyalty.getCustomerLoyalty()`, add the
+loyalty fields to that existing query and parse them in the loader. Two parts: a **build-time** step
+so the field is typed, and a **runtime** step to turn it into a usable object.
+
+#### 3a. Register the fragment (build-time / codegen)
+
+Add this fragment to `CustomerDetailsQuery.ts` and spread it into the `Customer` fragment:
 
 ```graphql
 fragment CustomerLoyaltyMetafield on Customer {
@@ -100,14 +104,31 @@ fragment CustomerLoyaltyMetafield on Customer {
 }
 ```
 
-At load time, parse the raw JSON and camelCase it before handing to components:
+Why copy it rather than import it? Hydrogen's GraphQL codegen only inlines fragment strings it finds
+in the files it scans (the `app/graphql/customer-account/*` glob) — it does not follow imports into
+`node_modules`. So the string has to physically live in your scanned file for `customer.loyalty` to
+appear on the generated query type; an imported constant wouldn't be picked up. The library exports
+the same string as `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT` (from `/server`) to copy from and to diff
+against in a test, but codegen consumes *your* copy.
+
+#### 3b. Parse it in the loader (runtime)
+
+A `json` metafield's `value` is a serialized string, and the easyPoints payload is snake_case.
+`parseCustomerLoyalty` does the whole boundary conversion — `JSON.parse` → camelCase → schema
+validation → inject the session `customerId` — and returns `null` on any failure (signed out, empty,
+malformed), so the page still renders for anonymous shoppers:
 
 ```ts
-import {keysToCamel, type CustomerLoyaltyMetafield} from '@teamlunaris/easypoints-hydrogen';
+import {parseCustomerLoyalty, type CustomerLoyaltyMetafield} from '@teamlunaris/easypoints-hydrogen';
 
-const raw = data.customer.loyalty?.value;
-const loyalty = raw ? keysToCamel<CustomerLoyaltyMetafield>(JSON.parse(raw)) : null;
+const loyalty: CustomerLoyaltyMetafield | null = parseCustomerLoyalty(
+  data.customer.loyalty?.value,
+  data.customer.id, // authorized GID, carried onto the result — not part of the metafield JSON
+);
 ```
+
+This is the same validation `getCustomerLoyalty()` runs server-side, so the two paths can't drift.
+(You only reach for the lower-level `keysToCamel` if you're hand-parsing some *other* raw metafield.)
 
 ### 4. Wrap the app in the provider
 
