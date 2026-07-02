@@ -146,4 +146,6 @@ jobs:
           VERSION: ${{ needs.version.outputs.version }}
         run: |
           node -e "const fs=require('fs');for(const f of ['./package.json','./jsr.json']){const o=require(f);o.version=process.env.VERSION;fs.writeFileSync(f,JSON.stringify(o,null,2)+'\n')}"
-          npx jsr publish --allow-slow-types
+          # --allow-dirty: the stamp step above intentionally edits package.json
+          # and jsr.json in place, which deno publish otherwise rejects.
+          npx jsr publish --allow-slow-types --allow-dirty
