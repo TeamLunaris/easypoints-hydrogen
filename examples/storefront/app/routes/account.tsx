@@ -32,7 +32,7 @@ export async function loader({context}: Route.LoaderArgs) {
     throw new Error('Customer not found');
   }
 
-  const loyalty = parseCustomerLoyalty(data.customer.loyalty?.value, data.customer.id);
+  const loyalty = parseCustomerLoyalty(data.customer);
 
   return remixData(
     {customer: data.customer, loyalty},
