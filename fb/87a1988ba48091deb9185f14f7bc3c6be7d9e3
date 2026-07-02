@@ -1,0 +1,35 @@
+packages/easypoints-hydrogen/jsr.json
+  s_54865b46436fa1::t_0bba87053f7ac3 4
+.github/workflows/release.yml
+  s_54865b46436fa1::t_a471ff44926827 60,65
+  s_54865b46436fa1::t_a6e196de08b3ac 143,147
+  s_54865b46436fa1::t_baaf7dd42fbf93 58-59,66-69
+  s_54865b46436fa1::t_6afee7a9a62555 8-34,37,62-64,70-71,75,104-106,112-113,118,136-138,145-146,148
+  s_54865b46436fa1::t_178ccb9c010211 100-101,108-111
+  s_54865b46436fa1::t_c4571aebaa97b9 149
+  s_54865b46436fa1::t_6e1aec49321aeb 102,107
+packages/easypoints-hydrogen/package.json
+  s_54865b46436fa1::t_c8a1f7078e3874 6-10
+  s_54865b46436fa1::t_5d920972eb296f 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.8",
+  "base_commit_sha": "fb87a1988ba48091deb9185f14f7bc3c6be7d9e3",
+  "prompts": {},
+  "humans": {
+    "h_8c8bb3a0db3180": {
+      "author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  },
+  "sessions": {
+    "s_54865b46436fa1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2a9429d8-afed-4cfd-b776-e56f9d975318",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
