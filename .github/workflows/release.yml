@@ -5,8 +5,36 @@ on:
     types: [published]
 
 jobs:
+  # Derive the version once from the release tag; every publish job consumes it.
+  # The committed package.json/jsr.json versions are 0.0.0 placeholders — the tag
+  # is the single source of truth, so there's no manual version bump to remember.
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      dist-tag: ${{ steps.v.outputs.dist-tag }}
+    steps:
+      - id: v
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="${RELEASE_TAG#v}"
+          # Prereleases (0.1.0-rc.N) publish under their prerelease id as the
+          # dist-tag; stable versions go to `latest`.
+          if [[ "$VERSION" == *-* ]]; then
+            DIST_TAG="${VERSION#*-}"
+            DIST_TAG="${DIST_TAG%%.*}"
+          else
+            DIST_TAG="latest"
+          fi
+          {
+            echo "version=$VERSION"
+            echo "dist-tag=$DIST_TAG"
+          } >> "$GITHUB_OUTPUT"
+
   # Publish to the public npm registry via OIDC Trusted Publishing (no token, with provenance).
   npm:
+    needs: version
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -27,11 +55,24 @@ jobs:
       - run: pnpm --filter @teamlunaris/easypoints-hydrogen run build
 
       # publishConfig.access is already "public"; prepublishOnly rebuilds dist.
-      - run: npm publish --provenance
+      # Skip if this exact version is already on the registry so re-running a
+      # partially-failed release doesn't 409 on the registries that succeeded.
+      - name: Publish to npm
         working-directory: packages/easypoints-hydrogen
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          DIST_TAG: ${{ needs.version.outputs.dist-tag }}
+        run: |
+          if npm view "@teamlunaris/easypoints-hydrogen@$VERSION" version >/dev/null 2>&1; then
+            echo "npm already has $VERSION; skipping."
+            exit 0
+          fi
+          node -e "const fs=require('fs'),p=require('./package.json');p.version=process.env.VERSION;fs.writeFileSync('./package.json',JSON.stringify(p,null,2)+'\n')"
+          npm publish --provenance --tag "$DIST_TAG"
 
   # Publish to GitHub Packages via the automatic GITHUB_TOKEN.
   github-packages:
+    needs: version
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -56,12 +97,25 @@ jobs:
       - run: pnpm --filter @teamlunaris/easypoints-hydrogen run build
 
       # publishConfig.access is "public"; scope→registry mapping routes this to GH Packages.
-      - run: pnpm publish --no-git-checks
+      # Skip if this exact version already exists so re-running a partially-failed
+      # release doesn't 409 (GitHub Packages refuses to overwrite a version).
+      - name: Publish to GitHub Packages
         working-directory: packages/easypoints-hydrogen
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+          DIST_TAG: ${{ needs.version.outputs.dist-tag }}
+        run: |
+          if npm view "@teamlunaris/easypoints-hydrogen@$VERSION" version --registry https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "GitHub Packages already has $VERSION; skipping."
+            exit 0
+          fi
+          node -e "const fs=require('fs'),p=require('./package.json');p.version=process.env.VERSION;fs.writeFileSync('./package.json',JSON.stringify(p,null,2)+'\n')"
+          pnpm publish --no-git-checks --tag "$DIST_TAG"
 
   # Publish to JSR (jsr.io) via OIDC Trusted Publishing (no token).
   # JSR publishes TypeScript source directly and generates the API reference from doc comments.
   jsr:
+    needs: version
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,9 +133,17 @@ jobs:
       # npm deps + peer deps are read from package.json by `jsr publish`.
       - run: pnpm install --frozen-lockfile
 
+      # jsr reads the version from jsr.json (and deps from package.json), so stamp
+      # both from the release tag. deno's --set-version only asserts a matching
+      # config version during a real publish, so writing the file is the reliable path.
       # --allow-slow-types: the public domain types are `v.InferOutput<typeof Schema>`,
       # so the schema values are transitively public and can't be explicitly annotated
       # without inverting that invariant. JSR still renders web docs from the doc comments;
       # npm consumers use the hand-built .d.mts from `vp pack`.
-      - run: npx jsr publish --allow-slow-types
+      - name: Publish to JSR
         working-directory: packages/easypoints-hydrogen
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          node -e "const fs=require('fs');for(const f of ['./package.json','./jsr.json']){const o=require(f);o.version=process.env.VERSION;fs.writeFileSync(f,JSON.stringify(o,null,2)+'\n')}"
+          npx jsr publish --allow-slow-types
