@@ -52,7 +52,7 @@ export async function queryCustomerLoyalty(
     // Parse + validate + carry the session-authenticated customer GID through (so callers like
     // redeemPoints authorize against it rather than a client-supplied id). Shares the isomorphic
     // helper with merchants who piggyback the fragment onto their own customer-account query.
-    return parseCustomerLoyalty(data.customer.loyalty?.value, data.customer.id);
+    return parseCustomerLoyalty(data.customer);
   } catch (error) {
     console.error("Error fetching customer loyalty:", error);
     return null;

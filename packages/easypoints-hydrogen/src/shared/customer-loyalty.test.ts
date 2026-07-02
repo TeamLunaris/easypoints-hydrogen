@@ -4,6 +4,12 @@ import { parseCustomerLoyalty } from "./customer-loyalty";
 
 const CUSTOMER_ID = "gid://shopify/Customer/1";
 
+/** Wraps a raw metafield `value` in the customer node shape the helper consumes. */
+const customer = (value: string | null | undefined) => ({
+  id: CUSTOMER_ID,
+  loyalty: { value },
+});
+
 /** A complete (snake_case) metafield value as the API serializes it into the metafield. */
 const METAFIELD_VALUE = JSON.stringify({
   balance: 100,
@@ -42,7 +48,7 @@ afterEach(() => {
 
 describe("parseCustomerLoyalty", () => {
   test("parses, camelCases, and injects the customerId", () => {
-    const result = parseCustomerLoyalty(METAFIELD_VALUE, CUSTOMER_ID);
+    const result = parseCustomerLoyalty(customer(METAFIELD_VALUE));
 
     expect(result).toMatchObject({
       customerId: CUSTOMER_ID,
@@ -60,14 +66,25 @@ describe("parseCustomerLoyalty", () => {
     ["null", null],
     ["undefined", undefined],
     ["empty string", ""],
-  ])("returns null when the value is %s", (_label, value) => {
-    expect(parseCustomerLoyalty(value, CUSTOMER_ID)).toBe(null);
+  ])("returns null when the metafield value is %s", (_label, value) => {
+    expect(parseCustomerLoyalty(customer(value))).toBe(null);
+  });
+
+  test.each([
+    ["null", null],
+    ["undefined", undefined],
+  ])("returns null when the customer is %s (signed out)", (_label, value) => {
+    expect(parseCustomerLoyalty(value)).toBe(null);
+  });
+
+  test("returns null when the loyalty metafield is absent", () => {
+    expect(parseCustomerLoyalty({ id: CUSTOMER_ID })).toBe(null);
   });
 
   test("returns null and logs when the value is not valid JSON", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    expect(parseCustomerLoyalty("not json", CUSTOMER_ID)).toBe(null);
+    expect(parseCustomerLoyalty(customer("not json"))).toBe(null);
     expect(errorSpy).toHaveBeenCalled();
   });
 
@@ -75,7 +92,7 @@ describe("parseCustomerLoyalty", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const partial = JSON.stringify({ balance: 100, tier_uid: "abc" });
 
-    expect(parseCustomerLoyalty(partial, CUSTOMER_ID)).toBe(null);
+    expect(parseCustomerLoyalty(customer(partial))).toBe(null);
     expect(errorSpy).toHaveBeenCalled();
   });
 });

@@ -99,13 +99,13 @@ Set in the Hydrogen environment (`context.env`):
 
 3. **Embed the customer loyalty GraphQL fragment** where the merchant's codegen scans it (the
    `app/graphql/customer-account/*` glob), so `customer.loyalty` lands in generated types. The
-   library exports `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT` as the source of truth. Parse + camelCase
-   the raw metafield JSON before handing it to components:
+   library exports `CUSTOMER_LOYALTY_METAFIELD_FRAGMENT` as the source of truth. Hand the customer
+   node to `parseCustomerLoyalty` to validate + camelCase the raw metafield JSON before passing it to
+   components (it returns `null` for a signed-out customer or an unset metafield, so no guard needed):
 
    ```ts
-   import { keysToCamel, type CustomerLoyaltyMetafield } from "@teamlunaris/easypoints-hydrogen";
-   const raw = data.customer.loyalty?.value;
-   const loyalty = raw ? keysToCamel<CustomerLoyaltyMetafield>(JSON.parse(raw)) : null;
+   import { parseCustomerLoyalty } from "@teamlunaris/easypoints-hydrogen";
+   const loyalty = parseCustomerLoyalty(data.customer);
    ```
 
 4. **Wrap the app** in `app/root.tsx` with `<EasyPointsProvider currencyCode="USD">`. Optional:

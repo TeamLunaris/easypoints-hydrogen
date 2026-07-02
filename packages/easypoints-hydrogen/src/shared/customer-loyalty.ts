@@ -6,30 +6,42 @@ import { CustomerLoyaltyMetafieldValueSchema } from "./loyalty-schema";
 import type { CustomerLoyaltyMetafield } from "./loyalty-schema";
 
 /**
+ * The subset of a customer-account query result that {@link parseCustomerLoyalty} consumes: the
+ * session-authenticated customer GID plus the `easy_points_attributes` metafield selected by
+ * {@link CUSTOMER_LOYALTY_METAFIELD_FRAGMENT}. Nullable end-to-end so it accepts optional-chained
+ * data (`data.customer`) for a signed-out customer without a guard at the call site.
+ */
+export type CustomerLoyaltyInput =
+  | {
+      id: string;
+      loyalty?: { value: string | null | undefined } | null;
+    }
+  | null
+  | undefined;
+
+/**
  * Parses the raw `easy_points_attributes` customer metafield JSON into a validated, camelCased
  * {@link CustomerLoyaltyMetafield}.
  *
  * Use it when you piggyback {@link CUSTOMER_LOYALTY_METAFIELD_FRAGMENT} onto a customer-account query
  * you already make (e.g. the account page's `CUSTOMER_DETAILS_QUERY`) and want to avoid the extra
- * round-trip that `EasyPointsClient.getCustomerLoyalty()` would cost. The server client uses this
- * same helper internally, so both paths validate identically and cannot drift.
+ * round-trip that `EasyPointsClient.getCustomerLoyalty()` would cost.
  *
  * Returns `null` (never throws) for every "no data" path so callers can render a signed-out/empty
  * state without branching on errors:
- * - `rawValue` is absent/empty (metafield unset, or customer signed out);
+ * - `customer` is nullish (signed out) or its metafield value is absent/empty (metafield unset);
  * - the JSON fails to parse (logged to `console.error`);
  * - the parsed value fails schema validation (logged to `console.error`).
  *
- * @param rawValue - The raw metafield `value` string (`data.customer.loyalty?.value`), or nullish.
- * @param customerId - The session-authenticated Shopify customer GID (`data.customer.id`). Injected
- *   onto the result so callers (e.g. `redeemPoints`) authorize against it rather than a
- *   client-supplied id; it is not part of the metafield JSON.
+ * @param customer - The customer node from a customer-account query (`data.customer`), or nullish.
  * @returns The normalized loyalty attributes, or `null` when unavailable/invalid.
  */
 export function parseCustomerLoyalty(
-  rawValue: string | null | undefined,
-  customerId: string,
+  customer: CustomerLoyaltyInput,
 ): CustomerLoyaltyMetafield | null {
+  if (!customer) return null;
+
+  const rawValue = customer.loyalty?.value;
   if (!rawValue) return null;
 
   let json: unknown;
@@ -49,5 +61,5 @@ export function parseCustomerLoyalty(
     return null;
   }
 
-  return { ...parsed.output, customerId };
+  return { ...parsed.output, customerId: customer.id };
 }
