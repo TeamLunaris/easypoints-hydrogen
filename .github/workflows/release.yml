@@ -114,6 +114,14 @@ jobs:
 
   # Publish to JSR (jsr.io) via OIDC Trusted Publishing (no token).
   # JSR publishes TypeScript source directly and generates the API reference from doc comments.
+  #
+  # We publish with `deno publish` directly rather than `npx jsr publish`: the jsr npm wrapper
+  # force-adds `--unstable-byonm`, which resolves bare imports (including the JSX automatic-runtime
+  # `react/jsx-runtime`) out of node_modules. Under pnpm, byonm walks up only to the package publish
+  # root, so a hoisted `react` sits ABOVE that ceiling and `react/jsx-runtime` falls through to
+  # sloppy-imports and resolves as a bogus relative path — the "Module not found .../react/jsx-runtime"
+  # publish failure. deno-native publish instead honors jsr.json's `nodeModulesDir: "none"` + `imports`
+  # map, resolving every dep straight from the npm registry, independent of node_modules/pnpm layout.
   jsr:
     needs: version
     runs-on: ubuntu-latest
@@ -123,29 +131,28 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
-
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282 # v2.0.4
         with:
-          node-version: 24.18.0
-          cache: pnpm
+          deno-version: v2.x
 
-      # npm deps + peer deps are read from package.json by `jsr publish`.
-      - run: pnpm install --frozen-lockfile
-
-      # jsr reads the version from jsr.json (and deps from package.json), so stamp
-      # both from the release tag. deno's --set-version only asserts a matching
-      # config version during a real publish, so writing the file is the reliable path.
+      # jsr reads the version from jsr.json, so stamp it from the release tag. deno's
+      # --set-version only asserts a matching config version during a real publish, so
+      # writing the file is the reliable path. (node is preinstalled on GitHub runners.)
+      #
       # --allow-slow-types: the public domain types are `v.InferOutput<typeof Schema>`,
       # so the schema values are transitively public and can't be explicitly annotated
       # without inverting that invariant. JSR still renders web docs from the doc comments;
       # npm consumers use the hand-built .d.mts from `vp pack`.
+      #
+      # --unstable-sloppy-imports: the source uses extensionless relative imports (matching
+      # the vp/tsdown toolchain), which deno-native resolution otherwise rejects.
+      #
+      # --allow-dirty: the stamp step below edits jsr.json in place, which deno publish
+      # otherwise rejects.
       - name: Publish to JSR
         working-directory: packages/easypoints-hydrogen
         env:
           VERSION: ${{ needs.version.outputs.version }}
         run: |
-          node -e "const fs=require('fs');for(const f of ['./package.json','./jsr.json']){const o=require(f);o.version=process.env.VERSION;fs.writeFileSync(f,JSON.stringify(o,null,2)+'\n')}"
-          # --allow-dirty: the stamp step above intentionally edits package.json
-          # and jsr.json in place, which deno publish otherwise rejects.
-          npx jsr publish --allow-slow-types --allow-dirty
+          node -e "const fs=require('fs');const o=require('./jsr.json');o.version=process.env.VERSION;fs.writeFileSync('./jsr.json',JSON.stringify(o,null,2)+'\n')"
+          deno publish --allow-slow-types --allow-dirty --unstable-sloppy-imports --no-check

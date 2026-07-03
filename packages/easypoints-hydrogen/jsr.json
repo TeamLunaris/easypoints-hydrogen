@@ -9,6 +9,19 @@
     "./server": "./src/server.ts",
     "./types": "./src/types.ts"
   },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
+  },
+  "nodeModulesDir": "none",
+  "imports": {
+    "react": "npm:react@^19",
+    "react/jsx-runtime": "npm:react@^19/jsx-runtime",
+    "react-router": "npm:react-router@^7.12",
+    "valibot": "npm:valibot@^1",
+    "@shopify/hydrogen": "npm:@shopify/hydrogen@^2026.0.0",
+    "@shopify/hydrogen/storefront-api-types": "npm:@shopify/hydrogen@^2026.0.0/storefront-api-types"
+  },
   "publish": {
     "include": ["src", "README.md", "AGENTS.md", "llms.txt", "LICENSE"],
     "exclude": ["src/test-support", "**/*.test.ts", "**/*.test.tsx", "**/.gitkeep", "dist"]
