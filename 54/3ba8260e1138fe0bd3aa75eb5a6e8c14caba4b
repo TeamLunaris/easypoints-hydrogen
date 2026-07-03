@@ -1,0 +1,23 @@
+packages/easypoints-hydrogen/jsr.json
+  s_cc7585998d90c4::t_4655a79005b165 16
+  s_cc7585998d90c4::t_f316831a6c64b6 12-15,17-24
+.github/workflows/release.yml
+  s_cc7585998d90c4::t_7b082e05248268 134
+  s_cc7585998d90c4::t_d7ea64beb9baf1 117-124,136,138-141,146-151,157-158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "543ba8260e1138fe0bd3aa75eb5a6e8c14caba4b",
+  "prompts": {},
+  "sessions": {
+    "s_cc7585998d90c4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f188003d-6109-4f29-88cf-02e4cb078688",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
