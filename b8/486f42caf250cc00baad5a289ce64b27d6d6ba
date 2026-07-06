@@ -1,0 +1,28 @@
+packages/easypoints-hydrogen/src/server/routes/cartPoints.test.ts
+  s_2efa3b05020c51::t_bb7ea1e8418abd 257
+  s_2efa3b05020c51::t_06c6f44f268f1f 178,180
+packages/easypoints-hydrogen/src/types.ts
+  s_2efa3b05020c51::t_b885ee36bb4058 105
+packages/easypoints-hydrogen/src/server/routes/cartPoints.ts
+  s_2efa3b05020c51::t_bb46d2ac9cf1d9 161-162
+packages/easypoints-hydrogen/src/shared/loyalty-schema.ts
+  s_2efa3b05020c51::t_687c0729113cb6 115-124,127
+packages/easypoints-hydrogen/src/server/loyalty.test.ts
+  s_2efa3b05020c51::t_5e57e63fee3263 42-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b8486f42caf250cc00baad5a289ce64b27d6d6ba",
+  "prompts": {},
+  "sessions": {
+    "s_2efa3b05020c51": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b106919-648d-483f-9731-b023f37949b6",
+        "model": "claude-fable-5"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
