@@ -1,0 +1,22 @@
+packages/easypoints-hydrogen/src/server/loyalty.test.ts
+  s_2efa3b05020c51::t_ca5598ea5933bd 197-198
+  s_2efa3b05020c51::t_d71d9fd7cea414 169-194
+packages/easypoints-hydrogen/src/shared/loyalty-schema.ts
+  s_2efa3b05020c51::t_8a6d4881e41fab 137-140,143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "323c2cdb017834aaa03f687eaf5618dbddad3d9f",
+  "prompts": {},
+  "sessions": {
+    "s_2efa3b05020c51": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b106919-648d-483f-9731-b023f37949b6",
+        "model": "claude-fable-5"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
