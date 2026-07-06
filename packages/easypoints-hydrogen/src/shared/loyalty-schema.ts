@@ -134,17 +134,14 @@ export type ErrorResponse = v.InferOutput<typeof ErrorResponseSchema>;
  * Response from the coupon-creation endpoint, as it looks AFTER `api.fetch` camelCases the body
  * (the API sends snake_case; `keysToCamel` runs before validation). `data.code` is applied as the
  * cart discount code on a successful redemption.
+ *
+ * Only `code` is validated: it is the one field the library consumes, and rejecting an otherwise
+ * successful response over unused fields fails the redemption AFTER the coupon was created
+ * server-side. The rest of the payload passes through untyped for consumers who want it.
  */
 export const CreateCouponResponseSchema = v.object({
-  data: v.object({
+  data: v.looseObject({
     code: v.string(),
-    currencyValue: v.number(),
-    expiresAt: v.string(),
-    id: v.number(),
-    pointValue: v.number(),
-    pointsReimbursed: v.number(),
-    posDiscount: v.boolean(),
-    reimbursementCascade: v.boolean(),
   }),
 });
 export type CreateCouponResponse = v.InferOutput<typeof CreateCouponResponseSchema>;

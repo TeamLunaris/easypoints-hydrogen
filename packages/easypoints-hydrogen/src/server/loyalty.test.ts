@@ -166,10 +166,36 @@ describe("api.createCoupon", () => {
     expect(result).toEqual(couponResponse());
   });
 
+  test("succeeds when unused response fields drift from the documented shape", async () => {
+    // Regression: only `data.code` is load-bearing. A strict schema over the other fields failed
+    // real redemptions (after the coupon was already created) when the API's serialization
+    // differed from the documented types — e.g. null expiry or string-encoded decimals.
+    fetchMock.mock(async () =>
+      jsonResponse({
+        data: {
+          code: "ABC123",
+          expires_at: null,
+          currency_value: "100.0",
+          points_reimbursed: "0",
+        },
+      }),
+    );
+
+    const result = await makeClient().api.createCoupon({
+      customerId: "1",
+      pointValue: 500,
+      productIds: ["1"],
+    });
+
+    expect(result).toEqual({
+      data: { code: "ABC123", expiresAt: null, currencyValue: "100.0", pointsReimbursed: "0" },
+    });
+  });
+
   test("returns an ErrorResponse when the 2xx body fails schema validation", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    // 200 OK, but the coupon payload is malformed (missing every `data` field).
-    fetchMock.mock(async () => jsonResponse({ data: { code: "ABC123" } }));
+    // 200 OK, but the coupon payload is missing `data.code` — the one field redemption relies on.
+    fetchMock.mock(async () => jsonResponse({ data: { id: 1 } }));
 
     const result = await makeClient().api.createCoupon({
       customerId: "gid://shopify/Customer/1",
