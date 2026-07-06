@@ -112,9 +112,19 @@ export type CollectionBonusPoints = v.InferOutput<typeof CollectionBonusPointsSc
 // REST API responses (validated AFTER keysToCamel — keys are camelCase)
 // ---------------------------------------------------------------------------
 
+/**
+ * One entry of the API's `errors` array. Plain strings in most responses; validation failures
+ * (422) send `{ title, detail, source }` objects instead. Both normalize to a human-readable
+ * string here so `ErrorResponse["errors"]` is always `string[]` for consumers.
+ */
+const ApiErrorSchema = v.pipe(
+  v.union([v.string(), v.object({ title: v.string(), detail: v.optional(v.string()) })]),
+  v.transform((error) => (typeof error === "string" ? error : (error.detail ?? error.title))),
+);
+
 /** Error response shape from the easyPoints API. */
 export const ErrorResponseSchema = v.object({
-  errors: v.array(v.string()),
+  errors: v.array(ApiErrorSchema),
   status: v.number(),
   title: v.string(),
 });

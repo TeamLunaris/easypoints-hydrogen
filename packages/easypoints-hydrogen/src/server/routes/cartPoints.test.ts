@@ -175,8 +175,9 @@ describe("REDEEM_POINTS", () => {
     const result = await redeem(action, context, "100");
 
     expect(result).toEqual({ success: true, points: 100 });
+    // The customer GID is parsed to the numeric id the coupon API expects (it 422s on GIDs).
     expect(createCoupon).toHaveBeenCalledWith({
-      customerId: "gid://shopify/Customer/1",
+      customerId: "1",
       pointValue: 100,
       productIds: ["1"],
     });
@@ -253,7 +254,7 @@ describe("REDEEM_POINTS", () => {
     await redeem(action, context, "50");
 
     expect(createCoupon).toHaveBeenCalledWith({
-      customerId: "gid://shopify/Customer/1",
+      customerId: "1",
       pointValue: 50,
       productIds: ["1", "2"],
     });

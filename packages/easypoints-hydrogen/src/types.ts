@@ -102,7 +102,7 @@ export type ApiResponse<T> = Promise<T | ErrorResponse>;
  * Payload for creating a redeem-points coupon via the easyPoints API.
  */
 export interface CreateCouponParams {
-  /** Shopify customer ID passed through from form action. */
+  /** Numeric Shopify customer ID (not the GID) or the customer's email; the API rejects GIDs. */
   customerId: string;
   /** Number of points the customer wants to redeem. */
   pointValue: number;

@@ -39,6 +39,35 @@ describe("api.fetch", () => {
     expect(result).toEqual(error);
   });
 
+  test("422 structured validation errors normalize to human-readable strings", async () => {
+    // Real shape of a validation failure: `errors` holds objects, not strings. Regression test
+    // for the schema rejecting them and masking the message as the bare status text.
+    fetchMock.mock(async () =>
+      jsonResponse(
+        {
+          status: 422,
+          title: "Unprocessable Entity",
+          errors: [
+            {
+              title: "Invalid value",
+              source: { pointer: "/customer_id" },
+              detail: "Invalid integer. Got: string",
+            },
+          ],
+        },
+        { status: 422 },
+      ),
+    );
+
+    const result = await makeClient().api.fetch("/whatever", { method: "GET" });
+
+    expect(result).toEqual({
+      errors: ["Invalid integer. Got: string"],
+      status: 422,
+      title: "Unprocessable Entity",
+    });
+  });
+
   test("4xx with an unparseable body synthesizes an ErrorResponse from the status line", async () => {
     // Non-JSON 4xx body: `withCache.fetch` returns `data: null` and `response.json()` rejects,
     // so `errorBody` is null and the client falls back to the status text.

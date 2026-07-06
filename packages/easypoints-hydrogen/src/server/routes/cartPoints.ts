@@ -158,7 +158,8 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
 
     const resp = await context.loyalty.api.createCoupon({
       productIds: Array.from(new Set(productIds)),
-      customerId: loyalty.customerId,
+      // The API validates `customer_id` as an integer (or email) and 422s on the raw GID.
+      customerId: parseGid(loyalty.customerId).id,
       pointValue: points,
     });
 
