@@ -83,15 +83,16 @@ Set in the Hydrogen environment (`context.env`):
 
 2. **Add the cart-points resource route** at `app/routes/api.cart.points.tsx`. The filename **must**
    map to `/api/cart/points` (the `CART_POINTS_ROUTE_PATH` default that the hooks post to). Import
-   `/server` **dynamically inside the action** — a module-scope import would trip its server-only
-   guard when the route module is lazy-loaded in the browser:
+   `/server` **at module scope** — React Router's automatic code splitting strips server-only route
+   exports (`action`/`loader`) and their imports from the client bundle, so `/server` never reaches
+   the browser and its server-only guard never runs there:
 
    ```ts
+   import { createCartPointsAction } from "@teamlunaris/easypoints-hydrogen/server";
+
    import type { Route } from "./+types/api.cart.points";
 
    export async function action(args: Route.ActionArgs) {
-     const { createCartPointsAction } = await import("@teamlunaris/easypoints-hydrogen/server");
-
      const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude lines
      return handleAction<Route.ActionArgs>(args);
    }

@@ -68,17 +68,20 @@ library's `CART_POINTS_ROUTE_PATH` default. It dispatches CalculatePoints / Rede
 UndoRedeem against `context.cart` + `context.loyalty`.
 
 The browser-safe route contract (`CART_POINTS_ACTIONS`, `CalculatePointsResponse`) comes from the
-**root** entry, not `/server`. Import `/server` **dynamically inside the action** — a module-scope
-import would trip its server-only guard when the route module is lazy-loaded in the browser.
+**root** entry, not `/server`. Import `/server` **at module scope** — React Router's [automatic code
+splitting](https://reactrouter.com/explanation/automatic-code-splitting) strips server-only route
+exports (`action`/`loader`) and their imports from the client bundle, so `/server` never reaches the
+browser and its server-only guard never runs there.
 
 ```ts
+import {createCartPointsAction} from '@teamlunaris/easypoints-hydrogen/server';
+
 import type {Route} from './+types/api.cart.points';
 
 export {CART_POINTS_ACTIONS} from '@teamlunaris/easypoints-hydrogen';
 export type {CalculatePointsResponse} from '@teamlunaris/easypoints-hydrogen';
 
 export async function action(args: Route.ActionArgs) {
-  const {createCartPointsAction} = await import('@teamlunaris/easypoints-hydrogen/server');
   const handleAction = createCartPointsAction(); // pass a `lineFilter` to exclude lines
   return handleAction<Route.ActionArgs>(args);
 }

@@ -94,15 +94,16 @@ return hydrogenContext;
 ```
 
 **2. Add the cart-points resource route** at `/api/cart/points` (`app/routes/api.cart.points.tsx`).
-Import `/server` dynamically inside the action so its server-only guard isn't tripped when the route
-module is lazy-loaded in the browser:
+Import `/server` at module scope. React Router's [automatic code splitting](https://reactrouter.com/explanation/automatic-code-splitting)
+removes server-only route exports (`action`/`loader`) — and their now-unused imports — from the
+client bundle, so `/server` never reaches the browser and its server-only guard never runs there:
 
 ```ts
+import { createCartPointsAction } from "@teamlunaris/easypoints-hydrogen/server";
+
 import type { Route } from "./+types/api.cart.points";
 
 export async function action(args: Route.ActionArgs) {
-  const { createCartPointsAction } = await import("@teamlunaris/easypoints-hydrogen/server");
-
   const handleAction = createCartPointsAction(); // optional `lineFilter` to exclude cart lines
   return handleAction<Route.ActionArgs>(args);
 }
