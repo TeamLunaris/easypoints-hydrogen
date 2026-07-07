@@ -1,0 +1,25 @@
+packages/easypoints-hydrogen/README.md
+  s_d6335ca3ed71e1::t_f733622f09e3db 97-99,102-103
+docs/getting-started.md
+  s_d6335ca3ed71e1::t_c876eaba1f6ea9 71-74,77-78
+packages/easypoints-hydrogen/AGENTS.md
+  s_d6335ca3ed71e1::t_5fe947225ad44c 86-88,91-92
+examples/storefront/app/routes/api.cart.points.tsx
+  s_d6335ca3ed71e1::t_f55480dea4fe80 1-2,15-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "b0e95493b642ba563d62432ec5831bcfb5e474c6",
+  "prompts": {},
+  "sessions": {
+    "s_d6335ca3ed71e1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "61f12298-a49b-41f3-8f27-96fd448a8c89",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "NexPB <1289189+NexPB@users.noreply.github.com>"
+    }
+  }
+}
