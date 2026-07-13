@@ -423,7 +423,7 @@ describe("REDEEM_POINTS", () => {
   test("surfaces loyalty_unavailable when the API is unreachable (fetch rejects)", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     const action = createCartPointsAction();
-    const { context } = makeContext({
+    const { context, updateDiscountCodes, updateAttributes } = makeContext({
       createCoupon: async () => {
         throw new Error("network down");
       },
@@ -437,6 +437,9 @@ describe("REDEEM_POINTS", () => {
         message: "The loyalty service is temporarily unavailable. Please try again later.",
       },
     });
+    expect(updateDiscountCodes).not.toHaveBeenCalled();
+    expect(updateAttributes).not.toHaveBeenCalled();
     expect(errorSpy).toHaveBeenCalled();
+    errorSpy.mockRestore();
   });
 });
