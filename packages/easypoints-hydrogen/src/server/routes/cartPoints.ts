@@ -158,12 +158,14 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
 
     // The client returns an `ErrorResponse` for 4xx but throws on 5xx and network failures; catch
     // those so an easyPoints outage degrades to a graceful error instead of crashing the action.
+    const customerId = parseGid(loyalty.customerId).id;
+
     let resp: Awaited<ReturnType<typeof context.loyalty.api.createCoupon>>;
     try {
       resp = await context.loyalty.api.createCoupon({
         productIds: Array.from(new Set(productIds)),
         // The API validates `customer_id` as an integer (or email) and 422s on the raw GID.
-        customerId: parseGid(loyalty.customerId).id,
+        customerId,
         pointValue: points,
       });
     } catch (error) {
