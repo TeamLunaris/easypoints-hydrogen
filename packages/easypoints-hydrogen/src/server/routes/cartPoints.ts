@@ -156,12 +156,27 @@ export function createCartPointsAction(options: CreateCartPointsActionOptions = 
       };
     }
 
-    const resp = await context.loyalty.api.createCoupon({
-      productIds: Array.from(new Set(productIds)),
-      // The API validates `customer_id` as an integer (or email) and 422s on the raw GID.
-      customerId: parseGid(loyalty.customerId).id,
-      pointValue: points,
-    });
+    // The client returns an `ErrorResponse` for 4xx but throws on 5xx and network failures; catch
+    // those so an easyPoints outage degrades to a graceful error instead of crashing the action.
+    let resp: Awaited<ReturnType<typeof context.loyalty.api.createCoupon>>;
+    try {
+      resp = await context.loyalty.api.createCoupon({
+        productIds: Array.from(new Set(productIds)),
+        // The API validates `customer_id` as an integer (or email) and 422s on the raw GID.
+        customerId: parseGid(loyalty.customerId).id,
+        pointValue: points,
+      });
+    } catch (error) {
+      console.error("[easyPoints] coupon creation failed:", error);
+      return {
+        success: false,
+        error: {
+          code: "loyalty_unavailable",
+          message: "The loyalty service is temporarily unavailable. Please try again later.",
+        },
+        points,
+      };
+    }
 
     if ("errors" in resp) {
       const message = resp.errors?.length ? resp.errors.join(", ") : resp.title;

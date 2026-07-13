@@ -1,6 +1,7 @@
-import { describe, expect, test } from "vite-plus/test";
+import { describe, expect, test, vi } from "vite-plus/test";
 
 import { createCartPointsAction } from "./cartPoints";
+import { EasyPointsClientError } from "../errors";
 import { CART_POINTS_ACTIONS as ACTIONS } from "../../shared/cartPoints";
 
 import { makeCart, makeLine, makeLoyaltyClient } from "../../test-support/context";
@@ -393,5 +394,49 @@ describe("REDEEM_POINTS", () => {
       points: 100,
       error: { code: "coupon_creation_failed", message: "Coupon could not be created" },
     });
+  });
+
+  test("surfaces loyalty_unavailable when the API 5xxes (client throws)", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const action = createCartPointsAction();
+    const { context, updateDiscountCodes } = makeContext({
+      createCoupon: async () => {
+        throw new EasyPointsClientError({
+          endpoint: "/shopify/coupons",
+          response: new Response(null, { status: 500, statusText: "Internal Server Error" }),
+        });
+      },
+    });
+
+    expect(await redeem(action, context, "100")).toEqual({
+      success: false,
+      points: 100,
+      error: {
+        code: "loyalty_unavailable",
+        message: "The loyalty service is temporarily unavailable. Please try again later.",
+      },
+    });
+    expect(updateDiscountCodes).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  test("surfaces loyalty_unavailable when the API is unreachable (fetch rejects)", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const action = createCartPointsAction();
+    const { context } = makeContext({
+      createCoupon: async () => {
+        throw new Error("network down");
+      },
+    });
+
+    expect(await redeem(action, context, "100")).toEqual({
+      success: false,
+      points: 100,
+      error: {
+        code: "loyalty_unavailable",
+        message: "The loyalty service is temporarily unavailable. Please try again later.",
+      },
+    });
+    expect(errorSpy).toHaveBeenCalled();
   });
 });
